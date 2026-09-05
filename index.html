@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySpace Dashboard</title>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- FIX: Alias window.React to window.react for the lucide-react UMD build -->
+    <script>
+        window.react = window.React;
+    </script>
+
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: {} }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.js"></script>
+
+    <style>
+        /* Custom Styles to mimic our previous setup */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { 
+            Moon, Sun, Clock, BookOpen, Headphones, 
+            List, Video, FileText, Play, Pause, RotateCcw, 
+            CheckCircle, Plus, Settings, ChevronRight, Volume2, VolumeX,
+            Palette, X, Loader2, ChevronDown,
+            BarChart3, Layers, GripVertical, Calendar, BrainCircuit,
+            Database, FileCode2, Filter
+        } = window.lucideReact;
+
+        // --- RAW DATA INTEGRATION (From GDrive / Kitaabi Keeda) ---
+        const rawLectureData = [
+          { "title": "Physics One-Shots (PW)", "folders": ["LECTURES", "Physics", "Physics Wallah"], "playlist": [ { "title": "Basic Maths & Vectors", "url": "https://www.youtube.com/embed/RAwcPN79g0Q" }, { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" }, { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" }, { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" }, { "title": "COM & Collision", "url": "https://www.youtube.com/embed/Rh95KkMwklU" }, { "title": "Rotational Motion", "url": "https://www.youtube.com/embed/vmaKeSkjtGo" }, { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" }, { "title": "Solids & Elasticity", "url": "https://www.youtube.com/embed/1xPm3vIRIGI" }, { "title": "Fluid Mechanics", "url": "https://www.youtube.com/embed/griSf2U_Zlk" }, { "title": "SHM", "url": "https://www.youtube.com/embed/myNQbAYzD5A" }, { "title": "Wave Motion", "url": "https://www.youtube.com/embed/PAlXOkn_Pa8" }, { "title": "Thermal Properties", "url": "https://www.youtube.com/embed/1nTFrbJ8Jhg" }, { "title": "Thermodynamics & KTG", "url": "https://www.youtube.com/embed/Ch9jLsgYIuM" }, { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" }, { "title": "Capacitors", "url": "https://www.youtube.com/embed/FImh-a0673s" }, { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" }, { "title": "Magnetism & Moving Charges", "url": "https://www.youtube.com/embed/3h3OexznsA0" }, { "title": "Electromagnetic Induction", "url": "https://www.youtube.com/embed/ebOF14qP21k" }, { "title": "AC Circuits", "url": "https://www.youtube.com/embed/gziRcxMiO_Q" }, { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" }, { "title": "Ray Optics", "url": "https://www.youtube.com/embed/AfPD-sHayb0" }, { "title": "Semiconductors", "url": "https://www.youtube.com/embed/5h5ANJnVe08" }, { "title": "Communication Systems", "url": "https://www.youtube.com/embed/fBqJdix2NjE" }, { "title": "Modern Physics", "url": "https://www.youtube.com/embed/G58QS4soCuQ" }, { "title": "Atoms", "url": "https://www.youtube.com/embed/AqjrqRyot6w" }, { "title": "Nuclei", "url": "https://www.youtube.com/embed/XJZ1PdXyJU4" }, { "title": "Dual Nature", "url": "https://www.youtube.com/embed/wE0xrUuJLnk" } ] },
+          { "title": "Physical Chemistry (PW)", "folders": ["LECTURES", "Chemistry", "Physics Wallah"], "playlist": [ { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" }, { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" }, { "title": "States of Matter", "url": "https://www.youtube.com/embed/8oypjDXAXZc" }, { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" }, { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" }, { "title": "Ionic Equilibrium", "url": "https://www.youtube.com/embed/BceSksiNLD4" }, { "title": "Redox Reactions", "url": "https://www.youtube.com/embed/1W-UvePUAKo" }, { "title": "Chemical Kinetics", "url": "https://www.youtube.com/embed/kwPNxC9AgZA" }, { "title": "Solutions", "url": "https://www.youtube.com/embed/7OkNy8vhDaw" } ] },
+          { "title": "Inorganic Chemistry (PW)", "folders": ["LECTURES", "Chemistry", "Physics Wallah"], "playlist": [ { "title": "Periodic Table", "url": "https://www.youtube.com/embed/nLE7_YBFQNQ" }, { "title": "Chemical Bonding", "url": "https://www.youtube.com/embed/kS8s_WX0IlY" }, { "title": "Coordination Compounds", "url": "https://www.youtube.com/embed/5myJzBeN514" }, { "title": "P-Block Elements", "url": "https://www.youtube.com/embed/b0k5LOk_uPk" }, { "title": "D & F-Block Elements", "url": "https://www.youtube.com/embed/SjILQ6cX_Vo" }, { "title": "Salt Analysis", "url": "https://www.youtube.com/embed/8rRnn4ECwXI" } ] },
+          { "title": "Organic Chemistry (PW)", "folders": ["LECTURES", "Chemistry", "Physics Wallah"], "playlist": [ { "title": "IUPAC Nomenclature", "url": "https://www.youtube.com/embed/A2QTsYu3fWo" }, { "title": "GOC", "url": "https://www.youtube.com/embed/FFCT-lh86tA" }, { "title": "Isomerism", "url": "https://www.youtube.com/embed/UOzWO2-Z9So" }, { "title": "Hydrocarbons", "url": "https://www.youtube.com/embed/02CBTEOMMsA" }, { "title": "Haloalkanes & Haloarenes", "url": "https://www.youtube.com/embed/7iJFvPI8vMM" }, { "title": "Alcohols, Phenols & Ethers", "url": "https://www.youtube.com/embed/IDo8B0c5Xis" }, { "title": "Aldehydes, Ketones & Acids", "url": "https://www.youtube.com/embed/oR19BqbPBu4" }, { "title": "Amines", "url": "https://www.youtube.com/embed/SKHrfD34Kkc" }, { "title": "Biomolecules", "url": "https://www.youtube.com/embed/LcVNwEWJtyI" } ] },
+          { "title": "Mathematics (PW)", "folders": ["LECTURES", "Maths", "Physics Wallah"], "playlist": [ { "title": "Basic Maths", "url": "https://www.youtube.com/embed/Z5uGIO_11vM" }, { "title": "Determinants", "url": "https://www.youtube.com/embed/uhq_WUNlvh8" }, { "title": "Trigonometric Ratios & Identities", "url": "https://www.youtube.com/embed/DitLpxy6V48" }, { "title": "Vectors", "url": "https://www.youtube.com/embed/FsTlbTQyuJ0" }, { "title": "Quadratic Equations", "url": "https://www.youtube.com/embed/iLIPlvjDkPU" }, { "title": "Matrices", "url": "https://www.youtube.com/embed/2YFQIFQmPmw" }, { "title": "Sets", "url": "https://www.youtube.com/embed/SOXQuRrgJHo" }, { "title": "3D Geometry", "url": "https://www.youtube.com/embed/t_RMMkiYj4g" }, { "title": "Sequence & Series", "url": "https://www.youtube.com/embed/CVG9PcraP1k" }, { "title": "Relations & Functions", "url": "https://www.youtube.com/embed/Qs0wRt70mC4" }, { "title": "Inverse Trigonometric Functions", "url": "https://www.youtube.com/embed/rdWRwY2kEXI" }, { "title": "Permutation & Combination", "url": "https://www.youtube.com/embed/rPFlUfjcakw" }, { "title": "Binomial Theorem", "url": "https://www.youtube.com/embed/QMWDHOcXEQI" }, { "title": "Method of Differentiation", "url": "https://www.youtube.com/embed/3JMzZR2TvhA" }, { "title": "Straight Lines", "url": "https://www.youtube.com/embed/pufR8xp-CQA" }, { "title": "Indefinite Integration", "url": "https://www.youtube.com/embed/7dVDuyI_8FA" }, { "title": "Circles", "url": "https://www.youtube.com/embed/qcpj3jjgr6o" }, { "title": "Parabola", "url": "https://www.youtube.com/embed/Nv9s38ZGPes" }, { "title": "Definite Integration", "url": "https://www.youtube.com/embed/UwRAUIeoCtI" }, { "title": "Differential Equation", "url": "https://www.youtube.com/embed/H1FKKjz8hsw" }, { "title": "Hyperbola", "url": "https://www.youtube.com/embed/zITyahKONeg" }, { "title": "Application of Integrals", "url": "https://www.youtube.com/embed/x0vMQRKTmQ0" }, { "title": "Ellipse", "url": "https://www.youtube.com/embed/ZdCd1G0NDUI" }, { "title": "Complex Number", "url": "https://www.youtube.com/embed/Q-AlaLN72w0" }, { "title": "Limits", "url": "https://www.youtube.com/embed/JnER25G1V7o" }, { "title": "Statistics", "url": "https://www.youtube.com/embed/mWa7eSpT6kg" }, { "title": "Probability", "url": "https://www.youtube.com/embed/3OFuYbk-BV4" }, { "title": "Continuity & Differentiability", "url": "https://www.youtube.com/embed/hsedtF2azNQ" }, { "title": "Application of Derivatives", "url": "https://www.youtube.com/embed/jOVcucQLv38" } ] },
+          { "title": "JEE Maths Playlist 1 - Neha Ma'am", "folders": ["LECTURES", "Maths", "Neha Agrawal"], "playlist": [ { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" }, { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" }, { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" }, { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" } ] },
+          { "title": "Eduniti Physics Sure Shot", "folders": ["LECTURES", "Physics", "Eduniti"], "playlist": [ { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" }, { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" }, { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" }, { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" } ] }
+        ];
+
+        // Transform raw lectures into a flat database array
+        let lectureIdCounter = 1;
+        const flattenedLectures = [];
+        rawLectureData.forEach(playlist => {
+          const category = playlist.folders[1] || 'General'; // Physics, Chemistry, Maths
+          const author = playlist.folders[2] || 'Unknown';
+          const sourcePath = `Drive > ${playlist.folders.join(' > ')}`;
+          
+          playlist.playlist.forEach(vid => {
+            flattenedLectures.push({
+              id: lectureIdCounter++,
+              title: vid.title,
+              course: playlist.title,
+              category: category,
+              author: author,
+              type: 'video',
+              url: vid.url,
+              source: sourcePath,
+              duration: '45m-2h'
+            });
+          });
+        });
+
+        // --- DATABASE SIMULATION ---
+        const MOCK_DB = {
+            users: {
+                'demo-user-123': {
+                profile: { name: 'Student', studyGoal: 'Ace JEE/Finals' },
+                lectures: flattenedLectures,
+                tasks: [
+                    { id: 101, text: 'Review Mechanics Short Notes', status: 'todo' },
+                    { id: 102, text: 'Watch Eduniti Kinematics', status: 'in-progress' },
+                    { id: 103, text: 'Solve 20 PYQs on Vectors', status: 'done' },
+                ],
+                flashcards: [
+                    { id: 201, front: 'What is the formula for escape velocity?', back: 'v = √(2GM/R) or √(2gR)', nextReview: Date.now(), easeFactor: 2.5, interval: 0, deck: 'Drive > Books > HC_Verma_Vol1.pdf' },
+                    { id: 202, front: 'What is the hybridization of Carbon in Benzene?', back: 'sp2 hybridized.', nextReview: Date.now(), easeFactor: 2.5, interval: 0, deck: 'Drive > Books > NCERT_Chemistry.pdf' },
+                    { id: 203, front: 'Integral of tan(x) dx?', back: 'ln|sec(x)| + C', nextReview: Date.now(), easeFactor: 2.6, interval: 0, deck: 'Drive > Books > RD_Sharma_Maths.pdf' },
+                    { id: 204, front: 'Newton\'s Second Law?', back: 'F = dp/dt (Rate of change of momentum)', nextReview: Date.now() + 86400000, easeFactor: 2.6, interval: 1, deck: 'Drive > Books > HC_Verma_Vol1.pdf' }, 
+                ],
+                analytics: {
+                    totalFocusMinutes: 2150,
+                    cardsMastered: 112,
+                    tasksCompleted: 45,
+                    weeklyData: [
+                    { day: 'Mon', hours: 3.5 }, { day: 'Tue', hours: 4.8 }, { day: 'Wed', hours: 2.5 },
+                    { day: 'Thu', hours: 5.2 }, { day: 'Fri', hours: 3.0 }, { day: 'Sat', hours: 6.5 }, { day: 'Sun', hours: 4.0 }
+                    ]
+                }
+                }
+            }
+        };
+
+        const THEMES = {
+            indigo: { name: 'Indigo', primary: 'bg-indigo-600', text: 'text-indigo-600', hover: 'hover:bg-indigo-700', bgLight: 'bg-indigo-50', bgDark: 'dark:bg-indigo-500/15', border: 'border-indigo-200', borderDark: 'dark:border-indigo-500/30', shadow: 'shadow-indigo-500/25', ring: 'ring-indigo-500/50' },
+            rose: { name: 'Rose', primary: 'bg-rose-500', text: 'text-rose-500', hover: 'hover:bg-rose-600', bgLight: 'bg-rose-50', bgDark: 'dark:bg-rose-500/15', border: 'border-rose-200', borderDark: 'dark:border-rose-500/30', shadow: 'shadow-rose-500/25', ring: 'ring-rose-500/50' },
+            emerald: { name: 'Emerald', primary: 'bg-emerald-500', text: 'text-emerald-500', hover: 'hover:bg-emerald-600', bgLight: 'bg-emerald-50', bgDark: 'dark:bg-emerald-500/15', border: 'border-emerald-200', borderDark: 'dark:border-emerald-500/30', shadow: 'shadow-emerald-500/25', ring: 'ring-emerald-500/50' },
+            amber: { name: 'Amber', primary: 'bg-amber-500', text: 'text-amber-500', hover: 'hover:bg-amber-600', bgLight: 'bg-amber-50', bgDark: 'dark:bg-amber-500/15', border: 'border-amber-200', borderDark: 'dark:border-amber-500/30', shadow: 'shadow-amber-500/25', ring: 'ring-amber-500/50' }
+        };
+
+        const SHADES = {
+            slate: { name: 'Soft Slate', main: 'dark:bg-slate-950', panel: 'dark:bg-slate-900', border: 'dark:border-slate-800/50' },
+            midnight: { name: 'Deep Midnight', main: 'dark:bg-[#060913]', panel: 'dark:bg-[#0B101E]', border: 'dark:border-[#1F2937]/50' },
+            black: { name: 'OLED Black', main: 'dark:bg-black', panel: 'dark:bg-[#101010]', border: 'dark:border-[#222]/50' }
+        };
+
+        const INITIAL_SOUNDS = [
+            { id: '1', name: 'Lo-Fi Beats', desc: 'Chill study vibes', icon: '🎧', playing: true, volume: 60 },
+            { id: '2', name: 'Rainfall', desc: 'Light ambient rain', icon: '🌧️', playing: false, volume: 40 },
+            { id: '3', name: 'Cafe Chatter', desc: 'Busy coffee shop', icon: '☕', playing: false, volume: 30 },
+            { id: '4', name: 'Deep Focus', desc: 'Binaural beats', icon: '🧠', playing: false, volume: 50 },
+            { id: '5', name: 'Library', desc: 'Pages & whispers', icon: '📚', playing: false, volume: 40 },
+            { id: '6', name: 'Fireplace', desc: 'Crackling wood', icon: '🔥', playing: false, volume: 60 },
+            { id: '7', name: 'Ocean Waves', desc: 'Calming beach sounds', icon: '🌊', playing: false, volume: 50 },
+            { id: '8', name: 'Forest', desc: 'Birds and leaves', icon: '🌲', playing: false, volume: 45 },
+        ];
+
+
+        // --- COMPONENTS ---
+
+        const SidebarItem = ({ icon: Icon, label, active, onClick, theme }) => (
+        <button 
+            onClick={onClick}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
+            active 
+                ? `${theme.primary} text-white shadow-md ${theme.shadow}` 
+                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
+            }`}
+        >
+            <Icon size={20} className={active ? 'text-white' : 'text-slate-400 dark:text-slate-500'} />
+            <span className="font-medium text-sm">{label}</span>
+        </button>
+        );
+
+
+        const FlashcardsView = ({ theme, userData, updateData }) => {
+        const [activeCardIndex, setActiveCardIndex] = useState(0);
+        const [isFlipped, setIsFlipped] = useState(false);
+
+        const dueCards = userData?.flashcards.filter(card => card.nextReview <= Date.now()) || [];
+        const currentCard = dueCards[activeCardIndex];
+
+        const handleReview = (quality) => {
+            if (!currentCard) return;
+
+            let newInterval = currentCard.interval;
+            let newEase = currentCard.easeFactor;
+
+            if (quality === 0) { 
+            newInterval = 0;
+            newEase = Math.max(1.3, newEase - 0.2);
+            } else if (quality === 1) { 
+            newInterval = newInterval === 0 ? 1 : newInterval * 1.2;
+            newEase = Math.max(1.3, newEase - 0.15);
+            } else if (quality === 2) { 
+            newInterval = newInterval === 0 ? 1 : (newInterval === 1 ? 6 : newInterval * newEase);
+            } else if (quality === 3) { 
+            newInterval = newInterval === 0 ? 4 : (newInterval === 1 ? 6 : newInterval * newEase * 1.3);
+            newEase += 0.15;
+            }
+
+            const nextReviewTime = Date.now() + (newInterval * 24 * 60 * 60 * 1000); 
+
+            const updatedCards = userData.flashcards.map(c => 
+            c.id === currentCard.id 
+                ? { ...c, interval: newInterval, easeFactor: newEase, nextReview: nextReviewTime }
+                : c
+            );
+
+            updateData('flashcards', updatedCards);
+            setIsFlipped(false);
+            
+            if (activeCardIndex >= dueCards.length - 1) {
+            setActiveCardIndex(0); 
+            }
+        };
+
+        if (dueCards.length === 0) {
+            return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in zoom-in-95 duration-500">
+                <div className={`w-24 h-24 rounded-full ${theme.bgLight} ${theme.text} ${theme.bgDark} flex items-center justify-center mb-6`}>
+                <BrainCircuit size={48} />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">You're all caught up!</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-center max-w-sm">
+                No flashcards due right now. Pull more notes from Drive folders or wait for your next spaced repetition cycle.
+                </p>
+            </div>
+            );
+        }
+
+        return (
+            <div className="max-w-3xl mx-auto animate-in fade-in duration-500">
+            <div className="mb-8 flex justify-between items-end">
+                <div>
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Spaced Repetition</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{dueCards.length} cards due for review</p>
+                </div>
+            </div>
+
+            <div 
+                className="relative w-full h-[400px] cursor-pointer group perspective-1000"
+                onClick={() => !isFlipped && setIsFlipped(true)}
+            >
+                <div className={`w-full h-full transition-transform duration-500 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
+                
+                {/* Front */}
+                <div className="absolute w-full h-full backface-hidden bg-white dark:bg-slate-800/80 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-lg p-8 flex flex-col hover:shadow-xl transition-shadow">
+                    <div className="flex justify-between items-start w-full">
+                    <span className={`text-xs font-bold uppercase tracking-wider ${theme.text}`}>Question</span>
+                    {currentCard.deck && (
+                        <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-white/5 max-w-[50%] overflow-hidden">
+                        {currentCard.deck.includes('Drive') ? <Database size={12} className="text-blue-500 flex-shrink-0" /> : <FileCode2 size={12} className="text-orange-500 flex-shrink-0" />}
+                        <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{currentCard.deck}</span>
+                        </div>
+                    )}
+                    </div>
+                    
+                    <div className="flex-1 flex items-center justify-center text-center px-4">
+                    <p className="text-2xl sm:text-3xl font-medium text-slate-800 dark:text-slate-100 leading-snug">
+                        {currentCard.front}
+                    </p>
+                    </div>
+                    
+                    <div className="w-full text-center text-sm text-slate-400 dark:text-slate-500 animate-pulse pb-2">
+                    Click to reveal answer
+                    </div>
+                </div>
+
+                {/* Back */}
+                <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-white dark:bg-slate-800/80 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-lg p-8 flex flex-col justify-between items-center text-center">
+                    <div className="flex-1 flex flex-col justify-center w-full">
+                    <span className={`text-xs font-bold uppercase tracking-wider ${theme.text} mb-6 block`}>Answer</span>
+                    <p className="text-xl sm:text-2xl text-slate-700 dark:text-slate-200 leading-relaxed">
+                        {currentCard.back}
+                    </p>
+                    </div>
+
+                    <div className="w-full grid grid-cols-4 gap-3 sm:gap-4 mt-8">
+                    <button onClick={(e) => { e.stopPropagation(); handleReview(0); }} className="p-3 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100 transition-colors">
+                        <span className="block font-bold text-sm sm:text-base mb-1">Again</span>
+                        <span className="text-[10px] opacity-70">&lt; 1m</span>
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); handleReview(1); }} className="p-3 rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 hover:bg-orange-100 transition-colors">
+                        <span className="block font-bold text-sm sm:text-base mb-1">Hard</span>
+                        <span className="text-[10px] opacity-70">1d</span>
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); handleReview(2); }} className={`p-3 rounded-xl ${theme.bgLight} ${theme.text} dark:bg-white/5 hover:bg-indigo-100 transition-colors`}>
+                        <span className="block font-bold text-sm sm:text-base mb-1">Good</span>
+                        <span className="text-[10px] opacity-70">2d</span>
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); handleReview(3); }} className="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100 transition-colors">
+                        <span className="block font-bold text-sm sm:text-base mb-1">Easy</span>
+                        <span className="text-[10px] opacity-70">4d</span>
+                    </button>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+            </div>
+        );
+        };
+
+
+        const VideoModal = ({ isOpen, onClose, lecture, theme }) => {
+        if (!isOpen || !lecture) return null;
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+                
+                <div className={`p-4 border-b border-slate-100 dark:border-white/5 flex justify-between items-center ${theme.bgLight} dark:bg-white/5`}>
+                <div>
+                    <h3 className="font-bold text-lg text-slate-800 dark:text-white line-clamp-1">{lecture.title}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{lecture.course} • {lecture.author}</p>
+                </div>
+                <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200/50 dark:hover:bg-white/10 text-slate-500 transition-colors flex-shrink-0">
+                    <X size={20} />
+                </button>
+                </div>
+
+                <div className="w-full aspect-video bg-black relative">
+                <iframe 
+                    src={lecture.url} 
+                    title={lecture.title}
+                    className="w-full h-full absolute top-0 left-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                ></iframe>
+                </div>
+            </div>
+            </div>
+        );
+        };
+
+        const AnalyticsView = ({ theme, userData }) => {
+        const analytics = userData?.analytics;
+        if (!analytics) return null;
+
+        const maxHours = Math.max(...analytics.weeklyData.map(d => d.hours), 1); 
+
+        return (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
+            <div className="mb-8">
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Study Analytics</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Track your progress and focus trends.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
+                <div className={`p-4 rounded-2xl ${theme.bgLight} ${theme.text} ${theme.bgDark}`}>
+                    <Clock size={24} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Focus Time</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{Math.floor(analytics.totalFocusMinutes / 60)}h {analytics.totalFocusMinutes % 60}m</p>
+                </div>
+                </div>
+                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
+                <div className={`p-4 rounded-2xl bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10`}>
+                    <BrainCircuit size={24} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Cards Mastered</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{analytics.cardsMastered}</p>
+                </div>
+                </div>
+                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
+                <div className={`p-4 rounded-2xl bg-orange-50 text-orange-500 dark:bg-orange-500/10`}>
+                    <CheckCircle size={24} />
+                </div>
+                <div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Tasks Completed</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{analytics.tasksCompleted}</p>
+                </div>
+                </div>
+            </div>
+
+            <div className="bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Hours Studied This Week</h3>
+                <div className="flex items-end justify-between h-64 mt-4 gap-2">
+                {analytics.weeklyData.map((day, idx) => {
+                    const heightPercent = (day.hours / maxHours) * 100;
+                    return (
+                    <div key={idx} className="flex flex-col items-center flex-1 group">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity mb-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+                        {day.hours}h
+                        </div>
+                        <div className="w-full relative flex justify-center flex-1">
+                        <div 
+                            className={`absolute bottom-0 w-full max-w-[3rem] rounded-t-xl transition-all duration-700 ease-out ${theme.primary} ${theme.shadow} opacity-80 group-hover:opacity-100`}
+                            style={{ height: `${heightPercent}%` }}
+                        />
+                        </div>
+                        <span className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{day.day}</span>
+                    </div>
+                    );
+                })}
+                </div>
+            </div>
+            </div>
+        );
+        };
+
+
+        const LecturesView = ({ theme, userData, updateData }) => {
+        const allLectures = userData?.lectures || [];
+        const [activeCategory, setActiveCategory] = useState('All');
+        const [playingVideo, setPlayingVideo] = useState(null);
+
+        const categories = ['All', ...new Set(allLectures.map(l => l.category))];
+        const filteredLectures = activeCategory === 'All' 
+            ? allLectures 
+            : allLectures.filter(l => l.category === activeCategory);
+
+        return (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+                <div>
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Drive Lectures</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from lectures.js and Drive.</p>
+                </div>
+                
+                {/* Category Filter */}
+                <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                {categories.map(cat => (
+                    <button 
+                    key={cat} 
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
+                        activeCategory === cat 
+                        ? `${theme.primary} text-white shadow-md ${theme.shadow}` 
+                        : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10'
+                    }`}
+                    >
+                    {cat}
+                    </button>
+                ))}
+                </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {filteredLectures.map((lecture) => (
+                <div key={lecture.id} className="group flex flex-col p-5 bg-white dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:shadow-xl dark:hover:shadow-2xl dark:hover:bg-white/10 transition-all duration-300">
+                    <div className="flex justify-between items-start mb-4">
+                    <div className={`p-2.5 rounded-xl ${lecture.type === 'video' ? 'bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-orange-50 text-orange-500 dark:bg-orange-500/10 dark:text-orange-400'}`}>
+                        <Video size={18} />
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${lecture.source.includes('Drive') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30'}`}>
+                        {lecture.source}
+                        </span>
+                    </div>
+                    </div>
+                    <h3 className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2`}>{lecture.title}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-1">{lecture.course} • {lecture.author}</p>
+                    
+                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-4">
+                    <button 
+                        onClick={() => setPlayingVideo(lecture)}
+                        className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold ${theme.primary} text-white hover:opacity-90 transition-all shadow-sm ${theme.shadow}`}
+                    >
+                        <Play size={12} className="ml-0.5" />
+                        <span>Watch</span>
+                    </button>
+                    </div>
+                </div>
+                ))}
+            </div>
+
+            <VideoModal 
+                isOpen={!!playingVideo} 
+                onClose={() => setPlayingVideo(null)} 
+                lecture={playingVideo}
+                theme={theme}
+            />
+            </div>
+        );
+        };
+
+
+        const TaskBoard = ({ theme, userData, updateData }) => {
+        const tasks = userData?.tasks || [];
+        const [newTask, setNewTask] = useState('');
+        const [draggedTaskId, setDraggedTaskId] = useState(null);
+
+        const columns = [
+            { id: 'todo', title: 'To Do', color: 'bg-slate-100 dark:bg-slate-800/50' },
+            { id: 'in-progress', title: 'In Progress', color: 'bg-blue-50 dark:bg-blue-900/10' },
+            { id: 'done', title: 'Completed', color: 'bg-emerald-50 dark:bg-emerald-900/10' }
+        ];
+
+        const handleDragStart = (e, id) => {
+            setDraggedTaskId(id);
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
+        };
+
+        const handleDragEnd = (e) => {
+            e.target.style.opacity = '1';
+            setDraggedTaskId(null);
+        };
+
+        const handleDragOver = (e) => {
+            e.preventDefault(); 
+            e.dataTransfer.dropEffect = 'move';
+        };
+
+        const handleDrop = (e, status) => {
+            e.preventDefault();
+            if (!draggedTaskId) return;
+            
+            const updatedTasks = tasks.map(t => 
+            t.id === draggedTaskId ? { ...t, status } : t
+            );
+            updateData('tasks', updatedTasks);
+        };
+
+        const addTask = (e) => {
+            e.preventDefault();
+            if (!newTask.trim()) return;
+            const newTaskObj = { id: Date.now(), text: newTask, status: 'todo' };
+            updateData('tasks', [...tasks, newTaskObj]);
+            setNewTask('');
+        };
+
+        return (
+            <div className="animate-in fade-in duration-500 h-full flex flex-col">
+            <div className="mb-6 flex-shrink-0">
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight mb-2">Task Flow</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-2xl">
+                Organize your tasks visually. Drag and drop cards between columns to track them from creation to completion.
+                </p>
+            </div>
+
+            <div className="mb-6 flex-shrink-0">
+                <form onSubmit={addTask} className="relative max-w-md">
+                <input 
+                    type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Add a new task..." 
+                    className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-3 pl-4 pr-12 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button type="submit" className={`absolute right-2 top-2 p-1.5 ${theme.primary} ${theme.hover} text-white rounded-xl transition-colors`}>
+                    <Plus size={20} />
+                </button>
+                </form>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
+                {columns.map(column => (
+                <div 
+                    key={column.id} 
+                    className={`flex flex-col rounded-[2rem] p-4 border border-slate-100 dark:border-white/5 ${column.color}`}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, column.id)}
+                >
+                    <div className="flex items-center justify-between mb-4 px-2">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-200">{column.title}</h3>
+                    <span className="bg-white/50 dark:bg-black/20 text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full text-xs font-semibold">
+                        {tasks.filter(t => t.status === column.id).length}
+                    </span>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto space-y-3">
+                    {tasks.filter(t => t.status === column.id).map(task => (
+                        <div 
+                        key={task.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, task.id)}
+                        onDragEnd={handleDragEnd}
+                        className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group transition-all"
+                        >
+                        <div className="flex items-start">
+                            <GripVertical size={16} className="text-slate-300 dark:text-slate-600 mr-2 mt-0.5 flex-shrink-0" />
+                            <span className={`text-sm flex-1 ${task.status === 'done' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-200'}`}>
+                            {task.text}
+                            </span>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+                ))}
+            </div>
+            </div>
+        );
+        };
+
+
+        const PomodoroView = ({ theme, userData, updateData }) => {
+        const [timeLeft, setTimeLeft] = useState(25 * 60);
+        const [isActive, setIsActive] = useState(false);
+        const [mode, setMode] = useState('focus');
+        const sessionStartRef = useRef(null);
+
+        useEffect(() => {
+            let interval = null;
+            if (isActive && timeLeft > 0) {
+            if (!sessionStartRef.current) sessionStartRef.current = Date.now();
+            interval = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
+            } else if (timeLeft === 0 && isActive) {
+            setIsActive(false);
+            if (mode === 'focus' && userData) {
+                const newTotal = userData.analytics.totalFocusMinutes + 25;
+                updateData('analytics', { ...userData.analytics, totalFocusMinutes: newTotal });
+            }
+            sessionStartRef.current = null;
+            }
+            return () => clearInterval(interval);
+        }, [isActive, timeLeft, mode, userData, updateData]);
+
+        const toggleTimer = () => setIsActive(!isActive);
+        const resetTimer = () => {
+            setIsActive(false);
+            sessionStartRef.current = null;
+            setTimeLeft(mode === 'focus' ? 25 * 60 : mode === 'shortBreak' ? 5 * 60 : 15 * 60);
+        };
+
+        const setTimerMode = (newMode) => {
+            setMode(newMode);
+            setIsActive(false);
+            sessionStartRef.current = null;
+            setTimeLeft(newMode === 'focus' ? 25 * 60 : newMode === 'shortBreak' ? 5 * 60 : 15 * 60);
+        };
+
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        };
+
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in zoom-in-95 duration-500">
+            <div className="bg-white dark:bg-white/5 p-10 rounded-[3rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 max-w-md w-full text-center">
+                <div className="flex justify-center space-x-2 mb-10 bg-slate-50 dark:bg-black/20 p-1.5 rounded-full">
+                {['focus', 'shortBreak', 'longBreak'].map((m) => (
+                    <button
+                    key={m}
+                    onClick={() => setTimerMode(m)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-medium capitalize transition-all ${
+                        mode === m 
+                        ? 'bg-white dark:bg-white/10 text-slate-800 dark:text-white shadow-sm' 
+                        : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                    }`}
+                    >
+                    {m.replace(/([A-Z])/g, ' $1').trim()}
+                    </button>
+                ))}
+                </div>
+
+                <div className="text-[5.5rem] font-light text-slate-800 dark:text-white tracking-tighter mb-10 tabular-nums font-mono leading-none">
+                {formatTime(timeLeft)}
+                </div>
+
+                <div className="flex justify-center items-center space-x-6">
+                <button 
+                    onClick={toggleTimer}
+                    className={`w-20 h-20 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${
+                    isActive ? 'bg-rose-500 shadow-rose-500/30' : `${theme.primary} ${theme.shadow}`
+                    }`}
+                >
+                    {isActive ? <Pause size={32} /> : <Play size={32} className="ml-1.5" />}
+                </button>
+                <button 
+                    onClick={resetTimer}
+                    className="w-14 h-14 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                >
+                    <RotateCcw size={22} />
+                </button>
+                </div>
+            </div>
+            </div>
+        );
+        };
+
+        const AudioMixerView = ({ theme }) => {
+        const [sounds, setSounds] = useState(INITIAL_SOUNDS);
+
+        const togglePlay = (id) => {
+            setSounds(sounds.map(s => s.id === id ? { ...s, playing: !s.playing } : s));
+        };
+
+        const handleVolumeChange = (id, newVolume) => {
+            setSounds(sounds.map(s => s.id === id ? { ...s, volume: parseInt(newVolume) } : s));
+        };
+
+        const stopAll = () => {
+            setSounds(sounds.map(s => ({ ...s, playing: false })));
+        };
+
+        const activeCount = sounds.filter(s => s.playing).length;
+
+        return (
+            <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl">
+            <div className="flex justify-between items-end">
+                <div>
+                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Audio Mixer</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Blend environments to create your perfect focus zone.</p>
+                </div>
+                {activeCount > 0 && (
+                <button 
+                    onClick={stopAll}
+                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center bg-white dark:bg-white/5 px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10"
+                >
+                    <VolumeX size={16} className="mr-1.5" /> Stop All
+                </button>
+                )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {sounds.map((sound) => (
+                <div key={sound.id} className={`p-6 rounded-[2rem] border transition-all duration-300 ${
+                    sound.playing 
+                    ? `${theme.bgLight} border-transparent dark:border-transparent ${theme.bgDark} shadow-sm scale-[1.02]` 
+                    : 'bg-white border-slate-100 dark:bg-white/5 dark:border-white/5 hover:border-slate-200 dark:hover:border-white/10'
+                }`}>
+                    <div className="flex flex-col items-center text-center space-y-4 mb-4">
+                    <button 
+                        onClick={() => togglePlay(sound.id)}
+                        className={`w-20 h-20 text-3xl rounded-3xl flex items-center justify-center transition-all ${
+                        sound.playing 
+                            ? `${theme.primary} text-white shadow-xl ${theme.shadow}` 
+                            : 'bg-slate-50 text-slate-500 dark:bg-black/20 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 shadow-inner'
+                        }`}
+                    >
+                        {sound.playing ? <Pause size={28} className="text-white absolute opacity-0 hover:opacity-100 transition-opacity" /> : <Play size={28} className="ml-1 text-slate-400 dark:text-slate-500 absolute opacity-0 hover:opacity-100 transition-opacity" />}
+                        <span className={`transition-opacity ${sound.playing ? 'opacity-20 hover:opacity-0' : ''}`}>{sound.icon}</span>
+                    </button>
+                    <div>
+                        <h3 className={`font-bold ${sound.playing ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>{sound.name}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{sound.desc}</p>
+                    </div>
+                    </div>
+                    
+                    {/* Visualizer & Volume */}
+                    <div className={`transition-all duration-500 overflow-hidden ${sound.playing ? 'h-16 opacity-100' : 'h-0 opacity-0'}`}>
+                    <div className="h-6 w-full flex items-end justify-center space-x-1 opacity-60 mb-4">
+                        {[...Array(8)].map((_, i) => (
+                            <div key={i} className={`w-1.5 rounded-full ${theme.primary} animate-pulse`} 
+                                style={{ 
+                                height: `${Math.random() * (sound.volume / 100) * 100}%`, 
+                                animationDelay: `${i * 0.1}s`, 
+                                animationDuration: '0.5s' 
+                                }} />
+                        ))}
+                    </div>
+                    <div className="flex items-center space-x-3 px-2">
+                        <Volume2 size={16} className={theme.text} />
+                        <input 
+                            type="range" min="0" max="100" 
+                            value={sound.volume}
+                            onChange={(e) => handleVolumeChange(sound.id, e.target.value)}
+                            className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
+                            style={{ 
+                            background: `linear-gradient(to right, var(--tw-colors-indigo-500) 0%, var(--tw-colors-indigo-500) ${sound.volume}%, transparent ${sound.volume}%)` 
+                            }} 
+                        />
+                    </div>
+                    </div>
+                </div>
+                ))}
+            </div>
+            <style dangerouslySetInnerHTML={{__html: `
+                input[type=range]::-webkit-slider-thumb {
+                    appearance: none; width: 16px; height: 16px; border-radius: 50%; background: white; border: 2px solid currentColor; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                }
+            `}} />
+            </div>
+        );
+        };
+
+        const SettingsView = ({ isDarkMode, setIsDarkMode, currentTheme, setTheme, currentShade, setShade, theme }) => (
+        <div className="max-w-3xl animate-in fade-in duration-500 space-y-8 pb-10">
+            <div>
+            <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Settings</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Customize your workspace appearance and behavior.</p>
+            </div>
+
+            <div className="space-y-6">
+            <div className="bg-white dark:bg-white/5 rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-sm">
+                <div className="flex items-center space-x-3 mb-8">
+                <div className={`p-2 rounded-lg ${theme.bgLight} ${theme.bgDark} ${theme.text}`}>
+                    <Palette size={20} />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800 dark:text-white">Theme & Colors</h3>
+                </div>
+
+                <div className="space-y-8">
+                <div>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Color Mode</label>
+                    <div className="flex space-x-4">
+                    <button onClick={() => setIsDarkMode(false)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${!isDarkMode ? `${theme.border} ${theme.bgLight} ${theme.text} ring-2 ${theme.ring} ring-offset-2` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
+                        <Sun size={18} /> <span className="font-medium">Light</span>
+                    </button>
+                    <button onClick={() => setIsDarkMode(true)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${isDarkMode ? `${theme.borderDark} ${theme.bgDark} ${theme.text} ring-2 ${theme.ring} ring-offset-2 dark:ring-offset-slate-900` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
+                        <Moon size={18} /> <span className="font-medium">Dark</span>
+                    </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Accent Color</label>
+                    <div className="flex space-x-4">
+                    {Object.entries(THEMES).map(([key, t]) => (
+                        <button 
+                        key={key} 
+                        onClick={() => setTheme(key)} 
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${t.primary} ${currentTheme === key ? `ring-4 ring-offset-2 dark:ring-offset-[#111] ${t.ring}` : 'opacity-80 hover:opacity-100'}`}
+                        >
+                            {currentTheme === key && <CheckCircle size={20} className="text-white drop-shadow-sm" />}
+                        </button>
+                    ))}
+                    </div>
+                </div>
+
+                {isDarkMode && (
+                    <div className="animate-in fade-in slide-in-from-top-2 duration-300 pt-2">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Dark Mode Background</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {Object.entries(SHADES).map(([key, s]) => (
+                        <button 
+                            key={key} 
+                            onClick={() => setShade(key)} 
+                            className={`p-5 rounded-2xl border text-left transition-all ${currentShade === key ? `${theme.borderDark} ${theme.bgDark}` : 'border-transparent bg-white/5 hover:bg-white/10'}`}
+                        >
+                            <div className="font-medium text-white mb-3">{s.name}</div>
+                            <div className={`w-full h-10 rounded-xl ${key === 'slate' ? 'bg-slate-950' : key === 'midnight' ? 'bg-[#060913]' : 'bg-black'} border border-white/10 shadow-inner`}></div>
+                        </button>
+                        ))}
+                    </div>
+                    </div>
+                )}
+                </div>
+            </div>
+            </div>
+        </div>
+        );
+
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('lectures');
+            const [isDarkMode, setIsDarkMode] = useState(false);
+            const [currentTheme, setCurrentTheme] = useState('indigo');
+            const [currentShade, setCurrentShade] = useState('slate');
+            
+            const [currentUserId, setCurrentUserId] = useState('demo-user-123');
+            const [userData, setUserData] = useState(null);
+
+            useEffect(() => {
+                setTimeout(() => { setUserData(MOCK_DB.users[currentUserId]); }, 500);
+            }, [currentUserId]);
+
+            const updateData = (key, newData) => {
+                setUserData(prev => ({ ...prev, [key]: newData }));
+            };
+
+            const theme = THEMES[currentTheme];
+            const shade = SHADES[currentShade];
+
+            useEffect(() => {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setIsDarkMode(true);
+            }, []);
+
+            useEffect(() => {
+                if (isDarkMode) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+            }, [isDarkMode]);
+
+            const renderContent = () => {
+                if (!userData) return <div className="flex h-full items-center justify-center"><Loader2 className={`animate-spin ${theme.text}`} size={32} /></div>;
+
+                switch (activeTab) {
+                case 'analytics': return <AnalyticsView theme={theme} userData={userData} />;
+                case 'lectures': return <LecturesView theme={theme} userData={userData} updateData={updateData} />;
+                case 'flashcards': return <FlashcardsView theme={theme} userData={userData} updateData={updateData} />;
+                case 'pomodoro': return <PomodoroView theme={theme} userData={userData} updateData={updateData} />;
+                case 'audio': return <AudioMixerView theme={theme} />;
+                case 'tasks': return <TaskBoard theme={theme} userData={userData} updateData={updateData} />;
+                case 'settings': return <SettingsView isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} currentTheme={currentTheme} setTheme={setCurrentTheme} currentShade={currentShade} setShade={setCurrentShade} theme={theme} />;
+                default: return <LecturesView theme={theme} userData={userData} updateData={updateData} />;
+                }
+            };
+
+            return (
+                <div className={`min-h-screen transition-colors duration-300 font-sans flex text-slate-900 dark:text-slate-100 ${isDarkMode ? shade.main : 'bg-[#F4F6F8]'} selection:bg-black/10 dark:selection:bg-white/20`}>
+                
+                <aside className={`w-[280px] border-r flex-shrink-0 hidden md:flex flex-col transition-colors duration-300 ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
+                    <div className={`h-20 flex items-center px-8 border-b ${isDarkMode ? shade.border : 'border-slate-100'}`}>
+                    <div className={`w-9 h-9 ${theme.primary} rounded-xl flex items-center justify-center mr-3 ${theme.shadow}`}>
+                        <BookOpen size={20} className="text-white" />
+                    </div>
+                    <h1 className="font-bold text-xl tracking-tight">StudySpace</h1>
+                    </div>
+                    
+                    <div className="p-5 flex-1 space-y-2 overflow-y-auto scrollbar-hide">
+                    <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-2">Dashboard</p>
+                    <SidebarItem icon={BarChart3} label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} theme={theme} />
+                    <SidebarItem icon={Layers} label="Flashcards" active={activeTab === 'flashcards'} onClick={() => setActiveTab('flashcards')} theme={theme} />
+                    
+                    <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-8">Study Tools</p>
+                    <SidebarItem icon={Video} label="Lectures" active={activeTab === 'lectures'} onClick={() => setActiveTab('lectures')} theme={theme} />
+                    <SidebarItem icon={List} label="Task Flow" active={activeTab === 'tasks'} onClick={() => setActiveTab('tasks')} theme={theme} />
+                    <SidebarItem icon={Clock} label="Timer" active={activeTab === 'pomodoro'} onClick={() => setActiveTab('pomodoro')} theme={theme} />
+                    <SidebarItem icon={Headphones} label="Audio Mixer" active={activeTab === 'audio'} onClick={() => setActiveTab('audio')} theme={theme} />
+                    </div>
+
+                    <div className={`p-5 border-t ${isDarkMode ? shade.border : 'border-slate-100'}`}>
+                    <button onClick={() => setActiveTab('settings')} className={`flex items-center space-x-3 w-full px-4 py-3 rounded-2xl transition-all ${activeTab === 'settings' ? `${theme.bgLight} ${theme.bgDark} ${theme.text}` : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}>
+                        <Settings size={20} />
+                        <span className="font-medium text-sm">Settings</span>
+                    </button>
+                    </div>
+                </aside>
+
+                <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
+                    <header className={`h-20 flex items-center justify-between px-6 md:px-10 backdrop-blur-xl border-b z-10 transition-colors duration-300 ${isDarkMode ? `${shade.panel}/80 ${shade.border}` : 'bg-white/70 border-transparent'}`}>
+                    <div className="flex items-center md:hidden">
+                        <div className={`w-8 h-8 ${theme.primary} rounded-lg flex items-center justify-center mr-3`}>
+                        <BookOpen size={18} className="text-white" />
+                        </div>
+                    </div>
+                    <div className="hidden md:flex items-center text-sm text-slate-500 dark:text-slate-400 font-medium">
+                        <span>Workspace</span><ChevronRight size={14} className="mx-2 opacity-40" />
+                        <span className="capitalize text-slate-800 dark:text-slate-200">{activeTab}</span>
+                    </div>
+                    <div className="flex items-center space-x-5">
+                        <button onClick={() => setActiveTab('settings')} className="p-2.5 rounded-full md:hidden text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5 transition-colors focus:outline-none">
+                        <Settings size={20} />
+                        </button>
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${theme.bgLight} ${theme.text} ${theme.bgDark} border ${theme.border} ${theme.borderDark}`}>
+                        {userData?.profile?.name?.[0] || 'U'}
+                        </div>
+                    </div>
+                    </header>
+
+                    <div className="flex-1 overflow-y-auto p-5 md:p-10 relative">
+                    {renderContent()}
+                    </div>
+
+                    <nav className={`md:hidden border-t p-2 flex justify-around overflow-x-auto transition-colors duration-300 scrollbar-hide ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
+                    {[
+                        { id: 'lectures', icon: Video, label: 'Lectures' },
+                        { id: 'flashcards', icon: Layers, label: 'Cards' },
+                        { id: 'tasks', icon: List, label: 'Tasks' },
+                        { id: 'pomodoro', icon: Clock, label: 'Timer' },
+                        { id: 'audio', icon: Headphones, label: 'Audio' },
+                    ].map((item) => (
+                        <button key={item.id} onClick={() => setActiveTab(item.id)} className={`flex flex-col items-center p-2 rounded-xl min-w-[64px] flex-shrink-0 transition-colors ${activeTab === item.id ? theme.text : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                        <item.icon size={20} className="mb-1" />
+                        <span className="text-[10px] font-semibold">{item.label}</span>
+                        </button>
+                    ))}
+                    </nav>
+                </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
