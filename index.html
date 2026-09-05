@@ -9,6 +9,11 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     
+    <!-- CRITICAL FIX: lucide-react expects 'react' (lowercase), but React exports as 'React' (uppercase) -->
+    <script>
+        window.react = window.React;
+    </script>
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.js"></script>
 
@@ -48,17 +53,16 @@
 <body class="antialiased bg-[#F4F6F8] dark:bg-slate-950 transition-colors duration-300 selection:bg-indigo-200 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100">
     <div id="root"></div>
 
-    <!-- CRITICAL: No 'import' statements allowed in standalone babel scripts -->
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
         const { 
             Moon, Sun, Clock, BookOpen, Headphones, 
             List, Video, FileText, Play, Pause, RotateCcw, 
             CheckCircle, Plus, Settings, ChevronRight, Volume2, VolumeX,
-            Palette, X, ChevronDown,
+            Palette, X, Loader2, ChevronDown,
             BarChart3, Layers, GripVertical, Calendar, BrainCircuit,
-            Database, FileCode2
-        } = window.LucideReact;
+            Database, FileCode2, Filter
+        } = window.lucideReact; // Fixed capitalization
 
         // ==========================================
         // EXTENSIVE LECTURE DATASET (From GDrive / Kitaabi Keeda)
@@ -181,58 +185,26 @@
               { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" }, 
               { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" }, 
               { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
-              { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" },
-              { "title": "Quadratic Equations 3.0", "url": "https://www.youtube.com/embed/MnUt4uRiUv8" },
-              { "title": "Binomial Theorem 3.0", "url": "https://www.youtube.com/embed/kTrZgk8ht6s" },
-              { "title": "Functions 3.0", "url": "https://www.youtube.com/embed/qMZbl49B2gk" },
-              { "title": "Limits, Continuity & Derivatives 3.0", "url": "https://www.youtube.com/embed/1Px2H-ZNAXc" },
-              { "title": "Application of Derivatives 3.0", "url": "https://www.youtube.com/embed/FjePwtMW_jA" },
-              { "title": "Indefinite Integration 3.0", "url": "https://www.youtube.com/embed/aBuT_NpL4kM" },
-              { "title": "Definite Integration 3.0", "url": "https://www.youtube.com/embed/bpeEpWjvG50" },
-              { "title": "Differential Equations 3.0", "url": "https://www.youtube.com/embed/PbeylmdToTs" },
-              { "title": "Sets & Relations 3.0", "url": "https://www.youtube.com/embed/BbDh_D9NOAc" },
-              { "title": "Permutations & Combinations 3.0", "url": "https://www.youtube.com/embed/dZleU5ZUDAo" },
-              { "title": "Probability 3.0", "url": "https://www.youtube.com/embed/N1gW3lZx_4I" },
-              { "title": "Straight Lines 3.0", "url": "https://www.youtube.com/embed/RHk11VC256Y" },
-              { "title": "Circles 3.0", "url": "https://www.youtube.com/embed/Se39Hv2_FzM" },
-              { "title": "Conic Sections One Shot", "url": "https://www.youtube.com/embed/ze6pUWYfAvY" },
-              { "title": "Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/EO_6mXn9szs" },
-              { "title": "Statistics 3.0", "url": "https://www.youtube.com/embed/WFY1D61ZOV0" }
+              { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" }
             ] 
           },
           {
-            "title": "Eduniti Physics Sure Shot (Mohit Sir)",
+            "title": "Eduniti Physics Sure Shot",
             "folders": ["LECTURES", "Physics", "Eduniti"],
             "playlist": [
               { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
               { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
               { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
-              { "title": "Mechanics P1", "url": "https://www.youtube.com/embed/3vkFbQxEYqE" },
-              { "title": "Mechanics P2", "url": "https://www.youtube.com/embed/JJMhkssd4GQ" },
-              { "title": "Mechanics P3", "url": "https://www.youtube.com/embed/Qbb6H6MhmRc" },
-              { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" },
-              { "title": "VCM Sure Shot", "url": "https://www.youtube.com/embed/EwOMzB63gBI" },
-              { "title": "Gravitation", "url": "https://www.youtube.com/embed/xF9ysyykedw" },
-              { "title": "Rotation P1", "url": "https://www.youtube.com/embed/Q8Rujg2Mkio" },
-              { "title": "SHM", "url": "https://www.youtube.com/embed/t7-G5GEfQXI" },
-              { "title": "Thermodynamics Graphs", "url": "https://www.youtube.com/embed/IySVKH_OttE" },
-              { "title": "Cylinder Piston", "url": "https://www.youtube.com/embed/0Ro_F6Af0Zg" },
-              { "title": "Fluids P1", "url": "https://www.youtube.com/embed/gwC-whA3M3g" },
-              { "title": "Fluids P2", "url": "https://www.youtube.com/embed/LIp4AZu3P0g" },
-              { "title": "Wave Motion", "url": "https://www.youtube.com/embed/4ioZfE3kGMg" },
-              { "title": "Electrostatics P1", "url": "https://www.youtube.com/embed/gf75PPW10oI" },
-              { "title": "Electrostatics P2", "url": "https://www.youtube.com/embed/MqeFMKAf5x8" },
-              { "title": "Electric Dipoles", "url": "https://www.youtube.com/embed/NKO1Szf4otc" },
-              { "title": "Capacitors", "url": "https://www.youtube.com/embed/qx-CMGn2ud4" }
+              { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" }
             ]
           }
         ];
 
-        // Transform raw lectures into a flat database array for easy mapping
+        // Transform raw lectures into a flat database array
         let lectureIdCounter = 1;
         const flattenedLectures = [];
         rawLectureData.forEach(playlist => {
-          const category = playlist.folders[1] || 'General'; 
+          const category = playlist.folders[1] || 'General'; // Physics, Chemistry, Maths
           const author = playlist.folders[2] || 'Unknown';
           const sourcePath = `Drive > ${playlist.folders.join(' > ')}`;
           
@@ -251,9 +223,6 @@
           });
         });
 
-        // ==========================================
-        // DATABASE SIMULATION (MOCK_DB)
-        // ==========================================
         const MOCK_DB = {
           users: {
             'demo-user-123': {
@@ -283,9 +252,6 @@
           }
         };
 
-        // ==========================================
-        // UI THEME CONSTANTS
-        // ==========================================
         const THEMES = {
           indigo: { name: 'Indigo', primary: 'bg-indigo-600', text: 'text-indigo-600', hover: 'hover:bg-indigo-700', bgLight: 'bg-indigo-50', bgDark: 'dark:bg-indigo-500/15', border: 'border-indigo-200', borderDark: 'dark:border-indigo-500/30', shadow: 'shadow-indigo-500/25', ring: 'ring-indigo-500/50' },
           rose: { name: 'Rose', primary: 'bg-rose-500', text: 'text-rose-500', hover: 'hover:bg-rose-600', bgLight: 'bg-rose-50', bgDark: 'dark:bg-rose-500/15', border: 'border-rose-200', borderDark: 'dark:border-rose-500/30', shadow: 'shadow-rose-500/25', ring: 'ring-rose-500/50' },
@@ -461,41 +427,10 @@
 
 
         // --- LECTURES MODULE ---
-        const VideoModal = ({ isOpen, onClose, lecture, theme }) => {
-          if (!isOpen || !lecture) return null;
-
-          return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-slate-900 w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-                
-                <div className={`p-4 border-b border-slate-100 dark:border-white/5 flex justify-between items-center ${theme.bgLight} dark:bg-white/5`}>
-                  <div>
-                    <h3 className="font-bold text-lg text-slate-800 dark:text-white line-clamp-1">{lecture.title}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{lecture.course} • {lecture.author}</p>
-                  </div>
-                  <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200/50 dark:hover:bg-white/10 text-slate-500 transition-colors flex-shrink-0">
-                    <X size={20} />
-                  </button>
-                </div>
-
-                <div className="w-full aspect-video bg-black relative">
-                  <iframe 
-                    src={lecture.url} 
-                    title={lecture.title}
-                    className="w-full h-full absolute top-0 left-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        const LecturesView = ({ theme, userData }) => {
+        const LecturesView = ({ theme, userData, updateData }) => {
           const allLectures = userData?.lectures || [];
           const [activeCategory, setActiveCategory] = useState('All');
-          const [playingVideo, setPlayingVideo] = useState(null);
+          const [activeVideo, setActiveVideo] = useState(null);
 
           const categories = ['All', ...new Set(allLectures.map(l => l.category))];
           const filteredLectures = activeCategory === 'All' 
@@ -507,7 +442,7 @@
               <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
                 <div>
                   <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Drive Lectures</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from your Google Drive integration.</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from lectures.js and Drive.</p>
                 </div>
                 
                 <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
@@ -540,28 +475,34 @@
                         </span>
                       </div>
                     </div>
-                    <h3 className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2`}>{lecture.title}</h3>
+                    <h3 
+                      onClick={() => lecture.url ? setActiveVideo(lecture.url) : null}
+                      className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2 ${lecture.url ? 'cursor-pointer hover:underline' : ''}`}
+                    >
+                      {lecture.title}
+                    </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-1">{lecture.course} • {lecture.author}</p>
                     
                     <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-4">
-                      <button 
-                        onClick={() => setPlayingVideo(lecture)}
-                        className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold ${theme.primary} text-white hover:opacity-90 transition-all shadow-sm ${theme.shadow} w-full justify-center`}
-                      >
-                        <Play size={12} className="ml-0.5" />
-                        <span>Watch Lecture</span>
-                      </button>
+                      <div className="flex items-center text-xs font-medium text-slate-400 dark:text-slate-500">
+                        <Clock size={14} className="mr-1.5" />
+                        {lecture.duration || `${lecture.pages} pages`}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <VideoModal 
-                isOpen={!!playingVideo} 
-                onClose={() => setPlayingVideo(null)} 
-                lecture={playingVideo}
-                theme={theme}
-              />
+              {activeVideo && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
+                      <div className="bg-black w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col aspect-video relative">
+                          <button onClick={() => setActiveVideo(null)} className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-rose-500 text-white rounded-full transition-colors">
+                              <X size={20} />
+                          </button>
+                          <iframe src={activeVideo} className="w-full h-full border-0" allowFullScreen allow="autoplay; encrypted-media"></iframe>
+                      </div>
+                  </div>
+              )}
             </div>
           );
         };
