@@ -9,14 +9,6 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     
-    <!-- CRITICAL FIX: lucide-react expects 'react' (lowercase), but React exports as 'React' (uppercase) -->
-    <script>
-        window.react = window.React;
-    </script>
-
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.js"></script>
-
     <!-- Babel for in-browser JSX compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
@@ -28,6 +20,9 @@
             theme: { extend: {} }
         }
     </script>
+
+    <!-- FontAwesome (Replaced Lucide to fix the silent JavaScript UMD crash) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -53,21 +48,16 @@
 <body class="antialiased bg-[#F4F6F8] dark:bg-slate-950 transition-colors duration-300 selection:bg-indigo-200 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100">
     <div id="root"></div>
 
-    <script type="text/babel">
+    <script type="text/babel" data-presets="react,env">
         const { useState, useEffect, useRef } = React;
-        const { 
-            Moon, Sun, Clock, BookOpen, Headphones, 
-            List, Video, FileText, Play, Pause, RotateCcw, 
-            CheckCircle, Plus, Settings, ChevronRight, Volume2, VolumeX,
-            Palette, X, Loader2, ChevronDown,
-            BarChart3, Layers, GripVertical, Calendar, BrainCircuit,
-            Database, FileCode2, Filter
-        } = window.lucideReact; // Fixed capitalization
 
         // ==========================================
         // EXTENSIVE LECTURE DATASET (From GDrive / Kitaabi Keeda)
         // ==========================================
         const rawLectureData = [
+          // ==========================================
+          // PHYSICS WALLAH (PW) LECTURES
+          // ==========================================
           { 
             "title": "Physics One-Shots (PW)", 
             "folders": ["LECTURES", "Physics", "Physics Wallah"], 
@@ -178,6 +168,10 @@
               { "title": "Application of Derivatives", "url": "https://www.youtube.com/embed/jOVcucQLv38" }
             ]
           },
+          
+          // ==========================================
+          // NEHA AGRAWAL LECTURES
+          // ==========================================
           { 
             "title": "JEE Maths Playlist 1 - Neha Ma'am", 
             "folders": ["LECTURES", "Maths", "Neha Agrawal"], 
@@ -185,17 +179,181 @@
               { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" }, 
               { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" }, 
               { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
-              { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" }
+              { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" },
+              { "title": "Quadratic Equations 3.0", "url": "https://www.youtube.com/embed/MnUt4uRiUv8" },
+              { "title": "Binomial Theorem 3.0", "url": "https://www.youtube.com/embed/kTrZgk8ht6s" },
+              { "title": "Functions 3.0", "url": "https://www.youtube.com/embed/qMZbl49B2gk" },
+              { "title": "Limits, Continuity & Derivatives 3.0", "url": "https://www.youtube.com/embed/1Px2H-ZNAXc" },
+              { "title": "Application of Derivatives 3.0", "url": "https://www.youtube.com/embed/FjePwtMW_jA" },
+              { "title": "Indefinite Integration 3.0", "url": "https://www.youtube.com/embed/aBuT_NpL4kM" },
+              { "title": "Definite Integration 3.0", "url": "https://www.youtube.com/embed/bpeEpWjvG50" },
+              { "title": "Differential Equations 3.0", "url": "https://www.youtube.com/embed/PbeylmdToTs" },
+              { "title": "Sets & Relations 3.0", "url": "https://www.youtube.com/embed/BbDh_D9NOAc" },
+              { "title": "Permutations & Combinations 3.0", "url": "https://www.youtube.com/embed/dZleU5ZUDAo" },
+              { "title": "Probability 3.0", "url": "https://www.youtube.com/embed/N1gW3lZx_4I" },
+              { "title": "Straight Lines 3.0", "url": "https://www.youtube.com/embed/RHk11VC256Y" },
+              { "title": "Circles 3.0", "url": "https://www.youtube.com/embed/Se39Hv2_FzM" },
+              { "title": "Conic Sections One Shot", "url": "https://www.youtube.com/embed/ze6pUWYfAvY" },
+              { "title": "Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/EO_6mXn9szs" },
+              { "title": "Statistics 3.0", "url": "https://www.youtube.com/embed/WFY1D61ZOV0" },
+              { "title": "Trigonometry & Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/IQeeRDA6T94" },
+              { "title": "Make Your Math Superstrong Topics", "url": "https://www.youtube.com/embed/fvUETQWW34Y" },
+              { "title": "Differential Equations & Area Under Curve", "url": "https://www.youtube.com/embed/KGI1PiPN-q4" },
+              { "title": "5 Easiest Chapters Math Marathon Part 1", "url": "https://www.youtube.com/embed/p3R5yXcJdX4" },
+              { "title": "5 Easiest Chapters Math Marathon Part 2", "url": "https://www.youtube.com/embed/q44atF--01U" },
+              { "title": "Complete Formula Revision Class 11", "url": "https://www.youtube.com/embed/H3ajZU-w1Mk" },
+              { "title": "Complete Formula Revision Class 12", "url": "https://www.youtube.com/embed/yZhWIgH-wqs" },
+              { "title": "Math Super Shortcuts & Tricks", "url": "https://www.youtube.com/embed/tVN2lZQV2_M" },
+              { "title": "JEE Jan '24 PYQs with Shortcuts", "url": "https://www.youtube.com/embed/XHDRIk0UL0w" },
+              { "title": "15 Sureshot Topics Math Marathon", "url": "https://www.youtube.com/embed/Zl53W-m0wTM" },
+              { "title": "65 Topics (High Priority) for 99.5%ile", "url": "https://www.youtube.com/embed/hhLxKrIj5b4" },
+              { "title": "JEE 2025 Final Push Game Changer", "url": "https://www.youtube.com/embed/WPQzDvdJQak" },
+              { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" },
+              { "title": "Code 301: Save Your 1st Attempt", "url": "https://www.youtube.com/embed/IqiClz6TEiM" },
+              { "title": "Vectors & 3D Booster Sprint", "url": "https://www.youtube.com/embed/hezQFC6RJjs" },
+              { "title": "Algebra Revision Sprint", "url": "https://www.youtube.com/embed/LLxVhlleHRM" },
+              { "title": "Coordinate Geometry Revision Sprint", "url": "https://www.youtube.com/embed/csb-IQN_pqU" },
+              { "title": "60 Most Repeated Ques by NTA", "url": "https://www.youtube.com/embed/FgILOHipMtw" },
+              { "title": "JEE Jan 2025 Math Marathon", "url": "https://www.youtube.com/embed/D0hzgpe5L9s" },
+              { "title": "JEE Apr 2025 Analysis of All 10 Shifts", "url": "https://www.youtube.com/embed/Wr6MNW6itqo" }
             ] 
           },
           {
-            "title": "Eduniti Physics Sure Shot",
+            "title": "JEE Maths Playlist 2 - Neha Ma'am",
+            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+            "playlist": [
+              { "title": "Agni Series: Sequences & Series", "url": "https://www.youtube.com/embed/AVjdJITX0Nc" },
+              { "title": "Agni Series: Matrices & Determinants", "url": "https://www.youtube.com/embed/obx33lta9P4" },
+              { "title": "Agni Series: Vectors & 3D Geometry", "url": "https://www.youtube.com/embed/Ui0P-tOC-f0" },
+              { "title": "Agni Series: Quadratic Equations & Complex Nos", "url": "https://www.youtube.com/embed/pouyY30rSHo" },
+              { "title": "Agni Series: Binomial Theorem", "url": "https://www.youtube.com/embed/IKZ_2Z2OOBQ" },
+              { "title": "Agni Series: Permutations & Combinations + Probability", "url": "https://www.youtube.com/embed/--k01m3f5Cw" },
+              { "title": "Agni Series: Sets, Relations & Functions", "url": "https://www.youtube.com/embed/7HbfPG8pVhs" },
+              { "title": "Agni Series: Trigonometry & Statistics", "url": "https://www.youtube.com/embed/2DC7cdv43Ao" },
+              { "title": "Agni Series: Limits, Continuity & Derivatives + AOD", "url": "https://www.youtube.com/embed/ryAw6vipopk" },
+              { "title": "Agni Series: Integration", "url": "https://www.youtube.com/embed/mjoCuNKUzB4" },
+              { "title": "Agni Series: Differential Equations & Area", "url": "https://www.youtube.com/embed/aSAg23ixuWE" },
+              { "title": "Agni Series: Straight Lines & Circles", "url": "https://www.youtube.com/embed/2eOXSPy1MuE" },
+              { "title": "Agni Series: Conic Sections", "url": "https://www.youtube.com/embed/4vagx7oH87k" },
+              { "title": "100 Days Timetable for JEE 2026", "url": "https://www.youtube.com/embed/aIjPAFSjRcI" },
+              { "title": "Agni Series: Sequences & Series (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/0DJXH0ql7BI" },
+              { "title": "Agni Series: Matrices & Determinants (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/JdHwa70kY3s" },
+              { "title": "Agni Series: Trigonometry & Inverse + Statistics (Jan 2025)", "url": "https://www.youtube.com/embed/qcDGzbWSTjo" },
+              { "title": "Agni Series: Sets, Relations & Functions (Jan 2025)", "url": "https://www.youtube.com/embed/o07B71pxaBo" },
+              { "title": "Agni Series: Complex Numbers & Quadratic Eqns (Jan 2025)", "url": "https://www.youtube.com/embed/EJtgkGdqOgY" },
+              { "title": "Agni Series: Permutations & Combinations + Probability (Jan 2025)", "url": "https://www.youtube.com/embed/jUxPvBZAK_4" },
+              { "title": "Agni Series: Binomial Theorem (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/56Odj-FzH18" },
+              { "title": "Agni Series: Limits, Continuity & Derivatives (Jan 2025)", "url": "https://www.youtube.com/embed/PTO6XHJfFU8" },
+              { "title": "Agni Series: AOD & Area Under Curve (Jan 2025)", "url": "https://www.youtube.com/embed/yMiEhnxQe8Y" },
+              { "title": "Agni Series: Integration (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/dgUEfZohNJU" },
+              { "title": "Agni Series: Vectors (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/UI_SOsUZBJE" },
+              { "title": "Agni Series: 3D Geometry (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/FJia0zLEq4U" },
+              { "title": "Agni Series: Straight Lines (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/Me9E0PFbuGQ" },
+              { "title": "Agni Series: Parabola (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/feBdaVYlkNs" },
+              { "title": "Agni Series: Circles, Ellipse & Hyperbola (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/kHj73PtXHQE" },
+              { "title": "Complete Formula Revision Class 12", "url": "https://www.youtube.com/embed/yZhWIgH-wqs" },
+              { "title": "Complete Formula Revision Class 11", "url": "https://www.youtube.com/embed/H3ajZU-w1Mk" },
+              { "title": "100 Most Repeated Math PYQs Last 7 Years", "url": "https://www.youtube.com/embed/FZJt1h-gO4w" },
+              { "title": "Booster: 7 Easiest Chapters = 36+ Marks", "url": "https://www.youtube.com/embed/mcMHaUuhe6o" },
+              { "title": "Booster: 67 Most Asked Topics by NTA", "url": "https://www.youtube.com/embed/UNOBGZjYiFk" },
+              { "title": "Booster: 6 Highest Weightage Chapters = 48+ Marks", "url": "https://www.youtube.com/embed/mb_ZpNpL4Go" },
+              { "title": "Math Marathon: Most Trending Topics & PYQs", "url": "https://www.youtube.com/embed/v8qnbEQulmA" },
+              { "title": "100 Most Asked Questions by NTA", "url": "https://www.youtube.com/embed/vMGMYl00kJI" }
+            ]
+          },
+          {
+            "title": "JEE Maths Playlist 3 - Neha Ma'am",
+            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+            "playlist": [
+              { "title": "Logarithms | Beginner's Course", "url": "https://www.youtube.com/embed/j1pDmQJ0wOY" },
+              { "title": "Trigonometry | Beginner's Course", "url": "https://www.youtube.com/embed/nfPvo7p-8t0" },
+              { "title": "Inequalities : Wavy Curve | Beginner's Course", "url": "https://www.youtube.com/embed/F0eIeAYiUUM" },
+              { "title": "Functions Basics, Domain & Range | Beginner's Course", "url": "https://www.youtube.com/embed/GNtYHAk_C4s" },
+              { "title": "Modulus & Greatest Integer Functions | Beginner's Course", "url": "https://www.youtube.com/embed/Q1AMRktu4pc" },
+              { "title": "Transformation of Graphs | Beginner's Course", "url": "https://www.youtube.com/embed/V3PYBhJS0Po" },
+              { "title": "Complex Numbers | Beginner's Course", "url": "https://www.youtube.com/embed/0Bul5m9fN_8" },
+              { "title": "Sequences & Series | Beginner's Course", "url": "https://www.youtube.com/embed/AmUO2o9NOYk" },
+              { "title": "Limits with Tricks | Beginner's Course", "url": "https://www.youtube.com/embed/WvmEDNxgVxg" },
+              { "title": "Differentiation | Beginner's Course", "url": "https://www.youtube.com/embed/KUu18_pkvbk" },
+              { "title": "Integration | Beginner's Course", "url": "https://www.youtube.com/embed/C3DS0tqK2TY" },
+              { "title": "Vectors | Beginner's Course", "url": "https://www.youtube.com/embed/BPgL5Xrp1LA" },
+              { "title": "Matrices and Determinants | Beginner's Course", "url": "https://www.youtube.com/embed/lkAPODbXnS0" },
+              { "title": "Binomial Theorem | Beginner's Course", "url": "https://www.youtube.com/embed/Bk6PQ6huy68" },
+              { "title": "Permutations and Combinations | Beginner's Course", "url": "https://www.youtube.com/embed/Sh6yppz4nzs" },
+              { "title": "Probability | Beginner's Course", "url": "https://www.youtube.com/embed/HkBKPCNFZ4k" },
+              { "title": "Straight Lines | Beginner's Course", "url": "https://www.youtube.com/embed/QS59lEJgPb8" },
+              { "title": "Conic Sections | Beginner's Course", "url": "https://www.youtube.com/embed/u4Fu2PcRSo4" },
+              { "title": "Quadratic Equations | Beginner's Course", "url": "https://www.youtube.com/embed/_P2GRAVyk_Q" },
+              { "title": "Sets | Beginner's Course", "url": "https://www.youtube.com/embed/LK0cQmgJsdk" },
+              { "title": "Relations | Beginner's Course", "url": "https://www.youtube.com/embed/MvTfxcM8hHs" },
+              { "title": "3D Geometry | Beginner's Course", "url": "https://www.youtube.com/embed/fdfT1w9rVJQ" }
+            ]
+          },
+          {
+            "title": "JEE Maths Playlist 4 - Neha Ma'am",
+            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+            "playlist": [
+              { "title": "Differentiation | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/ct-vCt9NU08" },
+              { "title": "Logarithms | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/cJceE7-8TBY" },
+              { "title": "Linear Inequalities & Wavy Curve | Foundation Series", "url": "https://www.youtube.com/embed/UJXel5_AOSY" },
+              { "title": "Trigonometry | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/GN9uAEisDtM" },
+              { "title": "Functions - Domain & Range | Foundation Series", "url": "https://www.youtube.com/embed/peKwXDIcYss" },
+              { "title": "Integration | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/iaK4ukVmFvc" },
+              { "title": "Sequences and Series | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/yP0EKKN0zys" },
+              { "title": "Probability | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/7_ZpO1hneXk" },
+              { "title": "Complete Class 11 Maths Required for Class 12 & JEE", "url": "https://www.youtube.com/embed/TQX02-rVCsA" }
+            ]
+          },
+
+          // ==========================================
+          // EDUNITI PHYSICS (MOHIT SIR)
+          // ==========================================
+          {
+            "title": "Eduniti Physics Sure Shot (Mohit Sir)",
             "folders": ["LECTURES", "Physics", "Eduniti"],
             "playlist": [
               { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
               { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
               { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
-              { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" }
+              { "title": "Mechanics P1", "url": "https://www.youtube.com/embed/3vkFbQxEYqE" },
+              { "title": "Mechanics P2", "url": "https://www.youtube.com/embed/JJMhkssd4GQ" },
+              { "title": "Mechanics P3", "url": "https://www.youtube.com/embed/Qbb6H6MhmRc" },
+              { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" },
+              { "title": "VCM Sure Shot", "url": "https://www.youtube.com/embed/EwOMzB63gBI" },
+              { "title": "Gravitation", "url": "https://www.youtube.com/embed/xF9ysyykedw" },
+              { "title": "Rotation P1", "url": "https://www.youtube.com/embed/Q8Rujg2Mkio" },
+              { "title": "SHM", "url": "https://www.youtube.com/embed/t7-G5GEfQXI" },
+              { "title": "Thermodynamics Graphs", "url": "https://www.youtube.com/embed/IySVKH_OttE" },
+              { "title": "Cylinder Piston", "url": "https://www.youtube.com/embed/0Ro_F6Af0Zg" },
+              { "title": "Fluids P1", "url": "https://www.youtube.com/embed/gwC-whA3M3g" },
+              { "title": "Fluids P2", "url": "https://www.youtube.com/embed/LIp4AZu3P0g" },
+              { "title": "Wave Motion", "url": "https://www.youtube.com/embed/4ioZfE3kGMg" },
+              { "title": "Electrostatics P1", "url": "https://www.youtube.com/embed/gf75PPW10oI" },
+              { "title": "Electrostatics P2", "url": "https://www.youtube.com/embed/MqeFMKAf5x8" },
+              { "title": "Electric Dipoles", "url": "https://www.youtube.com/embed/NKO1Szf4otc" },
+              { "title": "Capacitors", "url": "https://www.youtube.com/embed/qx-CMGn2ud4" },
+              { "title": "Circuits", "url": "https://www.youtube.com/embed/ie81MM1V4mE" },
+              { "title": "Electrodynamics P1", "url": "https://www.youtube.com/embed/lllAWLu5mso" },
+              { "title": "Electrodynamics P2", "url": "https://www.youtube.com/embed/1RdDchv2j_o" },
+              { "title": "Physics Concepts Marathon", "url": "https://www.youtube.com/embed/2qGiA1vKwjg" },
+              { "title": "Charge in Magnetic/Electric Field", "url": "https://www.youtube.com/embed/YmQvWuXsNhs" },
+              { "title": "Magnetic Effect P1", "url": "https://www.youtube.com/embed/XBMDnZPLd90" },
+              { "title": "Cavity Problem", "url": "https://www.youtube.com/embed/JcEaz2o0sL4" },
+              { "title": "MEC Rank Decider", "url": "https://www.youtube.com/embed/2fhxJ9ukudY" },
+              { "title": "Alternating Current", "url": "https://www.youtube.com/embed/H_9Pl8HeZ-o" },
+              { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" },
+              { "title": "Ray Optics Reflection/Refraction", "url": "https://www.youtube.com/embed/3Wmsf3lI73Y" },
+              { "title": "Image Velocity", "url": "https://www.youtube.com/embed/X1_c_4JaNwU" },
+              { "title": "Fish Bird Problem", "url": "https://www.youtube.com/embed/UTUyY5a9G3Y" },
+              { "title": "Ray Optics Sure Shot", "url": "https://www.youtube.com/embed/FXJO4GYTmXI" },
+              { "title": "Binding Energy", "url": "https://www.youtube.com/embed/5Tb_8wHchbU" },
+              { "title": "Modern Physics", "url": "https://www.youtube.com/embed/MWJdpWvwhwc" },
+              { "title": "Energy Conservation Cases", "url": "https://www.youtube.com/embed/_xOTxiWGGpI" },
+              { "title": "Assertion Reason P1", "url": "https://www.youtube.com/embed/jka_UoZPqHs" },
+              { "title": "Assertion Reason P2", "url": "https://www.youtube.com/embed/lauuB4VKWw4" },
+              { "title": "Mixed Concepts P1", "url": "https://www.youtube.com/embed/vHIhXfilkpg" },
+              { "title": "Mixed Concepts P2", "url": "https://www.youtube.com/embed/sdnEI-mpV4Y" },
+              { "title": "Competency Based Questions", "url": "https://www.youtube.com/embed/U7xuWZaYJ0M" }
             ]
           }
         ];
@@ -204,7 +362,7 @@
         let lectureIdCounter = 1;
         const flattenedLectures = [];
         rawLectureData.forEach(playlist => {
-          const category = playlist.folders[1] || 'General'; // Physics, Chemistry, Maths
+          const category = playlist.folders[1] || 'General'; 
           const author = playlist.folders[2] || 'Unknown';
           const sourcePath = `Drive > ${playlist.folders.join(' > ')}`;
           
@@ -281,7 +439,7 @@
         // REACT COMPONENTS
         // ==========================================
 
-        const SidebarItem = ({ icon: Icon, label, active, onClick, theme }) => (
+        const SidebarItem = ({ iconClass, label, active, onClick, theme }) => (
           <button 
             onClick={onClick}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
@@ -290,7 +448,7 @@
                 : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
             }`}
           >
-            <Icon size={20} className={active ? 'text-white' : 'text-slate-400 dark:text-slate-500'} />
+            <i className={`${iconClass} text-xl ${active ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`}></i>
             <span className="font-medium text-sm">{label}</span>
           </button>
         );
@@ -342,11 +500,11 @@
             return (
               <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in zoom-in-95 duration-500">
                 <div className={`w-24 h-24 rounded-full ${theme.bgLight} ${theme.text} ${theme.bgDark} flex items-center justify-center mb-6`}>
-                  <BrainCircuit size={48} />
+                  <i className="fas fa-brain text-5xl"></i>
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">You're all caught up!</h2>
                 <p className="text-slate-500 dark:text-slate-400 text-center max-w-sm">
-                  No flashcards due right now. Pull more notes from Drive folders or generate new cards from lectures.
+                  No flashcards due right now. Pull more notes from Drive or wait for your next spaced repetition cycle.
                 </p>
               </div>
             );
@@ -373,7 +531,7 @@
                       <span className={`text-xs font-bold uppercase tracking-wider ${theme.text}`}>Question</span>
                       {currentCard.deck && (
                          <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-white/5 max-w-[50%] overflow-hidden">
-                           {currentCard.deck.includes('Drive') ? <Database size={12} className="text-blue-500 flex-shrink-0" /> : <FileCode2 size={12} className="text-orange-500 flex-shrink-0" />}
+                           {currentCard.deck.includes('Drive') ? <i className="fas fa-database text-xs text-blue-500 flex-shrink-0"></i> : <i className="fas fa-file-code text-xs text-orange-500 flex-shrink-0"></i>}
                            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{currentCard.deck}</span>
                          </div>
                       )}
@@ -427,10 +585,41 @@
 
 
         // --- LECTURES MODULE ---
-        const LecturesView = ({ theme, userData, updateData }) => {
+        const VideoModal = ({ isOpen, onClose, lecture, theme }) => {
+          if (!isOpen || !lecture) return null;
+
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-slate-900 w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
+                
+                <div className={`p-4 border-b border-slate-100 dark:border-white/5 flex justify-between items-center ${theme.bgLight} dark:bg-white/5`}>
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-800 dark:text-white line-clamp-1">{lecture.title}</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{lecture.course} • {lecture.author}</p>
+                  </div>
+                  <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200/50 dark:hover:bg-white/10 text-slate-500 transition-colors flex-shrink-0">
+                    <i className="fas fa-times text-xl"></i>
+                  </button>
+                </div>
+
+                <div className="w-full aspect-video bg-black relative">
+                  <iframe 
+                    src={lecture.url} 
+                    title={lecture.title}
+                    className="w-full h-full absolute top-0 left-0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        const LecturesView = ({ theme, userData }) => {
           const allLectures = userData?.lectures || [];
           const [activeCategory, setActiveCategory] = useState('All');
-          const [activeVideo, setActiveVideo] = useState(null);
+          const [playingVideo, setPlayingVideo] = useState(null);
 
           const categories = ['All', ...new Set(allLectures.map(l => l.category))];
           const filteredLectures = activeCategory === 'All' 
@@ -442,7 +631,7 @@
               <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
                 <div>
                   <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Drive Lectures</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from lectures.js and Drive.</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from your Google Drive integration.</p>
                 </div>
                 
                 <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
@@ -467,7 +656,7 @@
                   <div key={lecture.id} className="group flex flex-col p-5 bg-white dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:shadow-xl dark:hover:shadow-2xl dark:hover:bg-white/10 transition-all duration-300">
                     <div className="flex justify-between items-start mb-4">
                       <div className={`p-2.5 rounded-xl ${lecture.type === 'video' ? 'bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-orange-50 text-orange-500 dark:bg-orange-500/10 dark:text-orange-400'}`}>
-                        <Video size={18} />
+                        {lecture.type === 'video' ? <i className="fas fa-video text-lg"></i> : <i className="fas fa-file-alt text-lg"></i>}
                       </div>
                       <div className="flex flex-col items-end">
                         <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${lecture.source.includes('Drive') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30'}`}>
@@ -475,34 +664,28 @@
                         </span>
                       </div>
                     </div>
-                    <h3 
-                      onClick={() => lecture.url ? setActiveVideo(lecture.url) : null}
-                      className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2 ${lecture.url ? 'cursor-pointer hover:underline' : ''}`}
-                    >
-                      {lecture.title}
-                    </h3>
+                    <h3 className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2`}>{lecture.title}</h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-1">{lecture.course} • {lecture.author}</p>
                     
                     <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-4">
-                      <div className="flex items-center text-xs font-medium text-slate-400 dark:text-slate-500">
-                        <Clock size={14} className="mr-1.5" />
-                        {lecture.duration || `${lecture.pages} pages`}
-                      </div>
+                      <button 
+                        onClick={() => setPlayingVideo(lecture)}
+                        className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold ${theme.primary} text-white hover:opacity-90 transition-all shadow-sm ${theme.shadow} w-full justify-center`}
+                      >
+                        <i className="fas fa-play text-xs ml-0.5"></i>
+                        <span>Watch Lecture</span>
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {activeVideo && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200">
-                      <div className="bg-black w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col aspect-video relative">
-                          <button onClick={() => setActiveVideo(null)} className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-rose-500 text-white rounded-full transition-colors">
-                              <X size={20} />
-                          </button>
-                          <iframe src={activeVideo} className="w-full h-full border-0" allowFullScreen allow="autoplay; encrypted-media"></iframe>
-                      </div>
-                  </div>
-              )}
+              <VideoModal 
+                isOpen={!!playingVideo} 
+                onClose={() => setPlayingVideo(null)} 
+                lecture={playingVideo}
+                theme={theme}
+              />
             </div>
           );
         };
@@ -570,7 +753,7 @@
                     className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-3 pl-4 pr-12 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                   <button type="submit" className={`absolute right-2 top-2 p-1.5 ${theme.primary} ${theme.hover} text-white rounded-xl transition-colors`}>
-                    <Plus size={20} />
+                    <i className="fas fa-plus text-xl"></i>
                   </button>
                 </form>
               </div>
@@ -600,7 +783,7 @@
                           className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group transition-all"
                         >
                           <div className="flex items-start">
-                            <GripVertical size={16} className="text-slate-300 dark:text-slate-600 mr-2 mt-0.5 flex-shrink-0" />
+                            <i className="fas fa-grip-vertical text-base text-slate-300 dark:text-slate-600 mr-2 mt-0.5 flex-shrink-0"></i>
                             <span className={`text-sm flex-1 ${task.status === 'done' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-200'}`}>
                               {task.text}
                             </span>
@@ -688,13 +871,13 @@
                       isActive ? 'bg-rose-500 shadow-rose-500/30' : `${theme.primary} ${theme.shadow}`
                     }`}
                   >
-                    {isActive ? <Pause size={32} /> : <Play size={32} className="ml-1.5" />}
+                    {isActive ? <i className="fas fa-pause text-3xl"></i> : <i className="fas fa-play text-3xl ml-1.5"></i>}
                   </button>
                   <button 
                     onClick={resetTimer}
                     className="w-14 h-14 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                   >
-                    <RotateCcw size={22} />
+                    <i className="fas fa-undo text-2xl"></i>
                   </button>
                 </div>
               </div>
@@ -732,7 +915,7 @@
                     onClick={stopAll}
                     className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center bg-white dark:bg-white/5 px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm"
                   >
-                    <VolumeX size={16} className="mr-1.5" /> Stop All
+                    <i className="fas fa-volume-mute text-base mr-1.5"></i> Stop All
                   </button>
                 )}
               </div>
@@ -753,7 +936,7 @@
                             : 'bg-slate-50 text-slate-500 dark:bg-black/20 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 shadow-inner'
                         }`}
                       >
-                        {sound.playing ? <Pause size={28} className="text-white absolute opacity-0 hover:opacity-100 transition-opacity" /> : <Play size={28} className="ml-1 text-slate-400 dark:text-slate-500 absolute opacity-0 hover:opacity-100 transition-opacity" />}
+                        {sound.playing ? <i className="fas fa-pause text-xl text-white absolute opacity-0 hover:opacity-100 transition-opacity"></i> : <i className="fas fa-play text-xl ml-1 text-slate-400 dark:text-slate-500 absolute opacity-0 hover:opacity-100 transition-opacity"></i>}
                         <span className={`transition-opacity ${sound.playing ? 'opacity-20 hover:opacity-0' : ''}`}>{sound.icon}</span>
                       </button>
                       <div>
@@ -774,7 +957,7 @@
                           ))}
                        </div>
                        <div className="flex items-center space-x-3 px-2">
-                         <Volume2 size={16} className={theme.text} />
+                         <i className={`fas fa-volume-up text-base ${theme.text}`}></i>
                          <input 
                             type="range" min="0" max="100" 
                             value={sound.volume}
@@ -810,7 +993,7 @@
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
                   <div className={`p-4 rounded-2xl ${theme.bgLight} ${theme.text} ${theme.bgDark}`}>
-                    <Clock size={24} />
+                    <i className="far fa-clock text-2xl"></i>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Focus Time</p>
@@ -819,7 +1002,7 @@
                 </div>
                 <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
                   <div className={`p-4 rounded-2xl bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10`}>
-                    <BrainCircuit size={24} />
+                    <i className="fas fa-brain text-2xl"></i>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Cards Mastered</p>
@@ -828,7 +1011,7 @@
                 </div>
                 <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
                   <div className={`p-4 rounded-2xl bg-orange-50 text-orange-500 dark:bg-orange-500/10`}>
-                    <CheckCircle size={24} />
+                    <i className="fas fa-check-circle text-2xl"></i>
                   </div>
                   <div>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Tasks Completed</p>
@@ -875,7 +1058,7 @@
               <div className="bg-white dark:bg-white/5 rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-sm">
                  <div className="flex items-center space-x-3 mb-8">
                    <div className={`p-2 rounded-lg ${theme.bgLight} ${theme.bgDark} ${theme.text}`}>
-                     <Palette size={20} />
+                     <i className="fas fa-palette text-xl"></i>
                    </div>
                    <h3 className="text-xl font-semibold text-slate-800 dark:text-white">Theme & Colors</h3>
                  </div>
@@ -885,10 +1068,10 @@
                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Color Mode</label>
                      <div className="flex space-x-4">
                        <button onClick={() => setIsDarkMode(false)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${!isDarkMode ? `${theme.border} ${theme.bgLight} ${theme.text} ring-2 ${theme.ring} ring-offset-2` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
-                         <Sun size={18} /> <span className="font-medium">Light</span>
+                         <i className="fas fa-sun text-lg"></i> <span className="font-medium">Light</span>
                        </button>
                        <button onClick={() => setIsDarkMode(true)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${isDarkMode ? `${theme.borderDark} ${theme.bgDark} ${theme.text} ring-2 ${theme.ring} ring-offset-2 dark:ring-offset-slate-900` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
-                         <Moon size={18} /> <span className="font-medium">Dark</span>
+                         <i className="fas fa-moon text-lg"></i> <span className="font-medium">Dark</span>
                        </button>
                      </div>
                    </div>
@@ -902,7 +1085,7 @@
                            onClick={() => setTheme(key)} 
                            className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${t.primary} ${currentTheme === key ? `ring-4 ring-offset-2 dark:ring-offset-[#111] ${t.ring}` : 'opacity-80 hover:opacity-100'}`}
                          >
-                            {currentTheme === key && <CheckCircle size={20} className="text-white drop-shadow-sm" />}
+                            {currentTheme === key && <i className="fas fa-check-circle text-xl text-white drop-shadow-sm"></i>}
                          </button>
                        ))}
                      </div>
@@ -930,7 +1113,6 @@
             </div>
           </div>
         );
-
 
         // ==========================================
         // MAIN APP COMPONENT
@@ -972,7 +1154,7 @@
                 <div className="flex h-full items-center justify-center animate-in fade-in duration-500">
                    <div className="flex flex-col items-center space-y-4">
                      <div className={`p-4 rounded-full ${theme.bgLight} ${theme.bgDark}`}>
-                       <BookOpen className={`animate-pulse ${theme.text}`} size={32} />
+                       <i className={`fas fa-book-open animate-pulse ${theme.text} text-3xl`}></i>
                      </div>
                      <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading Dashboard...</p>
                    </div>
@@ -999,26 +1181,26 @@
               <aside className={`w-[280px] border-r flex-shrink-0 hidden md:flex flex-col transition-colors duration-300 ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
                 <div className={`h-20 flex items-center px-8 border-b ${isDarkMode ? shade.border : 'border-slate-100'}`}>
                   <div className={`w-9 h-9 ${theme.primary} rounded-xl flex items-center justify-center mr-3 ${theme.shadow}`}>
-                    <BookOpen size={20} className="text-white" />
+                    <i className="fas fa-book-open text-white text-xl"></i>
                   </div>
                   <h1 className="font-bold text-xl tracking-tight text-slate-800 dark:text-white">StudySpace</h1>
                 </div>
                 
                 <div className="p-5 flex-1 space-y-2 overflow-y-auto scrollbar-hide">
                   <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-2">Dashboard</p>
-                  <SidebarItem icon={BarChart3} label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} theme={theme} />
-                  <SidebarItem icon={Layers} label="Flashcards" active={activeTab === 'flashcards'} onClick={() => setActiveTab('flashcards')} theme={theme} />
+                  <SidebarItem iconClass="fas fa-chart-bar" label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} theme={theme} />
+                  <SidebarItem iconClass="fas fa-layer-group" label="Flashcards" active={activeTab === 'flashcards'} onClick={() => setActiveTab('flashcards')} theme={theme} />
                   
                   <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-8">Study Tools</p>
-                  <SidebarItem icon={Video} label="Lectures" active={activeTab === 'lectures'} onClick={() => setActiveTab('lectures')} theme={theme} />
-                  <SidebarItem icon={List} label="Task Flow" active={activeTab === 'tasks'} onClick={() => setActiveTab('tasks')} theme={theme} />
-                  <SidebarItem icon={Clock} label="Timer" active={activeTab === 'pomodoro'} onClick={() => setActiveTab('pomodoro')} theme={theme} />
-                  <SidebarItem icon={Headphones} label="Audio Mixer" active={activeTab === 'audio'} onClick={() => setActiveTab('audio')} theme={theme} />
+                  <SidebarItem iconClass="fas fa-video" label="Lectures" active={activeTab === 'lectures'} onClick={() => setActiveTab('lectures')} theme={theme} />
+                  <SidebarItem iconClass="fas fa-list" label="Task Flow" active={activeTab === 'tasks'} onClick={() => setActiveTab('tasks')} theme={theme} />
+                  <SidebarItem iconClass="far fa-clock" label="Timer" active={activeTab === 'pomodoro'} onClick={() => setActiveTab('pomodoro')} theme={theme} />
+                  <SidebarItem iconClass="fas fa-headphones" label="Audio Mixer" active={activeTab === 'audio'} onClick={() => setActiveTab('audio')} theme={theme} />
                 </div>
 
                 <div className={`p-5 border-t ${isDarkMode ? shade.border : 'border-slate-100'}`}>
                   <button onClick={() => setActiveTab('settings')} className={`flex items-center space-x-3 w-full px-4 py-3 rounded-2xl transition-all ${activeTab === 'settings' ? `${theme.bgLight} ${theme.bgDark} ${theme.text}` : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}>
-                    <Settings size={20} />
+                    <i className="fas fa-cog text-xl"></i>
                     <span className="font-medium text-sm">Settings</span>
                   </button>
                 </div>
@@ -1031,16 +1213,16 @@
                 <header className={`h-20 flex items-center justify-between px-6 md:px-10 backdrop-blur-xl border-b z-10 transition-colors duration-300 ${isDarkMode ? `${shade.panel}/80 ${shade.border}` : 'bg-white/70 border-transparent'}`}>
                   <div className="flex items-center md:hidden">
                      <div className={`w-8 h-8 ${theme.primary} rounded-lg flex items-center justify-center mr-3`}>
-                      <BookOpen size={18} className="text-white" />
+                      <i className="fas fa-book-open text-white text-xl"></i>
                     </div>
                   </div>
                   <div className="hidden md:flex items-center text-sm text-slate-500 dark:text-slate-400 font-medium">
-                     <span>Workspace</span><ChevronRight size={14} className="mx-2 opacity-40" />
+                     <span>Workspace</span><i className="fas fa-chevron-right text-sm mx-2 opacity-40"></i>
                      <span className="capitalize text-slate-800 dark:text-slate-200">{activeTab}</span>
                   </div>
                   <div className="flex items-center space-x-5">
                     <button onClick={() => setActiveTab('settings')} className="p-2.5 rounded-full md:hidden text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5 transition-colors focus:outline-none">
-                       <Settings size={20} />
+                       <i className="fas fa-cog text-xl"></i>
                     </button>
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${theme.bgLight} ${theme.text} ${theme.bgDark} border ${theme.border} ${theme.borderDark}`}>
                       {userData?.profile?.name?.[0] || 'U'}
@@ -1055,14 +1237,14 @@
                 {/* MOBILE BOTTOM NAVIGATION */}
                 <nav className={`md:hidden border-t p-2 flex justify-around overflow-x-auto transition-colors duration-300 scrollbar-hide ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
                   {[
-                    { id: 'lectures', icon: Video, label: 'Lectures' },
-                    { id: 'flashcards', icon: Layers, label: 'Cards' },
-                    { id: 'tasks', icon: List, label: 'Tasks' },
-                    { id: 'pomodoro', icon: Clock, label: 'Timer' },
-                    { id: 'audio', icon: Headphones, label: 'Audio' },
+                    { id: 'lectures', iconClass: 'fas fa-video', label: 'Lectures' },
+                    { id: 'flashcards', iconClass: 'fas fa-layer-group', label: 'Cards' },
+                    { id: 'tasks', iconClass: 'fas fa-list', label: 'Tasks' },
+                    { id: 'pomodoro', iconClass: 'far fa-clock', label: 'Timer' },
+                    { id: 'audio', iconClass: 'fas fa-headphones', label: 'Audio' },
                   ].map((item) => (
                     <button key={item.id} onClick={() => setActiveTab(item.id)} className={`flex flex-col items-center p-2 rounded-xl min-w-[64px] flex-shrink-0 transition-colors ${activeTab === item.id ? theme.text : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
-                      <item.icon size={20} className="mb-1" />
+                      <i className={`${item.iconClass} text-xl mb-1`}></i>
                       <span className="text-[10px] font-semibold">{item.label}</span>
                     </button>
                   ))}
