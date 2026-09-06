@@ -5,54 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All-in-One Study Dashboard</title>
     <style>
-        /* =========================================================
-           1. CSS VARIABLES & CLEAN THEMES
-           ========================================================= */
         :root { 
-            --primary-bg: #ffffff; 
-            --sidebar-bg: #f9fafb; 
-            --sidebar-text: #334155; 
-            --highlight: #f1f5f9; 
-            --highlight-text: #2563eb; 
-            --text-color: #0f172a; 
-            --text-muted: #64748b;
-            --header-bg: #ffffff; 
-            --reader-bg: #f8fafc; 
-            --border-color: #e2e8f0;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            --folder-bg: #ffffff; 
-            --success: #16a34a;
-            --danger: #dc2626;
-            --warning: #ca8a04;
-            --info: #0284c7;
-        }
-
-        body.theme-slate {
-            --primary-bg: #0f172a; 
-            --sidebar-bg: #1e293b; 
-            --sidebar-text: #cbd5e1; 
-            --highlight: #334155; 
-            --highlight-text: #60a5fa; 
+            --primary-bg: #000000; 
+            --sidebar-bg: #0d0d0f; 
+            --sidebar-text: #f8fafc; 
+            --highlight: #1e3a8a; 
+            --highlight-text: #38bdf8; 
             --text-color: #f8fafc; 
             --text-muted: #94a3b8;
-            --header-bg: #0f172a; 
-            --reader-bg: #020617; 
-            --border-color: #334155;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); 
-            --folder-bg: #1e293b;
+            --header-bg: #0d0d0f; 
+            --reader-bg: #000000; 
+            --border-color: #27272a;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.9); 
+            --folder-bg: #18181b;
             --success: #22c55e;
             --danger: #ef4444;
             --warning: #eab308;
-            --info: #38bdf8;
+        }
+
+        body.theme-charcoal {
+            --primary-bg: #121212; 
+            --sidebar-bg: #1e1e24; 
+            --header-bg: #1e1e24; 
+            --reader-bg: #121212; 
+            --border-color: #3f3f46;
+            --folder-bg: #27272a;
         }
 
         body.font-medium { font-size: 15px; }
 
-        /* =========================================================
-           2. GLOBAL STYLES & LAYOUT
-           ========================================================= */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-color); transition: background-color 0.2s, color 0.2s; overflow: hidden; width: 100vw; font-weight: 400; line-height: 1.5; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-color); transition: background-color 0.3s, color 0.3s; overflow: hidden; width: 100vw; font-weight: 500; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -61,208 +44,170 @@
         button { cursor: pointer; font-family: inherit; }
         input, select { font-family: inherit; }
 
-        /* SIDEBAR */
-        .sidebar { width: 340px; min-width: 300px; max-width: 400px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; height: 100vh; }
-        .sidebar.collapsed { margin-left: -340px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+
+        .sidebar { width: 380px; min-width: 320px; max-width: 440px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; height: 100vh; }
+        .sidebar.collapsed { margin-left: -380px; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: var(--sidebar-bg); }
-        .sidebar-header h2 { font-size: 1.1em; font-weight: 600; letter-spacing: -0.01em;}
+        .sidebar-header h2 { font-size: 1.2em; font-weight: 700; display: flex; align-items: center; gap: 8px;}
         
         .header-controls-group { display: flex; align-items: center; gap: 8px; }
-        .icon-btn-header { background: transparent; border: 1px solid transparent; font-size: 1em; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-        .icon-btn-header:hover { background: var(--highlight); color: var(--text-color); border-color: var(--border-color); }
+        .icon-btn-header { background: var(--folder-bg); border: 1px solid var(--border-color); font-size: 1em; cursor: pointer; padding: 6px; border-radius: 8px; transition: 0.2s; color: var(--text-color); display: flex; align-items: center; justify-content: center; }
+        .icon-btn-header:hover { background: var(--highlight); color: var(--highlight-text); border-color: var(--highlight-text); }
 
-        /* POMODORO WIDGET (Cleaned up) */
         .pomodoro-container { padding: 16px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
-        .pomodoro-card { display: flex; align-items: center; justify-content: space-between; background: var(--folder-bg); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px; box-shadow: var(--card-shadow); transition: all 0.3s ease; gap: 12px; }
-        .pomodoro-card.running { border-color: var(--highlight-text); box-shadow: 0 0 0 1px var(--highlight-text); }
+        .pomodoro-card { display: flex; align-items: center; justify-content: space-between; background: var(--folder-bg); border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 12px; box-shadow: var(--card-shadow); transition: all 0.3s ease; gap: 12px; }
+        .pomodoro-card.running { border-color: var(--highlight-text); animation: pulseGlow 2s infinite; }
         .pomo-left { display: flex; align-items: center; gap: 12px; }
+        .pomo-icon { font-size: 1.8em; line-height: 1; }
         .pomo-info { display: flex; flex-direction: column; }
-        .pomo-status { font-size: 0.7em; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+        .pomo-status { font-size: 0.7em; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
         .pomodoro-card.running .pomo-status { color: var(--highlight-text); }
-        .pomodoro-display { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 1.6em; font-weight: 700; color: var(--text-color); letter-spacing: -0.02em; line-height: 1; margin-top: 2px;}
+        .pomodoro-display { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 1.6em; font-weight: 800; color: var(--text-color); letter-spacing: -0.02em; line-height: 1; margin-top: 2px;}
         .pomo-controls { display: flex; gap: 8px; align-items: center; }
-        .pomo-btn { background: var(--highlight); border: 1px solid var(--border-color); font-size: 0.9em; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s; color: var(--text-color); }
-        .pomo-btn:hover { background: var(--highlight-text); color: white; border-color: var(--highlight-text); }
+        .pomo-btn { background: var(--sidebar-bg); border: 1px solid var(--border-color); font-size: 1em; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s; color: var(--text-color); }
+        .pomo-btn:hover { background: var(--highlight); color: var(--highlight-text); border-color: var(--highlight-text); transform: scale(1.05); }
 
-        /* MODULE SELECTOR (Segmented Control Style) */
-        .mode-selector { display: flex; gap: 4px; padding: 16px 20px 8px; background-color: var(--sidebar-bg); }
-        .mode-btn { flex: 1; padding: 8px 12px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text-muted); font-weight: 500; font-size: 0.85em; text-align: center; transition: 0.2s; }
-        .mode-btn:hover { color: var(--text-color); background: var(--highlight); }
-        .mode-btn.active { background-color: var(--folder-bg); color: var(--text-color); border-color: var(--border-color); box-shadow: var(--card-shadow); font-weight: 600; }
+        .mode-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 20px; background-color: var(--sidebar-bg); }
+        .mode-btn { padding: 10px 8px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--folder-bg); color: var(--text-muted); font-weight: 600; font-size: 0.85em; text-align: center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;}
+        .mode-btn:hover { color: var(--text-color); background: var(--highlight); border-color: var(--highlight-text); }
+        .mode-btn.active { background-color: var(--highlight-text); color: #fff; border-color: var(--highlight-text); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); }
 
-        /* SEARCH & FOLDER TREE */
-        .search-container { position: sticky; top: 0; z-index: 10; padding: 8px 20px 16px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); display: flex; flex-direction: column; gap: 10px; }
-        .search-input { width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.9em; transition: border-color 0.2s; }
-        .search-input:focus { border-color: var(--highlight-text); box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); }
-        .search-input::placeholder { color: var(--text-muted); }
+        .search-container { padding: 0 20px 16px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); }
+        .search-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.9em; transition: 0.2s; }
+        .search-input:focus { border-color: var(--highlight-text); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
         
-        .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; background-color: var(--sidebar-bg); }
+        .book-list { flex-grow: 1; overflow-y: auto; padding: 16px 20px; list-style: none; background-color: var(--sidebar-bg); }
         details { margin-bottom: 6px; }
-        summary { padding: 8px 12px; cursor: pointer; font-weight: 500; border-radius: 6px; display: flex; align-items: center; user-select: none; font-size: 0.9em; color: var(--sidebar-text); transition: background 0.2s; }
-        summary:hover { background-color: var(--highlight); color: var(--text-color); }
+        summary { padding: 10px 14px; cursor: pointer; font-weight: 600; border-radius: 8px; display: flex; align-items: center; user-select: none; font-size: 0.9em; color: var(--sidebar-text); border: 1px solid var(--border-color); background: var(--folder-bg); transition: 0.2s; }
+        summary:hover { background-color: var(--highlight); border-color: var(--highlight-text); }
         summary::marker, summary::-webkit-details-marker { display: none; }
-        summary::before { content: "📁"; margin-right: 10px; opacity: 0.7; font-size: 1.1em; }
-        details[open] > summary::before { content: "📂"; opacity: 1; }
-        .folder-contents { padding-left: 12px; margin-top: 4px; border-left: 1px solid var(--border-color); margin-left: 14px; }
+        summary::before { content: "📁"; margin-right: 10px; font-size: 1.1em; }
+        details[open] > summary::before { content: "📂"; }
+        .folder-contents { padding-left: 12px; margin-top: 6px; border-left: 1px dashed var(--border-color); margin-left: 14px; }
 
-        .book-item { padding: 8px 12px; margin: 4px 0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.85em; color: var(--sidebar-text); background: transparent; transition: all 0.2s; gap: 8px; border: 1px solid transparent; }
-        .book-item:hover { background-color: var(--highlight); color: var(--text-color); }
-        .book-item.active { background-color: var(--folder-bg); color: var(--highlight-text); font-weight: 600; border-color: var(--border-color); box-shadow: var(--card-shadow); }
+        .book-item { padding: 8px 12px; margin: 4px 0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; font-size: 0.85em; color: var(--text-muted); background: transparent; transition: all 0.2s; gap: 8px; border: 1px solid transparent; }
+        .book-item:hover { background-color: var(--highlight); color: var(--text-color); border-color: var(--highlight-text); }
+        .book-item.active { background-color: var(--highlight-text); color: white; font-weight: 600; box-shadow: 0 2px 8px rgba(56, 189, 248, 0.3); }
         .book-item-content { display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
-        .book-item-content::before { content: "▶"; margin-right: 10px; opacity: 0.5; font-size: 0.8em; flex-shrink: 0; }
-        .book-item.active .book-item-content::before { opacity: 1; color: var(--highlight-text); }
+        .book-item-content::before { content: "📄"; margin-right: 8px; font-size: 1.1em; flex-shrink: 0; }
+        .book-item.video-item .book-item-content::before { content: "▶️"; }
 
-        /* MAIN WORKSPACE */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--reader-bg); width: 100%; position: relative; overflow: hidden; height: 100vh; }
         .reader-header { padding: 16px 24px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 70px;}
         .reader-header-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; flex-grow: 1; }
         .title-row { display: flex; align-items: center; gap: 10px; }
-        .title-row h2 { font-size: 1.15em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;}
-        .breadcrumb { color: var(--text-muted); font-size: 0.8em; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .playlist-select { margin-top: 4px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); font-weight: 500; font-size: 0.85em; width: 100%; max-width: 400px; outline: none; transition: border-color 0.2s;}
+        .title-row h2 { font-size: 1.15em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;}
+        .breadcrumb { color: var(--text-muted); font-size: 0.8em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .playlist-select { margin-top: 4px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); font-weight: 600; font-size: 0.85em; width: 100%; max-width: 400px; outline: none; transition: 0.2s; cursor: pointer;}
         .playlist-select:focus { border-color: var(--highlight-text); }
 
         .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-        .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); font-size: 1.1em; cursor: pointer; padding: 8px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .icon-btn:hover { background-color: var(--highlight); color: var(--text-color); border-color: var(--border-color); }
-        .primary-btn { background-color: var(--text-color); color: var(--primary-bg); font-weight: 500; font-size: 0.85em; padding: 8px 16px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s;}
-        .primary-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .primary-btn { background-color: var(--highlight-text); color: white; font-weight: 600; font-size: 0.85em; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(56,189,248,0.2);}
+        .primary-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         .reader-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; height: calc(100vh - 70px); position: relative; gap: 16px; }
-        .reader-container.split-active { flex-direction: row; }
-        .reader-container.split-active #viewer-wrapper, .reader-container.split-active #viewer-wrapper-split { height: 100%; width: 50%; }
-
-        #viewer-wrapper, #viewer-wrapper-split { width: 100%; height: 100%; border-radius: 8px; overflow: hidden; display: none; background-color: var(--folder-bg); border: 1px solid var(--border-color); position: relative; box-shadow: var(--card-shadow);}
         
-        .placeholder-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); text-align: center; max-width: 400px; margin: 0 auto;}
-        .placeholder-icon { font-size: 3em; margin-bottom: 16px; opacity: 0.5; }
-        .placeholder-title { font-size: 1.2em; font-weight: 600; color: var(--text-color); margin-bottom: 8px; }
-        .placeholder-text { font-size: 0.9em; line-height: 1.5; }
+        #viewer-wrapper { width: 100%; height: 100%; border-radius: 12px; overflow: hidden; display: none; background-color: #000; border: 1px solid var(--border-color); position: relative; box-shadow: var(--card-shadow);}
         
-        .resizer { width: 12px; cursor: col-resize; background: transparent; display: flex; align-items: center; justify-content: center; z-index: 10; display: none; transition: background 0.2s; margin: 0 -4px;}
-        .resizer::after { content: ''; width: 2px; height: 40px; background: var(--border-color); border-radius: 2px; transition: background 0.2s;}
-        .resizer:hover::after, .resizer.dragging::after { background: var(--highlight-text); height: 100%; }
+        .placeholder-container { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--folder-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 16px; box-shadow: var(--card-shadow); text-align: center; max-width: 450px;}
+        .placeholder-icon { font-size: 3em; margin-bottom: 16px; opacity: 0.8; }
+        .placeholder-title { font-size: 1.3em; font-weight: 700; color: var(--text-color); margin-bottom: 8px; }
+        .placeholder-text { font-size: 0.9em; line-height: 1.5; color: var(--text-muted); }
 
-        /* UTILITIES WORKSPACE */
         #utilities-workspace { display:none; width:100%; height:100%; background:var(--reader-bg); flex-direction:column; overflow-y:auto; padding: 32px 48px; }
-        .utility-menu-btn { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 14px 18px; border-radius: 8px; font-size: 0.9em; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; box-shadow: var(--card-shadow); }
-        .utility-menu-btn:hover { border-color: var(--text-muted); transform: translateY(-1px); }
+        .utility-menu-btn { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 16px 20px; border-radius: 12px; font-size: 0.95em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; box-shadow: var(--card-shadow); }
+        .utility-menu-btn:hover { border-color: var(--highlight-text); background: var(--highlight); transform: translateY(-2px); }
         
-        .util-workspace-inner { display: flex; flex-direction: column; width: 100%; max-width: 1100px; margin: 0 auto; gap: 32px;}
-        .util-header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
-        .util-title { font-size: 1.8em; font-weight: 700; letter-spacing: -0.02em; }
-        .util-subtitle { color: var(--text-muted); font-size: 0.95em; }
+        .util-workspace-inner { display: flex; flex-direction: column; width: 100%; max-width: 1200px; margin: 0 auto; gap: 32px;}
+        .util-header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; text-align: center; }
+        .util-title { font-size: 2em; font-weight: 800; letter-spacing: -0.02em; }
+        .util-subtitle { color: var(--text-muted); font-size: 1em; font-weight: 500;}
 
-        /* Analytics */
-        .util-dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; width: 100%; }
-        .stat-card { background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 8px;}
-        .stat-value { font-size: 2.5em; font-weight: 700; color: var(--text-color); line-height: 1; letter-spacing: -0.02em;}
-        .stat-label { font-size: 0.85em; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        
-        /* Timetable - Timeline View */
-        .tt-container { background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--card-shadow); overflow: hidden; display: flex; flex-direction: column; min-height: 60vh;}
-        .tt-header-bar { padding: 16px 24px; border-bottom: 1px solid var(--border-color); background: var(--sidebar-bg); display: flex; gap: 12px; align-items: center; }
+        .tt-container { background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--card-shadow); overflow: hidden; display: flex; flex-direction: column; min-height: 60vh;}
+        .tt-header-bar { padding: 20px 24px; border-bottom: 1px solid var(--border-color); background: var(--sidebar-bg); display: flex; gap: 16px; align-items: center; }
         .tt-input-group { display: flex; gap: 12px; flex-grow: 1; align-items: center; }
-        .tt-input { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 6px; outline: none; font-size: 0.9em; transition: 0.2s; }
+        .tt-input { background: var(--primary-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px 14px; border-radius: 8px; outline: none; font-size: 0.9em; transition: 0.2s; }
         .tt-input:focus { border-color: var(--highlight-text); }
-        .tt-input.time { width: 120px; font-family: monospace; }
+        .tt-input.time { width: 130px; font-family: monospace; }
         .tt-input.text { flex-grow: 1; }
         
-        .tt-timeline { padding: 24px; display: flex; flex-direction: column; gap: 0; position: relative; flex-grow: 1; overflow-y: auto;}
-        .tt-timeline::before { content: ''; position: absolute; left: 104px; top: 24px; bottom: 24px; width: 2px; background: var(--border-color); border-radius: 1px; }
+        .tt-timeline { padding: 30px; display: flex; flex-direction: column; gap: 0; position: relative; flex-grow: 1; overflow-y: auto;}
+        .tt-timeline::before { content: ''; position: absolute; left: 110px; top: 30px; bottom: 30px; width: 2px; background: var(--border-color); border-radius: 1px; }
         
         .tt-item { display: flex; gap: 24px; position: relative; margin-bottom: 24px; }
         .tt-item:last-child { margin-bottom: 0; }
-        .tt-time-column { width: 60px; flex-shrink: 0; text-align: right; font-family: monospace; font-size: 0.85em; font-weight: 600; color: var(--text-muted); padding-top: 14px;}
-        .tt-node { width: 12px; height: 12px; border-radius: 50%; background: var(--folder-bg); border: 2px solid var(--text-color); position: absolute; left: 79px; top: 16px; z-index: 2; transition: 0.2s;}
+        .tt-time-column { width: 70px; flex-shrink: 0; text-align: right; font-family: monospace; font-size: 0.9em; font-weight: 700; color: var(--highlight-text); padding-top: 16px;}
+        .tt-node { width: 14px; height: 14px; border-radius: 50%; background: var(--folder-bg); border: 2px solid var(--highlight-text); position: absolute; left: 84px; top: 18px; z-index: 2; transition: 0.2s;}
         .tt-item.completed .tt-node { background: var(--success); border-color: var(--success); }
         
-        .tt-content { flex-grow: 1; background: var(--primary-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-        .tt-item:hover .tt-content { border-color: var(--text-muted); }
-        .tt-item.completed .tt-content { opacity: 0.6; background: var(--highlight); }
+        .tt-content { flex-grow: 1; background: var(--primary-bg); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .tt-item:hover .tt-content { border-color: var(--highlight-text); }
+        .tt-item.completed .tt-content { opacity: 0.5; }
         .tt-item.completed .tt-task-text { text-decoration: line-through; }
-        .tt-task-info { display: flex; flex-direction: column; gap: 4px; }
-        .tt-task-text { font-weight: 500; color: var(--text-color); font-size: 0.95em; }
-        .tt-task-duration { font-size: 0.75em; color: var(--text-muted); display: flex; gap: 12px;}
+        .tt-task-text { font-weight: 600; color: var(--text-color); font-size: 1em; }
         
-        .tt-actions { display: flex; gap: 8px; }
-        .tt-action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px; transition: 0.2s; }
-        .tt-action-btn:hover { background: var(--border-color); color: var(--text-color); }
-        .tt-action-btn.check:hover { color: var(--success); }
-        .tt-action-btn.del:hover { color: var(--danger); }
+        .tt-actions { display: flex; gap: 10px; }
+        .tt-action-btn { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
+        .tt-action-btn:hover { transform: scale(1.1); }
+        .tt-action-btn.check:hover { color: var(--success); border-color: var(--success); }
+        .tt-action-btn.del:hover { color: var(--danger); border-color: var(--danger); }
 
-        /* Syllabus Tracker */
-        .syl-container { display: flex; flex-direction: column; gap: 20px; }
-        .syl-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
-        .syl-tab { padding: 8px 16px; background: transparent; border: none; color: var(--text-muted); font-weight: 500; font-size: 0.95em; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        .syl-tab:hover { background: var(--highlight); color: var(--text-color); }
-        .syl-tab.active { background: var(--text-color); color: var(--primary-bg); font-weight: 600; }
+        .syl-container { display: flex; flex-direction: column; gap: 24px; }
+        .syl-tabs { display: flex; gap: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; justify-content: center;}
+        .syl-tab { padding: 10px 24px; background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-weight: 600; font-size: 0.95em; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .syl-tab:hover { border-color: var(--highlight-text); color: var(--text-color); }
+        .syl-tab.active { background: var(--highlight-text); color: white; border-color: var(--highlight-text); box-shadow: 0 4px 10px rgba(56,189,248,0.3);}
         
-        .syl-progress-wrapper { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 12px; }
-        .syl-progress-header { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9em; }
-        .syl-progress-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; overflow: hidden; }
-        .syl-progress-fill { height: 100%; background: var(--text-color); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .syl-progress-wrapper { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 12px; text-align: center;}
+        .syl-progress-header { font-weight: 700; font-size: 1.1em; color: var(--text-color);}
+        .syl-progress-bar { width: 100%; height: 12px; background: var(--primary-bg); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);}
+        .syl-progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(34,197,94,0.5);}
         
-        .syl-subjects-grid { display: flex; flex-direction: column; gap: 16px; }
+        .syl-subjects-grid { display: flex; flex-direction: column; gap: 20px; }
         .syl-subject-card { background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: var(--card-shadow); }
-        .syl-subject-header { padding: 16px 20px; background: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 1.05em; display: flex; justify-content: space-between; cursor: pointer; user-select: none; }
-        .syl-subject-header:hover { background: var(--highlight); }
-        .syl-chapter-list { display: flex; flex-direction: column; }
-        .syl-chapter-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
-        .syl-chapter-row:last-child { border-bottom: none; }
-        .syl-chapter-row:hover { background: var(--highlight); }
-        .syl-chap-name { font-size: 0.9em; font-weight: 500; color: var(--text-color); }
+        .syl-subject-header { padding: 18px 24px; background: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 1.1em; display: flex; justify-content: space-between; cursor: pointer; user-select: none; color: var(--highlight-text);}
+        .syl-chapter-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px; background: var(--primary-bg);}
+        .syl-chapter-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 8px; transition: 0.2s; }
+        .syl-chapter-row:hover { border-color: var(--highlight-text); }
+        .syl-chap-name { font-size: 0.9em; font-weight: 600; color: var(--text-color); line-height: 1.3;}
         
-        .syl-status-btn { font-size: 0.75em; font-weight: 600; padding: 4px 12px; border-radius: 12px; border: 1px solid; cursor: pointer; transition: all 0.2s; width: 110px; text-align: center; }
+        .syl-status-btn { font-size: 0.8em; font-weight: 700; padding: 6px 12px; border-radius: 6px; border: 1px solid; cursor: pointer; transition: all 0.2s; width: 120px; text-align: center; flex-shrink: 0; margin-left: 12px;}
         .syl-status-0 { background: transparent; border-color: var(--border-color); color: var(--text-muted); }
-        .syl-status-1 { background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.3); color: var(--warning); }
-        .syl-status-2 { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); color: var(--info); }
-        .syl-status-3 { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3); color: var(--success); }
-        
-        /* MODALS */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 3000; backdrop-filter: blur(2px); justify-content: center; align-items: center; }
-        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
-        .modal-box { background: var(--folder-bg); border: 1px solid var(--border-color); width: 400px; max-width: 90%; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden; }
-        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.05em; background: var(--sidebar-bg); }
-        .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
-        .setting-group { display: flex; flex-direction: column; gap: 8px; font-size: 0.9em; font-weight: 500; color: var(--text-color); }
-        .setting-group select, .setting-group input { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-color); outline: none; transition: 0.2s;}
-        .setting-group select:focus, .setting-group input:focus { border-color: var(--text-muted); }
-        .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background: var(--sidebar-bg); }
+        .syl-status-1 { background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.4); color: var(--warning); }
+        .syl-status-2 { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.4); color: var(--highlight-text); }
+        .syl-status-3 { background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.5); color: var(--success); box-shadow: 0 0 8px rgba(34,197,94,0.2);}
 
-        /* COPILOT CHAT */
-        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--text-color); color: var(--primary-bg); border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 1.2em; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 999; display: flex; justify-content: center; align-items: center; transition: transform 0.2s; }
-        .chat-fab:hover { transform: scale(1.05); }
-        .chat-window { position: fixed; bottom: 84px; right: 24px; width: 340px; height: 480px; background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.2s ease; overflow: hidden; }
+        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--highlight-text); color: #fff; border: none; border-radius: 50%; width: 56px; height: 56px; font-size: 1.5em; cursor: pointer; box-shadow: 0 4px 20px rgba(56,189,248,0.4); z-index: 999; display: flex; justify-content: center; align-items: center; transition: transform 0.2s; }
+        .chat-fab:hover { transform: scale(1.08); }
+        .chat-window { position: fixed; bottom: 90px; right: 24px; width: 360px; height: 500px; background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.2s ease; overflow: hidden; }
         .chat-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .chat-header { background: var(--sidebar-bg); padding: 14px 16px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.95em; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header { background: var(--sidebar-bg); padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 1em; display: flex; justify-content: space-between; align-items: center; color: var(--highlight-text);}
         .chat-body { flex-grow: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--primary-bg); }
-        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 8px; font-size: 0.85em; line-height: 1.5; }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 10px; font-size: 0.9em; line-height: 1.4; }
         .bot-msg { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 2px;}
         .user-msg { background: var(--highlight-text); color: white; align-self: flex-end; border-bottom-right-radius: 2px;}
-        .chat-footer { padding: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--folder-bg); }
-        .chat-footer input { flex-grow: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-color); outline: none; font-size: 0.85em; }
-        .chat-footer button { background: var(--text-color); color: var(--primary-bg); border: none; padding: 0 16px; border-radius: 6px; font-weight: 500; font-size: 0.85em; cursor: pointer; transition: 0.2s;}
-        .chat-footer button:hover { opacity: 0.9; }
+        .chat-footer { padding: 14px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--sidebar-bg); }
+        .chat-footer input { flex-grow: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-color); outline: none; font-size: 0.9em; }
+        .chat-footer button { background: var(--highlight-text); color: white; border: none; padding: 0 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;}
 
     </style>
 </head>
-<body class="theme-slate font-medium">
+<body class="theme-amoled font-medium">
 
-    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h2>Study Dashboard</h2>
+            <h2>📚 Study Deck</h2>
             <div class="header-controls-group">
                 <button class="icon-btn-header" id="theme-toggle" title="Toggle Theme">🌓</button>
-                <button class="icon-btn-header" id="pomo-open-settings" title="Settings">⚙️</button>
             </div>
         </div>
 
-        <!-- POMODORO WIDGET -->
         <div class="pomodoro-container" id="pomo-container">
             <div class="pomodoro-card" id="pomo-card">
                 <div class="pomo-left">
+                    <span class="pomo-icon">🍅</span>
                     <div class="pomo-info">
                         <span class="pomo-status" id="pomo-status-text">Focus Session</span>
                         <span class="pomodoro-display" id="pomo-time">25:00</span>
@@ -275,29 +220,26 @@
             </div>
         </div>
 
-        <!-- MODULE SELECTOR -->
         <div class="mode-selector">
-            <button class="mode-btn active" data-target="LECTURES">Lectures</button>
-            <button class="mode-btn" data-target="UTILITIES">Utilities</button>
+            <button class="mode-btn active" data-target="LECTURES">📺 Lectures</button>
+            <button class="mode-btn" data-target="FILES">📄 Files</button>
+            <button class="mode-btn" data-target="SUPPORT">💡 Support</button>
+            <button class="mode-btn" data-target="UTILITIES">🛠️ Utilities</button>
         </div>
 
-        <!-- LIBRARY VIEW -->
         <div id="library-sidebar-view" style="display:flex; flex-direction:column; flex-grow:1; overflow:hidden;">
             <div class="search-container">
-                <input type="text" id="search-bar" class="search-input" placeholder="Search lectures...">
+                <input type="text" id="search-bar" class="search-input" placeholder="Search resources...">
             </div>
             <div class="book-list" id="book-list"></div>
         </div>
 
-        <!-- UTILITIES VIEW -->
-        <div id="utilities-sidebar-view" style="display:none; padding: 20px; flex-direction:column; gap:8px; overflow-y:auto;">
-            <button class="utility-menu-btn" data-util="timetable">📅 Planner & Timetable</button>
+        <div id="utilities-sidebar-view" style="display:none; padding: 20px; flex-direction:column; gap:12px; overflow-y:auto;">
+            <button class="utility-menu-btn" data-util="timetable">📅 Master Timetable</button>
             <button class="utility-menu-btn" data-util="syllabus">📑 Syllabus Tracker</button>
-            <button class="utility-menu-btn" data-util="analytics">📊 Focus Analytics</button>
         </div>
     </div>
 
-    <!-- MAIN WORKSPACE -->
     <div class="main-content">
         <div class="reader-header">
             <div class="reader-header-info">
@@ -309,45 +251,33 @@
             </div>
             
             <div class="header-actions">
-                <button id="split-screen-btn" class="icon-btn" title="Toggle Split View" style="display:none;">◫</button>
-                <button id="fullscreen-btn" class="primary-btn">Fullscreen</button>
+                <button id="fullscreen-btn" class="primary-btn">⛶ Fullscreen</button>
             </div>
         </div>
         
         <div class="reader-container" id="reader-container-main">
-            <!-- PLACEHOLDER -->
             <div class="placeholder-container" id="placeholder-box">
-                <div class="placeholder-icon">📚</div>
-                <div class="placeholder-title">Ready to dive in?</div>
-                <div class="placeholder-text">Select a video lecture to start studying, or open your utilities to plan your sessions.</div>
+                <div class="placeholder-icon">🚀</div>
+                <div class="placeholder-title">Ready to crush it?</div>
+                <div class="placeholder-text">Pick a lecture, open a file, or set up your timetable to get started.</div>
             </div>
             
-            <!-- Viewer 1 (Main) -->
             <div id="viewer-wrapper">
                 <iframe id="book-frame" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
             </div>
 
-            <div id="split-resizer" class="resizer"></div>
-            
-            <!-- Viewer 2 (Split) -->
-            <div id="viewer-wrapper-split">
-                <iframe id="book-frame-split" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
-            </div>
-
-            <!-- UTILITIES WORKSPACE -->
             <div id="utilities-workspace"></div>
         </div>
         
-        <!-- LOCAL COPILOT CHAT -->
         <button class="chat-fab" id="chat-fab-btn" title="Search Copilot">✨</button>
         <div class="chat-window" id="chat-window">
             <div class="chat-header">
                 <span>Lecture Copilot</span>
-                <button class="icon-btn" id="chat-close-btn" style="padding:4px; font-size:1em;">✕</button>
+                <button class="icon-btn-header" id="chat-close-btn" style="padding:4px; font-size:1em; border:none; background:none;">✕</button>
             </div>
             <div class="chat-body" id="chat-body">
                 <div class="chat-msg bot-msg">
-                    Hi! Type a topic (e.g., "Kinematics", "Organic") and I'll fetch the best lectures from your library.
+                    Hi! Type a topic and I'll fetch the best videos/files from your library.
                 </div>
             </div>
             <div class="chat-footer">
@@ -357,43 +287,12 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
-    <div class="modal-overlay" id="settings-modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <span>Preferences</span>
-                <button class="icon-btn" id="settings-close-modal" style="padding:4px;">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="setting-group">
-                    <label>Focus Duration (mins)</label>
-                    <select id="setting-focus-time">
-                        <option value="15">15 Minutes</option>
-                        <option value="25" selected>25 Minutes</option>
-                        <option value="45">45 Minutes (Deep Work)</option>
-                        <option value="60">60 Minutes</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label>Theme</label>
-                    <select id="setting-theme">
-                        <option value="theme-light">Light Mode</option>
-                        <option value="theme-slate" selected>Slate Dark (Professional)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="primary-btn" id="save-settings-btn">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // ==========================================
-            // 1. DATA INJECTION
+            // 1. DATA INJECTION (Organized cleanly)
             // ==========================================
+            
             const lectureVideos = [
                 {
                     "title": "Physics One-Shots (PW)",
@@ -403,29 +302,7 @@
                         { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" },
                         { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" },
                         { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" },
-                        { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" },
-                        { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" },
-                        { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" },
                         { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" }
-                    ]
-                },
-                {
-                    "title": "Physical Chemistry (PW)",
-                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
-                    "playlist": [
-                        { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" },
-                        { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" },
-                        { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" },
-                        { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" }
-                    ]
-                },
-                {
-                    "title": "JEE Maths - Neha Ma'am",
-                    "folders": ["LECTURES", "Maths", "Neha Agrawal"],
-                    "playlist": [
-                        { "title": "Sequences & Series", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" },
-                        { "title": "Matrices & Determinants", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" },
-                        { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" }
                     ]
                 },
                 {
@@ -433,13 +310,42 @@
                     "folders": ["LECTURES", "Physics", "Eduniti"],
                     "playlist": [
                         { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
-                        { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
-                        { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" }
+                        { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" }
+                    ]
+                },
+                {
+                    "title": "JEE Maths - Neha Ma'am",
+                    "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+                    "playlist": [
+                        { "title": "Sequences & Series", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" },
+                        { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" }
                     ]
                 }
             ];
 
-            // Detailed JEE Syllabus
+            // Filtered from user's data.js for FILES module (COACHINGS and SUBJECTS)
+            const filesData = [
+                { "title": "PW Old Test Series", "folders": ["COACHINGS", "PW"], "url": "https://drive.google.com/file/d/1Emnjudx3tfSJct8--uQ2z26TZj86H7oJ/preview" },
+                { "title": "Physics ARCHIVE - JEE (Main)", "folders": ["COACHINGS", "AAKASH"], "url": "https://drive.google.com/file/d/1tA2TE6nY8pEqxymkj734VSv-dcn7tev1/preview" },
+                { "title": "Chemistry ARCHIVE - JEE (Main)", "folders": ["COACHINGS", "AAKASH"], "url": "https://drive.google.com/file/d/1nsO5H549jvYWkeyYWcEeegSqJeo8QfRA/preview" },
+                { "title": "WEP", "folders": ["COACHINGS", "ALLEN"], "url": "https://drive.google.com/file/d/1xULnniKoj59JwLEi8AXJv4n51UiACQiS/preview" },
+                { "title": "THERMODYNAMICS 01", "folders": ["COACHINGS", "NUCLEUS"], "url": "https://drive.google.com/file/d/12UUAzXguNgETp-BguebpE55Q72HDlQhs/preview" },
+                { "title": "Black Book Algebra", "folders": ["SUBJECTS", "Maths Special"], "url": "https://drive.google.com/file/d/14HukOgsh19UCXfpHXVWA1a7yPurM8rRl/preview" },
+                { "title": "VK Jaiswal Inorganic Chemistry", "folders": ["SUBJECTS", "Inorganic Chem"], "url": "https://drive.google.com/file/d/14EVwhdkYYjFDfNiSbh3pWNN_wSF5DFUF/preview" },
+                { "title": "Himanshu Pandey Organic", "folders": ["SUBJECTS", "Organic Chem"], "url": "https://drive.google.com/file/d/1e6M1o-aL3_ljsS_-ez4yGOtaYoSczRUo/preview" },
+                { "title": "Concept of Physics HC Verma Vol 1", "folders": ["SUBJECTS", "Physics Specials"], "url": "https://drive.google.com/file/d/1lfFiGEUvj2_EWi4L08z-Gnwumbs9r9Cf/preview" }
+            ];
+
+            // Filtered from user's data.js for SUPPORT module (EXTRAS sub-folders)
+            const supportData = [
+                { "title": "Physics ARS Class 12", "folders": ["Flashcards", "Physics"], "url": "https://drive.google.com/file/d/17BOjGk1HO_KZdGKgjItlTag18Wens8vS/preview" },
+                { "title": "Chemistry ARS Class 12", "folders": ["Flashcards", "Chemistry"], "url": "https://drive.google.com/file/d/10j6hRd8tt5za9bDqUBkR0Q9U4NIAp91v/preview" },
+                { "title": "JEE physics formula booklet", "folders": ["Formula BOOKLET", "Physics"], "url": "https://drive.google.com/file/d/1-DkwbSvzoYBKtXvx0IUMfYyzur9XcoOv/preview" },
+                { "title": "JEE maths formula booklet", "folders": ["Formula BOOKLET", "Maths"], "url": "https://drive.google.com/file/d/1BvvhnHsZ_L-vCKBxVXE1V77ZmGf-Zcfx/preview" },
+                { "title": "PHYSICS CONCEPT MAP", "folders": ["Concept Maps", "Physics"], "url": "https://drive.google.com/file/d/15XEURyXYGyUZz8n3BuJ5tYlf2ELzoWhN/preview" },
+                { "title": "Physical Chemhack", "folders": ["Hack Books", "Chemistry"], "url": "https://drive.google.com/file/d/1GLBEHS_DRrWU6g-BBWjCdaUZtoxxvrlo/preview" }
+            ];
+
             const detailedSyllabus = {
                 "Class12": {
                     "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"],
@@ -447,35 +353,32 @@
                     "Maths": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of the Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
                 },
                 "JEEMains": {
-                    "Physics": ["Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects of Current", "Electromagnetic Induction", "Electromagnetic Waves", "Optics", "Dual Nature of Matter", "Atoms and Nuclei", "Electronic Devices"],
-                    "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Periodic Properties", "p-Block Elements", "d- and f-Block", "Coordination Compounds", "Basic Principles of Organic Chemistry", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules", "Practical Chemistry"],
-                    "Maths": ["Sets Relations and Functions", "Complex Numbers", "Matrices and Determinants", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity and Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics and Probability", "Trigonometry"]
+                    "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects of Current and Magnetism", "Electromagnetic Induction and Alternating Currents", "Electromagnetic Waves", "Optics", "Dual Nature of Matter and Radiation", "Atoms and Nuclei", "Electronic Devices", "Experimental Skills"],
+                    "Chemistry": ["Some Basic Concepts in Chemistry", "Atomic Structure", "Chemical Bonding", "Chemical Thermodynamics", "Solutions", "Equilibrium", "Redox Reactions and Electrochemistry", "Chemical Kinetics", "Classification of Elements", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "Purification and Characterisation of Organic Compounds", "Some Basic Principles of Organic Chemistry", "Hydrocarbons", "Organic Compounds Containing Halogens", "Organic Compounds Containing Oxygen", "Organic Compounds Containing Nitrogen", "Biomolecules", "Principles Related to Practical Chemistry"],
+                    "Maths": ["Sets Relations and Functions", "Complex Numbers", "Matrices and Determinants", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity and Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "Three Dimensional Geometry", "Vector Algebra", "Statistics and Probability", "Trigonometry"]
                 },
                 "JEEAdv": {
                     "Physics": ["General Physics", "Kinematics", "Laws of Motion", "Work Power & Energy", "Center of Mass", "Rotational Dynamics", "Gravitation", "Fluid Mechanics", "Thermal Physics", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Ray & Wave Optics", "Modern Physics"],
                     "Chemistry": ["Atomic Structure", "Chemical Bonding", "Gaseous State", "Thermodynamics", "Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "s, p, d, f Block Elements", "Coordination Compounds", "Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Halides", "Oxygen Containing Compounds", "Nitrogen Containing Compounds", "Biomolecules & Polymers", "POC"],
-                    "Maths": ["Algebra of Complex Numbers", "Quadratic Equations", "Sequence & Series", "Permutations & Combinations", "Binomial Theorem", "Matrices & Determinants", "Probability", "Trigonometric Equations", "Properties of Triangles", "2D Geometry: Lines & Circles", "Conic Sections", "3D Geometry", "Differential Calculus", "Integral Calculus", "Vector Algebra"]
+                    "Maths": ["Algebra of Complex Numbers", "Quadratic Equations", "Sequence & Series", "Permutations & Combinations", "Binomial Theorem", "Matrices & Determinants", "Probability", "Trigonometric Equations", "Properties of Triangles", "2D Geometry", "Conic Sections", "3D Geometry", "Differential Calculus", "Integral Calculus", "Vector Algebra"]
                 }
             };
 
-            const libraryData = [...lectureVideos];
-            let studyStats = JSON.parse(localStorage.getItem('study_stats_clean')) || {};
-            const todayStr = new Date().toISOString().split('T')[0];
-            if (!studyStats[todayStr]) studyStats[todayStr] = 0;
-
-            // ==========================================
-            // 2. POMODORO SYSTEM
-            // ==========================================
-            let pomoSettings = JSON.parse(localStorage.getItem('pomo_settings_clean')) || { focusTime: 25, theme: 'theme-slate' };
-            document.body.className = `${pomoSettings.theme} font-medium`;
+            let activeModule = 'LECTURES';
             
-            let pomoSeconds = pomoSettings.focusTime * 60;
+            let theme = 'theme-amoled';
+            document.body.className = `${theme} font-medium`;
+            
+            document.getElementById('theme-toggle').onclick = () => {
+                theme = theme === 'theme-amoled' ? 'theme-charcoal' : 'theme-amoled';
+                document.body.className = `${theme} font-medium`;
+            };
+
+            let pomoSeconds = 25 * 60;
             let pomoInterval = null;
             let isPomoRunning = false;
-
             const pomoDisplay = document.getElementById('pomo-time');
             const pomoToggle = document.getElementById('pomo-toggle');
-            const pomoReset = document.getElementById('pomo-reset');
             const pomoCard = document.getElementById('pomo-card');
 
             function updatePomoDisplay() {
@@ -503,96 +406,95 @@
                             isPomoRunning = false;
                             pomoToggle.textContent = '▶';
                             pomoCard.classList.remove('running');
-                            
-                            studyStats[todayStr]++;
-                            localStorage.setItem('study_stats_clean', JSON.stringify(studyStats));
-                            alert("Focus Session Complete! Great job.");
-                            pomoSeconds = pomoSettings.focusTime * 60;
+                            alert("Focus Session Complete!");
+                            pomoSeconds = 25 * 60;
                             updatePomoDisplay();
                         }
                     }, 1000);
                 }
             });
 
-            pomoReset.addEventListener('click', () => {
+            document.getElementById('pomo-reset').addEventListener('click', () => {
                 clearInterval(pomoInterval);
                 isPomoRunning = false;
-                pomoSeconds = pomoSettings.focusTime * 60;
+                pomoSeconds = 25 * 60;
                 pomoToggle.textContent = '▶';
                 pomoCard.classList.remove('running');
                 updatePomoDisplay();
             });
             updatePomoDisplay();
 
-            // ==========================================
-            // 3. RENDERING & UI NAVIGATION
-            // ==========================================
             const bookList = document.getElementById('book-list');
             const searchBar = document.getElementById('search-bar');
             
             function renderLibrary(query = '') {
                 bookList.innerHTML = '';
-                let filtered = libraryData.filter(b => {
+                
+                let sourceData = [];
+                if(activeModule === 'LECTURES') sourceData = lectureVideos;
+                else if(activeModule === 'FILES') sourceData = filesData;
+                else if(activeModule === 'SUPPORT') sourceData = supportData;
+
+                let filtered = sourceData.filter(b => {
                     const text = (b.title + " " + b.folders.join(" ")).toLowerCase();
                     return text.includes(query.toLowerCase());
                 });
 
                 if(filtered.length === 0) {
-                    bookList.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:0.9em;">No lectures found.</div>`;
+                    bookList.innerHTML = `<div style="padding:15px; text-align:center; color:var(--text-muted); font-size:0.9em;">No resources found.</div>`;
                     return;
                 }
 
                 const tree = {};
                 filtered.forEach(b => {
-                    const subj = b.folders[1] || 'General';
-                    const creator = b.folders[2] || 'Various';
-                    if (!tree[subj]) tree[subj] = {};
-                    if (!tree[subj][creator]) tree[subj][creator] = [];
-                    tree[subj][creator].push(b);
+                    const topFolder = b.folders[0] || 'General';
+                    const subFolder = b.folders[1] || 'Various';
+                    if (!tree[topFolder]) tree[topFolder] = {};
+                    if (!tree[topFolder][subFolder]) tree[topFolder][subFolder] = [];
+                    tree[topFolder][subFolder].push(b);
                 });
 
-                Object.keys(tree).sort().forEach(subj => {
-                    let detailsSubj = document.createElement('details');
-                    detailsSubj.open = query.length > 0;
-                    detailsSubj.innerHTML = `<summary>${subj}</summary><div class="folder-contents"></div>`;
-                    let contentSubj = detailsSubj.querySelector('.folder-contents');
+                Object.keys(tree).sort().forEach(topF => {
+                    let detailsTop = document.createElement('details');
+                    detailsTop.open = query.length > 0 || Object.keys(tree).length === 1;
+                    detailsTop.innerHTML = `<summary>${topF}</summary><div class="folder-contents"></div>`;
+                    let contentTop = detailsTop.querySelector('.folder-contents');
 
-                    Object.keys(tree[subj]).sort().forEach(creator => {
-                        let detailsCreator = document.createElement('details');
-                        detailsCreator.open = query.length > 0;
-                        detailsCreator.innerHTML = `<summary>${creator}</summary><div class="folder-contents"></div>`;
-                        let contentCreator = detailsCreator.querySelector('.folder-contents');
+                    Object.keys(tree[topF]).sort().forEach(subF => {
+                        let detailsSub = document.createElement('details');
+                        detailsSub.open = query.length > 0;
+                        detailsSub.innerHTML = `<summary>${subF}</summary><div class="folder-contents"></div>`;
+                        let contentSub = detailsSub.querySelector('.folder-contents');
 
-                        tree[subj][creator].forEach(book => {
+                        tree[topF][subF].forEach(book => {
                             let item = document.createElement('div');
-                            item.className = 'book-item';
+                            let isVid = book.playlist || (book.url && book.url.includes('youtube'));
+                            item.className = `book-item ${isVid ? 'video-item' : ''}`;
                             item.innerHTML = `<div class="book-item-content">${book.title}</div>`;
-                            item.addEventListener('click', () => loadLecture(book, item));
-                            contentCreator.appendChild(item);
+                            item.addEventListener('click', () => loadResource(book, item));
+                            contentSub.appendChild(item);
                         });
-                        contentSubj.appendChild(detailsCreator);
+                        contentTop.appendChild(detailsSub);
                     });
-                    bookList.appendChild(detailsSubj);
+                    bookList.appendChild(detailsTop);
                 });
             }
 
             searchBar.addEventListener('input', (e) => renderLibrary(e.target.value));
 
-            function loadLecture(book, el) {
+            function loadResource(book, el) {
                 document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
                 if (el) el.classList.add('active');
 
                 document.getElementById('placeholder-box').style.display = 'none';
                 document.getElementById('utilities-workspace').style.display = 'none';
                 document.getElementById('viewer-wrapper').style.display = 'block';
-                document.getElementById('split-screen-btn').style.display = 'flex';
                 
                 document.getElementById('current-book-title').textContent = book.title;
-                document.getElementById('current-book-breadcrumb').textContent = book.folders.join(" / ");
+                document.getElementById('current-book-breadcrumb').textContent = `${activeModule} / ${book.folders.join(" / ")}`;
                 
                 const dropdown = document.getElementById('playlist-dropdown');
                 const frame = document.getElementById('book-frame');
-                const splitFrame = document.getElementById('book-frame-split');
                 
                 if (book.playlist && book.playlist.length > 0) {
                     dropdown.style.display = 'block';
@@ -603,252 +505,11 @@
                         opt.textContent = vid.title;
                         dropdown.appendChild(opt);
                     });
-                    dropdown.onchange = (e) => { 
-                        frame.src = e.target.value; 
-                        if(document.getElementById('reader-container-main').classList.contains('split-active')) {
-                            splitFrame.src = e.target.value;
-                        }
-                    };
+                    dropdown.onchange = (e) => { frame.src = e.target.value; };
                     frame.src = book.playlist[0].url;
-                    if(document.getElementById('reader-container-main').classList.contains('split-active')) {
-                        splitFrame.src = book.playlist[0].url;
-                    }
                 } else {
                     dropdown.style.display = 'none';
-                }
-            }
-
-            // ==========================================
-            // 4. UTILITIES WORKSPACE
-            // ==========================================
-            document.querySelectorAll('.utility-menu-btn').forEach(btn => {
-                btn.addEventListener('click', () => openUtility(btn.getAttribute('data-util')));
-            });
-
-            function openUtility(type) {
-                document.getElementById('placeholder-box').style.display = 'none';
-                document.getElementById('viewer-wrapper').style.display = 'none';
-                document.getElementById('viewer-wrapper-split').style.display = 'none';
-                document.getElementById('split-resizer').style.display = 'none';
-                document.getElementById('split-screen-btn').style.display = 'none';
-                document.getElementById('playlist-dropdown').style.display = 'none';
-                document.getElementById('reader-container-main').classList.remove('split-active');
-                
-                const workspace = document.getElementById('utilities-workspace');
-                workspace.style.display = 'flex';
-                
-                let title = type.charAt(0).toUpperCase() + type.slice(1);
-                document.getElementById('current-book-title').textContent = title;
-                document.getElementById('current-book-breadcrumb').textContent = `Workspace / ${title}`;
-
-                if (type === 'analytics') {
-                    let total = 0, streak = 0, d = new Date();
-                    for(let k in studyStats) total += studyStats[k];
-                    while(studyStats[d.toISOString().split('T')[0]] > 0) {
-                        streak++; d.setDate(d.getDate()-1);
-                    }
-                    workspace.innerHTML = `
-                        <div class="util-workspace-inner">
-                            <div class="util-header">
-                                <h2 class="util-title">Focus Analytics</h2>
-                                <p class="util-subtitle">Track your deep work sessions over time.</p>
-                            </div>
-                            <div class="util-dashboard-grid">
-                                <div class="stat-card">
-                                    <div class="stat-label">Total Sessions</div>
-                                    <div class="stat-value">${total}</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">Current Streak</div>
-                                    <div class="stat-value" style="color:var(--success);">${streak} <span style="font-size:0.5em; opacity:0.8;">days</span></div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-label">Hours Studied</div>
-                                    <div class="stat-value">${((total * pomoSettings.focusTime) / 60).toFixed(1)} <span style="font-size:0.5em; opacity:0.8;">hrs</span></div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } 
-                else if (type === 'timetable') {
-                    workspace.innerHTML = `
-                        <div class="util-workspace-inner" style="max-width:800px;">
-                            <div class="util-header">
-                                <h2 class="util-title">Daily Planner</h2>
-                                <p class="util-subtitle">Plan your study blocks efficiently.</p>
-                            </div>
-                            <div class="tt-container">
-                                <div class="tt-header-bar">
-                                    <div class="tt-input-group">
-                                        <input type="time" id="tt-time" class="tt-input time" value="09:00">
-                                        <input type="text" id="tt-task" class="tt-input text" placeholder="What are you studying?">
-                                    </div>
-                                    <button class="primary-btn" id="tt-add-btn">Add Block</button>
-                                </div>
-                                <div class="tt-timeline" id="tt-timeline"></div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    let tasks = JSON.parse(localStorage.getItem('study_timeline_clean')) || [];
-                    
-                    const formatTime = (time24) => {
-                        let [h, m] = time24.split(':');
-                        let ampm = h >= 12 ? 'PM' : 'AM';
-                        h = h % 12 || 12;
-                        return `${String(h).padStart(2,'0')}:${m} ${ampm}`;
-                    };
-
-                    const renderTasks = () => {
-                        const tl = document.getElementById('tt-timeline');
-                        tl.innerHTML = '';
-                        tasks.sort((a,b)=>a.time.localeCompare(b.time)).forEach((t, i) => {
-                            let item = document.createElement('div');
-                            item.className = `tt-item ${t.done ? 'completed':''}`;
-                            item.innerHTML = `
-                                <div class="tt-time-column">${formatTime(t.time)}</div>
-                                <div class="tt-node"></div>
-                                <div class="tt-content">
-                                    <div class="tt-task-info">
-                                        <div class="tt-task-text">${t.text}</div>
-                                    </div>
-                                    <div class="tt-actions">
-                                        <button class="tt-action-btn check" onclick="toggleTask(${i})">✔</button>
-                                        <button class="tt-action-btn del" onclick="delTask(${i})">✕</button>
-                                    </div>
-                                </div>
-                            `;
-                            tl.appendChild(item);
-                        });
-                    };
-
-                    window.toggleTask = (i) => { tasks[i].done = !tasks[i].done; localStorage.setItem('study_timeline_clean', JSON.stringify(tasks)); renderTasks(); };
-                    window.delTask = (i) => { tasks.splice(i, 1); localStorage.setItem('study_timeline_clean', JSON.stringify(tasks)); renderTasks(); };
-                    
-                    document.getElementById('tt-add-btn').onclick = () => {
-                        let tm = document.getElementById('tt-time').value;
-                        let txt = document.getElementById('tt-task').value.trim();
-                        if(txt && tm) { 
-                            tasks.push({time:tm, text:txt, done:false}); 
-                            localStorage.setItem('study_timeline_clean', JSON.stringify(tasks)); 
-                            document.getElementById('tt-task').value = '';
-                            renderTasks(); 
-                        }
-                    };
-                    renderTasks();
-                } 
-                else if (type === 'syllabus') {
-                    workspace.innerHTML = `
-                        <div class="util-workspace-inner">
-                            <div class="util-header">
-                                <h2 class="util-title">Syllabus Tracker</h2>
-                                <p class="util-subtitle">Track your chapter-wise readiness.</p>
-                            </div>
-                            <div class="syl-container">
-                                <div class="syl-tabs">
-                                    <button class="syl-tab active" data-target="Class12">Class 12 Boards</button>
-                                    <button class="syl-tab" data-target="JEEMains">JEE Mains</button>
-                                    <button class="syl-tab" data-target="JEEAdv">JEE Advanced</button>
-                                </div>
-                                <div class="syl-progress-wrapper">
-                                    <div class="syl-progress-header">
-                                        <span>Overall Progress</span>
-                                        <span id="syl-pct-text">0%</span>
-                                    </div>
-                                    <div class="syl-progress-bar"><div class="syl-progress-fill" id="syl-progress-fill"></div></div>
-                                </div>
-                                <div class="syl-subjects-grid" id="syl-subjects-grid"></div>
-                            </div>
-                        </div>
-                    `;
-
-                    const states = [
-                        { text: 'Unstudied', class: 'syl-status-0' },
-                        { text: 'Theory Done', class: 'syl-status-1' },
-                        { text: 'Practice/PYQs', class: 'syl-status-2' },
-                        { text: 'Mastered', class: 'syl-status-3' }
-                    ];
-
-                    let sylData = JSON.parse(localStorage.getItem('syllabus_tracker_clean')) || {};
-
-                    function updateProgress() {
-                        let total = 0, score = 0;
-                        for(let page in detailedSyllabus) {
-                            for(let subj in detailedSyllabus[page]) {
-                                detailedSyllabus[page][subj].forEach(chap => {
-                                    let key = `${page}_${subj}_${chap}`;
-                                    total += 3;
-                                    score += (sylData[key] || 0);
-                                });
-                            }
-                        }
-                        let pct = total === 0 ? 0 : Math.round((score/total)*100);
-                        document.getElementById('syl-progress-fill').style.width = `${pct}%`;
-                        document.getElementById('syl-pct-text').innerText = `${pct}% Complete`;
-                    }
-
-                    function renderSyllabusView(examKey) {
-                        const grid = document.getElementById('syl-subjects-grid');
-                        grid.innerHTML = '';
-                        const data = detailedSyllabus[examKey];
-
-                        for(let subj in data) {
-                            let card = document.createElement('div');
-                            card.className = 'syl-subject-card';
-                            
-                            // Check if this subject should be open (default to true for first render)
-                            let isOpen = true; 
-
-                            card.innerHTML = `
-                                <div class="syl-subject-header">
-                                    <span>${subj}</span>
-                                    <span style="font-size:0.8em; color:var(--text-muted);">${data[subj].length} Chapters</span>
-                                </div>
-                                <div class="syl-chapter-list" style="display: ${isOpen ? 'flex' : 'none'};"></div>
-                            `;
-
-                            let header = card.querySelector('.syl-subject-header');
-                            let list = card.querySelector('.syl-chapter-list');
-                            header.onclick = () => {
-                                list.style.display = list.style.display === 'none' ? 'flex' : 'none';
-                            };
-
-                            data[subj].forEach(chap => {
-                                let key = `${examKey}_${subj}_${chap}`;
-                                let stIdx = sylData[key] || 0;
-
-                                let row = document.createElement('div');
-                                row.className = 'syl-chapter-row';
-                                row.innerHTML = `
-                                    <span class="syl-chap-name">${chap}</span>
-                                    <button class="syl-status-btn ${states[stIdx].class}">${states[stIdx].text}</button>
-                                `;
-
-                                let btn = row.querySelector('button');
-                                btn.onclick = () => {
-                                    stIdx = (stIdx + 1) % 4;
-                                    sylData[key] = stIdx;
-                                    localStorage.setItem('syllabus_tracker_clean', JSON.stringify(sylData));
-                                    btn.className = `syl-status-btn ${states[stIdx].class}`;
-                                    btn.innerText = states[stIdx].text;
-                                    updateProgress();
-                                };
-                                list.appendChild(row);
-                            });
-                            grid.appendChild(card);
-                        }
-                    }
-
-                    document.querySelectorAll('.syl-tab').forEach(tab => {
-                        tab.onclick = (e) => {
-                            document.querySelectorAll('.syl-tab').forEach(t => t.classList.remove('active'));
-                            e.target.classList.add('active');
-                            renderSyllabusView(e.target.getAttribute('data-target'));
-                        };
-                    });
-
-                    renderSyllabusView('Class12');
-                    updateProgress();
+                    frame.src = book.url || '';
                 }
             }
 
@@ -857,19 +518,207 @@
                     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active');
                     activeModule = e.target.getAttribute('data-target');
+                    searchBar.value = '';
                     
-                    if(activeModule === 'LECTURES') {
+                    if(activeModule === 'UTILITIES') {
+                        document.getElementById('library-sidebar-view').style.display = 'none';
+                        document.getElementById('utilities-sidebar-view').style.display = 'flex';
+                    } else {
                         document.getElementById('utilities-sidebar-view').style.display = 'none';
                         document.getElementById('library-sidebar-view').style.display = 'flex';
                         renderLibrary();
-                    } else {
-                        document.getElementById('library-sidebar-view').style.display = 'none';
-                        document.getElementById('utilities-sidebar-view').style.display = 'flex';
                     }
                 });
             });
 
-            // Local Copilot Logic
+            document.querySelectorAll('.utility-menu-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.getAttribute('data-util');
+                    document.getElementById('placeholder-box').style.display = 'none';
+                    document.getElementById('viewer-wrapper').style.display = 'none';
+                    document.getElementById('playlist-dropdown').style.display = 'none';
+                    
+                    const workspace = document.getElementById('utilities-workspace');
+                    workspace.style.display = 'flex';
+                    
+                    document.getElementById('current-book-title').textContent = type === 'timetable' ? 'Master Timetable' : 'Syllabus Tracker';
+                    document.getElementById('current-book-breadcrumb').textContent = `Workspace / Utilities`;
+
+                    if (type === 'timetable') {
+                        workspace.innerHTML = `
+                            <div class="util-workspace-inner" style="max-width:900px;">
+                                <div class="util-header">
+                                    <h2 class="util-title">Daily Timeline</h2>
+                                    <p class="util-subtitle">Schedule your deep work blocks.</p>
+                                </div>
+                                <div class="tt-container">
+                                    <div class="tt-header-bar">
+                                        <div class="tt-input-group">
+                                            <input type="time" id="tt-time" class="tt-input time" value="08:00">
+                                            <input type="text" id="tt-task" class="tt-input text" placeholder="What are you focusing on?">
+                                        </div>
+                                        <button class="primary-btn" id="tt-add-btn">Add Block</button>
+                                    </div>
+                                    <div class="tt-timeline" id="tt-timeline"></div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        let tasks = JSON.parse(localStorage.getItem('study_timeline_v3')) || [];
+                        
+                        const formatTime = (time24) => {
+                            let [h, m] = time24.split(':');
+                            let ampm = h >= 12 ? 'PM' : 'AM';
+                            h = h % 12 || 12;
+                            return `${String(h).padStart(2,'0')}:${m} ${ampm}`;
+                        };
+
+                        const renderTasks = () => {
+                            const tl = document.getElementById('tt-timeline');
+                            tl.innerHTML = '';
+                            tasks.sort((a,b)=>a.time.localeCompare(b.time)).forEach((t, i) => {
+                                let item = document.createElement('div');
+                                item.className = `tt-item ${t.done ? 'completed':''}`;
+                                item.innerHTML = `
+                                    <div class="tt-time-column">${formatTime(t.time)}</div>
+                                    <div class="tt-node"></div>
+                                    <div class="tt-content">
+                                        <div class="tt-task-text">${t.text}</div>
+                                        <div class="tt-actions">
+                                            <button class="tt-action-btn check" onclick="window.toggleTask(${i})">✔</button>
+                                            <button class="tt-action-btn del" onclick="window.delTask(${i})">✕</button>
+                                        </div>
+                                    </div>
+                                `;
+                                tl.appendChild(item);
+                            });
+                        };
+
+                        window.toggleTask = (i) => { tasks[i].done = !tasks[i].done; localStorage.setItem('study_timeline_v3', JSON.stringify(tasks)); renderTasks(); };
+                        window.delTask = (i) => { tasks.splice(i, 1); localStorage.setItem('study_timeline_v3', JSON.stringify(tasks)); renderTasks(); };
+                        
+                        document.getElementById('tt-add-btn').onclick = () => {
+                            let tm = document.getElementById('tt-time').value;
+                            let txt = document.getElementById('tt-task').value.trim();
+                            if(txt && tm) { 
+                                tasks.push({time:tm, text:txt, done:false}); 
+                                localStorage.setItem('study_timeline_v3', JSON.stringify(tasks)); 
+                                document.getElementById('tt-task').value = '';
+                                renderTasks(); 
+                            }
+                        };
+                        renderTasks();
+                    } 
+                    else if (type === 'syllabus') {
+                        workspace.innerHTML = `
+                            <div class="util-workspace-inner">
+                                <div class="util-header">
+                                    <h2 class="util-title">Immersive Syllabus Tracker</h2>
+                                    <p class="util-subtitle">Track chapter-wise readiness.</p>
+                                </div>
+                                <div class="syl-container">
+                                    <div class="syl-tabs">
+                                        <button class="syl-tab active" data-target="Class12">Class 12 Boards</button>
+                                        <button class="syl-tab" data-target="JEEMains">JEE Mains</button>
+                                        <button class="syl-tab" data-target="JEEAdv">JEE Advanced</button>
+                                    </div>
+                                    <div class="syl-progress-wrapper">
+                                        <div class="syl-progress-header">
+                                            <span id="syl-pct-text">Overall Readiness: 0%</span>
+                                        </div>
+                                        <div class="syl-progress-bar"><div class="syl-progress-fill" id="syl-progress-fill"></div></div>
+                                    </div>
+                                    <div class="syl-subjects-grid" id="syl-subjects-grid"></div>
+                                </div>
+                            </div>
+                        `;
+
+                        const states = [
+                            { text: '⚪ Unstudied', class: 'syl-status-0' },
+                            { text: '🟡 Theory Done', class: 'syl-status-1' },
+                            { text: '🔵 Practicing PYQs', class: 'syl-status-2' },
+                            { text: '🟢 Mastered', class: 'syl-status-3' }
+                        ];
+
+                        let sylData = JSON.parse(localStorage.getItem('syllabus_tracker_v3')) || {};
+
+                        function updateProgress() {
+                            let total = 0, score = 0;
+                            for(let page in detailedSyllabus) {
+                                for(let subj in detailedSyllabus[page]) {
+                                    detailedSyllabus[page][subj].forEach(chap => {
+                                        let key = `${page}_${subj}_${chap}`;
+                                        total += 3;
+                                        score += (sylData[key] || 0);
+                                    });
+                                }
+                            }
+                            let pct = total === 0 ? 0 : Math.round((score/total)*100);
+                            document.getElementById('syl-progress-fill').style.width = `${pct}%`;
+                            document.getElementById('syl-pct-text').innerText = `Overall Readiness: ${pct}%`;
+                        }
+
+                        function renderSyllabusView(examKey) {
+                            const grid = document.getElementById('syl-subjects-grid');
+                            grid.innerHTML = '';
+                            const data = detailedSyllabus[examKey];
+
+                            for(let subj in data) {
+                                let card = document.createElement('div');
+                                card.className = 'syl-subject-card';
+                                
+                                card.innerHTML = `
+                                    <div class="syl-subject-header">
+                                        <span>${subj}</span>
+                                        <span style="font-size:0.8em; color:var(--text-muted); font-weight:500;">${data[subj].length} Chapters</span>
+                                    </div>
+                                    <div class="syl-chapter-list"></div>
+                                `;
+
+                                let header = card.querySelector('.syl-subject-header');
+                                let list = card.querySelector('.syl-chapter-list');
+                                header.onclick = () => list.style.display = list.style.display === 'none' ? 'grid' : 'none';
+
+                                data[subj].forEach(chap => {
+                                    let key = `${examKey}_${subj}_${chap}`;
+                                    let stIdx = sylData[key] || 0;
+
+                                    let row = document.createElement('div');
+                                    row.className = 'syl-chapter-row';
+                                    row.innerHTML = `
+                                        <span class="syl-chap-name">${chap}</span>
+                                        <button class="syl-status-btn ${states[stIdx].class}">${states[stIdx].text}</button>
+                                    `;
+
+                                    let btn = row.querySelector('button');
+                                    btn.onclick = () => {
+                                        stIdx = (stIdx + 1) % 4;
+                                        sylData[key] = stIdx;
+                                        localStorage.setItem('syllabus_tracker_v3', JSON.stringify(sylData));
+                                        btn.className = `syl-status-btn ${states[stIdx].class}`;
+                                        btn.innerText = states[stIdx].text;
+                                        updateProgress();
+                                    };
+                                    list.appendChild(row);
+                                });
+                                grid.appendChild(card);
+                            }
+                        }
+
+                        document.querySelectorAll('.syl-tab').forEach(tab => {
+                            tab.onclick = (e) => {
+                                document.querySelectorAll('.syl-tab').forEach(t => t.classList.remove('active'));
+                                e.target.classList.add('active');
+                                renderSyllabusView(e.target.getAttribute('data-target'));
+                            };
+                        });
+
+                        renderSyllabusView('Class12');
+                        updateProgress();
+                    }
+                });
+            });
+
             const chatFab = document.getElementById('chat-fab-btn');
             const chatWin = document.getElementById('chat-window');
             const chatInp = document.getElementById('chat-input');
@@ -877,21 +726,17 @@
 
             chatFab.onclick = () => chatWin.classList.add('open');
             document.getElementById('chat-close-btn').onclick = () => chatWin.classList.remove('open');
-            
+
             window.playSearchedVideo = function(url, title, catTitle) {
                 document.getElementById('placeholder-box').style.display = 'none';
                 document.getElementById('utilities-workspace').style.display = 'none';
                 document.getElementById('viewer-wrapper').style.display = 'block';
-                document.getElementById('split-screen-btn').style.display = 'flex';
                 
                 document.getElementById('current-book-title').textContent = title;
                 document.getElementById('current-book-breadcrumb').textContent = `Search / ${catTitle}`;
                 document.getElementById('playlist-dropdown').style.display = 'none';
                 
                 document.getElementById('book-frame').src = url;
-                if(document.getElementById('reader-container-main').classList.contains('split-active')) {
-                    document.getElementById('book-frame-split').src = url;
-                }
                 chatWin.classList.remove('open');
             }
 
@@ -903,85 +748,22 @@
                 
                 setTimeout(() => {
                     let matches = [];
-                    libraryData.forEach(cat => {
-                        cat.playlist.forEach(vid => {
-                            if(vid.title.toLowerCase().includes(q) || cat.title.toLowerCase().includes(q)) {
-                                matches.push(`<button onclick="playSearchedVideo('${vid.url}', '${vid.title.replace(/'/g, "\\'")}', '${cat.title.replace(/'/g, "\\'")}')" style="background:var(--highlight); color:var(--text-color); border:1px solid var(--border-color); padding:8px 12px; border-radius:6px; margin-top:6px; width:100%; text-align:left; cursor:pointer; font-size:0.9em; transition:0.2s;" onmouseover="this.style.borderColor='var(--highlight-text)'" onmouseout="this.style.borderColor='var(--border-color)'">▶ ${vid.title}</button>`);
-                            }
-                        });
+                    // Search through lectures
+                    lectureVideos.forEach(cat => {
+                        if(cat.playlist) {
+                            cat.playlist.forEach(vid => {
+                                if(vid.title.toLowerCase().includes(q) || cat.title.toLowerCase().includes(q)) {
+                                    matches.push(`<button onclick="playSearchedVideo('${vid.url}', '${vid.title.replace(/'/g, "\\'")}', '${cat.title.replace(/'/g, "\\'")}')" style="background:var(--highlight); color:var(--highlight-text); border:1px solid var(--highlight-text); padding:8px 12px; border-radius:8px; margin-top:6px; width:100%; text-align:left; cursor:pointer; font-size:0.9em; font-weight:600; transition:0.2s;">▶ ${vid.title}</button>`);
+                                }
+                            });
+                        }
                     });
                     
-                    let reply = matches.length > 0 ? `I found these lectures for you:<br>${matches.slice(0,3).join('')}` : "Sorry, I couldn't find any lectures matching that topic.";
+                    let reply = matches.length > 0 ? `I found these resources for you:<br>${matches.slice(0,3).join('')}` : "Sorry, I couldn't find any resources matching that topic.";
                     chatBody.innerHTML += `<div class="chat-msg bot-msg">${reply}</div>`;
                     chatBody.scrollTop = chatBody.scrollHeight;
                 }, 400);
             };
-
-            // Modal Controls
-            const settingsModal = document.getElementById('settings-modal-overlay');
-            document.getElementById('pomo-open-settings').onclick = () => settingsModal.classList.add('open');
-            document.getElementById('settings-close-modal').onclick = () => settingsModal.classList.remove('open');
-            
-            document.getElementById('save-settings-btn').onclick = () => {
-                pomoSettings.focusTime = parseInt(document.getElementById('setting-focus-time').value);
-                pomoSettings.theme = document.getElementById('setting-theme').value;
-                localStorage.setItem('pomo_settings_clean', JSON.stringify(pomoSettings));
-                document.body.className = `${pomoSettings.theme} font-medium`;
-                settingsModal.classList.remove('open');
-                
-                if(!isPomoRunning) {
-                    pomoSeconds = pomoSettings.focusTime * 60;
-                    updatePomoDisplay();
-                }
-            };
-            
-            document.getElementById('theme-toggle').onclick = () => {
-                pomoSettings.theme = pomoSettings.theme === 'theme-light' ? 'theme-slate' : 'theme-light';
-                document.body.className = `${pomoSettings.theme} font-medium`;
-                document.getElementById('setting-theme').value = pomoSettings.theme;
-                localStorage.setItem('pomo_settings_clean', JSON.stringify(pomoSettings));
-            };
-
-            // Split Screen Logic
-            let isSplitActive = false;
-            document.getElementById('split-screen-btn').onclick = () => {
-                isSplitActive = !isSplitActive;
-                const main = document.getElementById('reader-container-main');
-                const v1 = document.getElementById('viewer-wrapper');
-                const v2 = document.getElementById('viewer-wrapper-split');
-                const res = document.getElementById('split-resizer');
-                
-                if(isSplitActive) {
-                    main.classList.add('split-active');
-                    v2.style.display = 'block';
-                    res.style.display = 'flex';
-                    document.getElementById('book-frame-split').src = document.getElementById('book-frame').src;
-                    v1.style.width = '50%'; v2.style.width = '50%';
-                    document.getElementById('split-screen-btn').style.color = 'var(--highlight-text)';
-                } else {
-                    main.classList.remove('split-active');
-                    v2.style.display = 'none';
-                    res.style.display = 'none';
-                    v1.style.width = '100%';
-                    document.getElementById('split-screen-btn').style.color = '';
-                }
-            };
-
-            // Resizer Logic
-            const resizer = document.getElementById('split-resizer');
-            let isResizing = false;
-            resizer.onmousedown = () => { isResizing = true; resizer.classList.add('dragging'); document.body.style.cursor='col-resize'; document.getElementById('viewer-wrapper').style.pointerEvents='none'; document.getElementById('viewer-wrapper-split').style.pointerEvents='none';};
-            document.onmousemove = (e) => {
-                if(!isResizing) return;
-                const main = document.getElementById('reader-container-main');
-                const rect = main.getBoundingClientRect();
-                let pct = ((e.clientX - rect.left) / rect.width) * 100;
-                if(pct>20 && pct<80) {
-                    document.getElementById('viewer-wrapper').style.width = `${pct}%`;
-                    document.getElementById('viewer-wrapper-split').style.width = `${100-pct}%`;
-                }
-            };
-            document.onmouseup = () => { if(isResizing) { isResizing = false; resizer.classList.remove('dragging'); document.body.style.cursor='default'; document.getElementById('viewer-wrapper').style.pointerEvents='auto'; document.getElementById('viewer-wrapper-split').style.pointerEvents='auto';}};
 
             document.getElementById('fullscreen-btn').onclick = () => {
                 if (!document.fullscreenElement) document.documentElement.requestFullscreen();
