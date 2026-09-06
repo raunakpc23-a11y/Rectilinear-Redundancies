@@ -272,14 +272,15 @@
                         <option value="brown">🌊 Brown Noise (Deep Focus)</option>
                         <option value="pink">🌸 Pink Noise (Balanced Focus)</option>
                         <option value="white">📻 White Noise (Isolate)</option>
+                        <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                     </optgroup>
-                    <optgroup label="Curated Playlists (Spotify)">
-                        <option value="lofi">🎧 Lofi Beats</option>
-                        <option value="classical">🎻 Classical Study</option>
-                        <option value="game">🎮 Video Game Soundtracks</option>
-                        <option value="cinematic">🎬 Epic Cinematic Scores</option>
-                        <option value="nature">🌧️ Nature Sounds</option>
-                        <option value="cafe">☕ Coffee Shop Vibe</option>
+                    <optgroup label="Curated Playlists (YouTube)">
+                        <option value="jfKfPfyJRdk">🎧 Lofi Beats (Lofi Girl)</option>
+                        <option value="mIYzpCGx0zQ">🎻 Classical Study</option>
+                        <option value="g6jEhbFQ11M">🎮 Video Game Soundtracks</option>
+                        <option value="aHJmB16bXEA">🎬 Epic Cinematic Scores</option>
+                        <option value="eKFTSSKCzWA">🌧️ Nature Sounds</option>
+                        <option value="BOBEO11K63A">☕ Coffee Shop Vibe</option>
                     </optgroup>
                 </select>
             </div>
@@ -812,74 +813,114 @@
             const audioSelect = document.getElementById('audio-select');
             const volContainer = document.getElementById('volume-container');
             const volSlider = document.getElementById('audio-volume');
+            const audioToggleBtn = document.getElementById('audio-toggle');
             
+            function stopCurrentAudio() {
+                if(isAud && audNode) { 
+                    try {
+                        if(audNode.stop) audNode.stop();
+                        if(audNode.disconnect) audNode.disconnect();
+                    } catch(er){} 
+                    audNode=null; globalGainNode=null; 
+                }
+                const iframe = document.getElementById('audio-frame');
+                if (iframe) iframe.src = '';
+                document.getElementById('audio-iframe-box').style.display = 'none';
+                isAud = false;
+                audioToggleBtn.textContent = "▶ Start Audio";
+            }
+
             audioSelect.addEventListener('change', () => {
-                if (['brown', 'white', 'pink'].includes(audioSelect.value)) {
+                if (['brown', 'white', 'pink', 'binaural'].includes(audioSelect.value)) {
                     volContainer.style.display = 'flex';
                 } else {
                     volContainer.style.display = 'none';
                 }
+                stopCurrentAudio(); // Automatically stop when switching tracks
             });
 
             volSlider.addEventListener('input', (e) => {
-                if (globalGainNode) globalGainNode.gain.value = e.target.value;
+                if (globalGainNode && globalGainNode.gain) globalGainNode.gain.value = e.target.value;
             });
 
-            document.getElementById('audio-toggle').onclick = (e) => {
+            audioToggleBtn.onclick = (e) => {
                 const type = audioSelect.value;
                 const iframe = document.getElementById('audio-frame');
                 const box = document.getElementById('audio-iframe-box');
                 
-                if(isAud && audNode) { try{audNode.stop();}catch(er){} audNode=null; globalGainNode=null; }
-                if(isAud) { isAud=false; e.target.textContent="▶ Start Audio"; box.style.display='none'; iframe.src=''; return; }
+                if(isAud) { 
+                    stopCurrentAudio(); 
+                    return; 
+                }
 
                 isAud = true;
                 e.target.textContent="⏹ Stop Audio";
                 
-                if(['brown', 'white', 'pink'].includes(type)) {
+                if(['brown', 'white', 'pink', 'binaural'].includes(type)) {
                     box.style.display='none';
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const bSize = 2 * ctx.sampleRate; 
-                    const buff = ctx.createBuffer(1, bSize, ctx.sampleRate); 
-                    const out = buff.getChannelData(0);
-                    
-                    let last=0;
-                    let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-                    
-                    for(let i=0; i<bSize; i++) {
-                        let w = Math.random()*2-1;
-                        if(type==='white') {
-                            out[i] = w * 0.1;
-                        } else if(type==='brown') {
-                            last = (last + (0.02 * w)) / 1.02; 
-                            out[i] = last * 1.5; 
-                        } else if (type === 'pink') {
-                            b0 = 0.99886 * b0 + w * 0.0555179;
-                            b1 = 0.99332 * b1 + w * 0.0750759;
-                            b2 = 0.96900 * b2 + w * 0.1538520;
-                            b3 = 0.86650 * b3 + w * 0.3104856;
-                            b4 = 0.55000 * b4 + w * 0.5329522;
-                            b5 = -0.7616 * b5 - w * 0.0168980;
-                            out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
-                            b6 = w * 0.115926;
-                        }
-                    }
-                    audNode = ctx.createBufferSource(); audNode.buffer = buff; audNode.loop = true;
                     globalGainNode = ctx.createGain(); 
                     globalGainNode.gain.value = volSlider.value;
-                    audNode.connect(globalGainNode); globalGainNode.connect(ctx.destination);
-                    audNode.start(0);
+                    globalGainNode.connect(ctx.destination);
+
+                    if (type === 'binaural') {
+                        // Create Binaural Beats (40Hz difference)
+                        const osc1 = ctx.createOscillator();
+                        const osc2 = ctx.createOscillator();
+                        const merger = ctx.createChannelMerger(2);
+                        
+                        osc1.type = 'sine';
+                        osc1.frequency.value = 200; // Left ear
+                        osc2.type = 'sine';
+                        osc2.frequency.value = 240; // Right ear (40Hz Gamma wave)
+                        
+                        osc1.connect(merger, 0, 0); // Connect to Left
+                        osc2.connect(merger, 0, 1); // Connect to Right
+                        
+                        merger.connect(globalGainNode);
+                        osc1.start();
+                        osc2.start();
+                        
+                        // Store merger or oscillators in audNode to handle stopping later
+                        audNode = { 
+                            stop: () => { osc1.stop(); osc2.stop(); }, 
+                            disconnect: () => { osc1.disconnect(); osc2.disconnect(); merger.disconnect(); }
+                        };
+                    } else {
+                        const bSize = 2 * ctx.sampleRate; 
+                        const buff = ctx.createBuffer(1, bSize, ctx.sampleRate); 
+                        const out = buff.getChannelData(0);
+                        
+                        let last=0;
+                        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+                        
+                        for(let i=0; i<bSize; i++) {
+                            let w = Math.random()*2-1;
+                            if(type==='white') {
+                                out[i] = w * 0.1;
+                            } else if(type==='brown') {
+                                last = (last + (0.02 * w)) / 1.02; 
+                                out[i] = last * 1.5; 
+                            } else if (type === 'pink') {
+                                b0 = 0.99886 * b0 + w * 0.0555179;
+                                b1 = 0.99332 * b1 + w * 0.0750759;
+                                b2 = 0.96900 * b2 + w * 0.1538520;
+                                b3 = 0.86650 * b3 + w * 0.3104856;
+                                b4 = 0.55000 * b4 + w * 0.5329522;
+                                b5 = -0.7616 * b5 - w * 0.0168980;
+                                out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11;
+                                b6 = w * 0.115926;
+                            }
+                        }
+                        audNode = ctx.createBufferSource(); 
+                        audNode.buffer = buff; 
+                        audNode.loop = true;
+                        audNode.connect(globalGainNode); 
+                        audNode.start(0);
+                    }
                 } else {
                     box.style.display='block';
-                    const playlistMap = {
-                        'lofi': '0vvXsWCC9xrXsKd4FyS8kM',
-                        'classical': '37i9dQZF1DWV0gynK7Pt6v',
-                        'game': '37i9dQZF1DXdfOcg1fm0VG',
-                        'cinematic': '37i9dQZF1DX1qXJgB0bA8E',
-                        'nature': '37i9dQZF1DX4PP3DA4J0N8',
-                        'cafe': '37i9dQZF1DX30D5N5E3E7h'
-                    };
-                    iframe.src = `https://open.spotify.com/embed/playlist/${playlistMap[type]}?utm_source=generator&theme=0`;
+                    iframe.src = `https://www.youtube.com/embed/${type}?autoplay=1`;
                 }
             };
 
