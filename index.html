@@ -3,1250 +3,1011 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudySpace Dashboard</title>
-    
-    <!-- React & ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    
-    <!-- Babel for in-browser JSX compilation -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: {} }
-        }
-    </script>
-
-    <!-- FontAwesome (Replaced Lucide to guarantee no browser crashes) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <title>All-in-One Study Dashboard</title>
     <style>
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .perspective-1000 { perspective: 1000px; }
-        .transform-style-3d { transform-style: preserve-3d; }
-        .backface-hidden { backface-visibility: hidden; }
-        .rotate-y-180 { transform: rotateY(180deg); }
-        
-        /* Range slider styling for Audio Mixer */
-        input[type=range]::-webkit-slider-thumb {
-            appearance: none; 
-            width: 16px; 
-            height: 16px; 
-            border-radius: 50%; 
-            background: white; 
-            border: 2px solid currentColor; 
-            cursor: pointer; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        /* =========================================================
+           1. CSS VARIABLES & THEMES (Ultra-detailed Dark Modes)
+           ========================================================= */
+        :root { 
+            --primary-bg: #f4f6f8; 
+            --sidebar-bg: #ffffff; 
+            --sidebar-text: #2d3748; 
+            --highlight: #ebf8ff; 
+            --highlight-text: #3182ce; 
+            --text-color: #1a202c; 
+            --text-muted: #718096;
+            --header-bg: #ffffff; 
+            --reader-bg: #edf2f7; 
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --folder-bg: #f7fafc; 
+            --success: #48bb78;
+            --danger: #ef4444;
         }
+
+        body.theme-amoled {
+            --primary-bg: #000000; 
+            --sidebar-bg: #0d0d0f; 
+            --sidebar-text: #f8fafc; 
+            --highlight: #1e3a8a; 
+            --highlight-text: #38bdf8; 
+            --text-color: #f8fafc; 
+            --text-muted: #94a3b8;
+            --header-bg: #0d0d0f; 
+            --reader-bg: #000000; 
+            --border-color: #27272a;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.9); 
+            --folder-bg: #18181b;
+            --success: #22c55e;
+        }
+
+        body.theme-charcoal {
+            --primary-bg: #121212; 
+            --sidebar-bg: #1e1e24; 
+            --sidebar-text: #f4f4f5; 
+            --highlight: #3f3f46; 
+            --highlight-text: #38bdf8; 
+            --text-color: #f4f4f5; 
+            --text-muted: #a1a1aa;
+            --header-bg: #1e1e24; 
+            --reader-bg: #121212; 
+            --border-color: #3f3f46;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6); 
+            --folder-bg: #27272a;
+            --success: #10b981;
+        }
+
+        body.theme-slate {
+            --primary-bg: #0f172a; 
+            --sidebar-bg: #1e293b; 
+            --sidebar-text: #f1f5f9; 
+            --highlight: #3b82f6; 
+            --highlight-text: #60a5fa; 
+            --text-color: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --header-bg: #1e293b; 
+            --reader-bg: #0f172a; 
+            --border-color: #475569;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4); 
+            --folder-bg: #334155;
+            --success: #34d399;
+        }
+
+        body.theme-light {
+            /* Fallbacks to root defaults */
+        }
+
+        body.font-small { font-size: 13px; }
+        body.font-medium { font-size: 15px; }
+        body.font-large { font-size: 17px; }
+
+        /* =========================================================
+           2. GLOBAL STYLES & LAYOUT
+           ========================================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-color); transition: background-color 0.3s, color 0.3s; overflow: hidden; width: 100vw; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+
+        /* SIDEBAR */
+        .sidebar { width: 440px; min-width: 320px; max-width: 440px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.02); transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; height: 100vh; }
+        .sidebar.collapsed { margin-left: -440px; }
+        .sidebar-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: var(--sidebar-bg); }
+        .sidebar-header h2 { font-size: 1.2em; font-weight: 700; }
+        
+        .header-controls-group { display: flex; align-items: center; gap: 6px; }
+        .icon-btn-header { background: none; border: none; font-size: 1.15em; cursor: pointer; padding: 4px; border-radius: 6px; transition: transform 0.2s; color: var(--text-color); }
+        .icon-btn-header:hover { transform: scale(1.15); }
+
+        /* POMODORO WIDGET */
+        .pomodoro-container { padding: 12px 16px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; }
+        .pomodoro-card { display: flex; align-items: center; justify-content: space-between; background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px; transition: all 0.3s ease; gap: 8px; }
+        .pomodoro-card.running { border-color: var(--highlight-text); animation: pulseGlow 2s infinite; }
+        .pomo-left { display: flex; align-items: center; gap: 10px; }
+        .pomo-icon { font-size: 1.5em; line-height: 1; }
+        .pomo-info { display: flex; flex-direction: column; gap: 1px; }
+        .pomo-status { font-size: 0.65em; font-weight: 700; text-transform: uppercase; color: var(--highlight-text); }
+        .pomodoro-display { font-family: monospace; font-size: 1.3em; font-weight: 800; color: var(--highlight-text); }
+        .pomo-controls { display: flex; gap: 6px; align-items: center; }
+        .pomo-btn { background: var(--sidebar-bg); border: 1px solid var(--border-color); cursor: pointer; font-size: 0.85em; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s; color: var(--text-color); }
+        .pomo-btn:hover { background: var(--highlight); border-color: var(--highlight-text); transform: scale(1.05); }
+        
+        .pomo-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; font-size: 0.75em; font-weight: 600; color: var(--highlight-text); text-align: center; }
+        .pomo-highlight-task { display: none; background: var(--folder-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; font-size: 0.78em; font-weight: 600; color: var(--text-color); align-items: center; gap: 8px; }
+        .pomo-highlight-task span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* MODULE SELECTOR */
+        .mode-selector { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px 4px; background-color: var(--sidebar-bg); }
+        .mode-btn { flex: 1; min-width: 80px; padding: 8px 4px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--folder-bg); color: var(--sidebar-text); font-weight: 700; font-size: 0.82em; cursor: pointer; text-align: center; transition: 0.2s;}
+        .mode-btn:hover { border-color: var(--highlight-text); color: var(--highlight-text); }
+        .mode-btn.active { background-color: var(--highlight-text); color: white; border-color: var(--highlight-text); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); }
+
+        /* SEARCH & FOLDER TREE */
+        .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 16px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .search-row { display: flex; gap: 6px; align-items: center; width: 100%; }
+        .search-input { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.88em; }
+        .search-input:focus { border-color: var(--highlight-text); }
+        
+        .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 16px; list-style: none; background-color: var(--sidebar-bg); }
+        details { margin-bottom: 4px; }
+        summary { padding: 8px 12px; cursor: pointer; font-weight: 600; border-radius: 8px; display: flex; align-items: center; background-color: var(--folder-bg); user-select: none; font-size: 0.86em; color: var(--sidebar-text); border: 1px solid var(--border-color); }
+        summary:hover { background-color: var(--highlight); color: var(--highlight-text); border-color: var(--highlight-text); }
+        summary::marker, summary::-webkit-details-marker { display: none; }
+        summary::before { content: "📁"; margin-right: 8px; font-size: 1.1em; }
+        details[open] > summary::before { content: "📂"; }
+        .folder-contents { padding-left: 10px; margin-top: 4px; border-left: 2px dashed var(--border-color); margin-left: 10px; }
+
+        .book-item { padding: 7px 10px; margin: 3px 0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.83em; color: var(--sidebar-text); border: 1px solid var(--border-color); background: var(--folder-bg); gap: 6px; }
+        .book-item:hover { background-color: var(--highlight); color: var(--highlight-text); border-color: var(--highlight-text); }
+        .book-item.active { background-color: var(--highlight-text); color: white; font-weight: 600; border-color: var(--highlight-text);}
+        .book-item-content { display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
+        .book-item-content::before { content: "▶️"; margin-right: 6px; opacity: 0.8; flex-shrink: 0; }
+        
+        /* MAIN WORKSPACE */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--reader-bg); width: 100%; position: relative; overflow: hidden; height: 100vh; }
+        .reader-header { padding: 12px 20px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .reader-header-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; flex-grow: 1; }
+        .title-row { display: flex; align-items: center; gap: 8px; }
+        .title-row h2 { font-size: 1.2em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .breadcrumb { color: var(--text-color); opacity: 0.7; font-size: 0.8em; font-family: monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .playlist-select { margin-top: 4px; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); font-weight: 600; font-size: 0.85em; width: 100%; max-width: 400px; outline: none; cursor:pointer;}
+
+        .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+        .icon-btn { background: none; border: none; color: inherit; font-size: 1.2em; cursor: pointer; padding: 6px 8px; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .icon-btn:hover { background-color: var(--border-color); }
+        .primary-btn { background-color: var(--highlight-text); color: white; font-weight: bold; font-size: 0.85em; padding: 7px 14px; display: flex; gap: 6px; border-radius: 6px; border: none; cursor: pointer; align-items: center;}
+        .primary-btn:hover { filter: brightness(1.1); }
+
+        .reader-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; height: calc(100vh - 70px); position: relative; gap: 8px; }
+        .reader-container.split-active { flex-direction: row; }
+        .reader-container.split-active #viewer-wrapper, .reader-container.split-active #viewer-wrapper-split, .reader-container.split-active #omr-panel { height: 100%; width: 50%; }
+
+        #viewer-wrapper, #viewer-wrapper-split { width: 100%; height: 100%; border-radius: 10px; overflow: hidden; display: none; background-color: #000; border: 1px solid var(--border-color); position: relative; box-shadow: var(--card-shadow);}
+        
+        .placeholder-container { background-color: var(--sidebar-bg); padding: 40px; border-radius: 14px; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); max-width: 500px; text-align: center; }
+        
+        /* SPLIT SCREEN & RESIZER */
+        .resizer { width: 8px; cursor: col-resize; background: var(--border-color); border-radius: 4px; transition: background 0.2s; z-index: 10; display: none;}
+        .resizer:hover, .resizer.dragging { background: var(--highlight-text); }
+
+        /* UTILITIES WORKSPACE (Analytics, Timetable, Syllabus, Whiteboard) */
+        #utilities-workspace { display:none; width:100%; height:100%; background:var(--reader-bg); flex-direction:column; overflow-y:auto; padding:20px;}
+        .utility-menu-btn { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 16px; border-radius: 12px; font-size: 1em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .utility-menu-btn:hover { background: var(--highlight); color: var(--highlight-text); border-color: var(--highlight-text); transform: translateY(-2px); }
+        .util-workspace-inner { display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; max-width: 1000px; margin: 0 auto;}
+        
+        /* Analytics */
+        .util-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; margin-bottom: 30px; }
+        .stat-card { background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; text-align: center; box-shadow: var(--card-shadow); flex: 1; }
+        .stat-value { font-size: 2.5em; font-weight: 800; margin-bottom: 8px; color: var(--highlight-text); }
+        .stat-label { font-size: 0.8em; opacity: 0.8; font-weight: 600; text-transform: uppercase; }
+        
+        /* Timetable */
+        .tt-layout { display: flex; gap: 20px; width: 100%; height: calc(100vh - 160px);}
+        .tt-daily { flex-grow: 1; display: flex; flex-direction: column; background: var(--sidebar-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--card-shadow); }
+        .tt-add-task-form { display: flex; gap: 10px; align-items: center; background: var(--folder-bg); padding: 12px; border-bottom: 1px solid var(--border-color); flex-shrink:0;}
+        .tt-time-input, .tt-task-input { background: var(--primary-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px; border-radius: 6px; outline: none; font-size: 0.9em; }
+        .tt-task-input { flex-grow: 1; }
+        .tt-tasks-container { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 15px; }
+        .tt-task-item { display: flex; align-items: center; justify-content: space-between; background: var(--primary-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); transition: 0.2s; }
+        .tt-task-item:hover { border-color: var(--highlight-text); }
+        .tt-task-time { font-family: monospace; font-size: 0.85em; font-weight: bold; color: var(--highlight-text); background: var(--folder-bg); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color); margin-right: 10px;}
+
+        /* Syllabus */
+        .syl-tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%;}
+        .syl-tab { flex: 1; padding: 12px; font-size: 1em; font-weight: bold; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; text-align:center;}
+        .syl-tab.active { background: var(--highlight-text); color: white; border-color: var(--highlight-text); }
+        .syl-subject { background: var(--sidebar-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 10px; width:100%;}
+        .syl-subject summary { padding: 15px 20px; font-size: 1.1em; font-weight: bold; background: var(--folder-bg); cursor: pointer; color: var(--highlight-text); list-style: none; border-radius: 12px;}
+        .syl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+        .syl-item { display: flex; justify-content: space-between; align-items: center; background: var(--primary-bg); padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .syl-btn { font-size: 0.8em; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; font-weight: bold; transition: filter 0.2s; width:100px; text-align:center;}
+
+        /* MODALS & GLASSMORPHISM */
+        .pomo-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 3000; backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+        .pomo-modal-overlay.open { display: flex; }
+        .pomo-modal { background: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); backdrop-filter: blur(16px); border: 1px solid var(--border-color); width: 440px; max-width: 90%; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; animation: fadeIn 0.3s ease-out; }
+        body.theme-amoled .pomo-modal { background: rgba(13, 13, 15, 0.90); }
+        body.theme-charcoal .pomo-modal { background: rgba(30, 30, 36, 0.90); }
+        body.theme-slate .pomo-modal { background: rgba(30, 41, 59, 0.90); }
+        
+        .pomo-modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.05em; }
+        .pomo-modal-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; max-height: 60vh; overflow-y: auto; }
+        .pomo-setting-group { display: flex; flex-direction: column; gap: 6px; font-size: 0.88em; font-weight: 600; }
+        .pomo-setting-group select, .pomo-setting-group input[type="text"] { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; }
+        
+        /* QUICK NOTES DRAWER */
+        .notes-panel { position: absolute; top: 0; right: -360px; width: 340px; height: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-left: 1px solid var(--border-color); box-shadow: -4px 0 25px rgba(0,0,0,0.3); transition: right 0.3s ease; display: flex; flex-direction: column; z-index: 150; }
+        body.theme-amoled .notes-panel { background: rgba(13, 13, 15, 0.95); }
+        body.theme-charcoal .notes-panel { background: rgba(30, 30, 36, 0.95); }
+        body.theme-slate .notes-panel { background: rgba(30, 41, 59, 0.95); }
+        .notes-panel.open { right: 0; }
+        .notes-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .notes-area { flex-grow: 1; border: none; padding: 14px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.9em; line-height: 1.5; }
+
+        /* LOCAL SEARCH COPILOT */
+        .chat-fab { position: fixed; bottom: 20px; right: 20px; background: var(--highlight-text); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 1.3em; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 999; display: flex; justify-content: center; align-items: center; transition: transform 0.2s; }
+        .chat-fab:hover { transform: scale(1.08); }
+        .chat-window { position: fixed; bottom: 80px; right: 20px; width: 340px; height: 440px; background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.25s ease; overflow: hidden; }
+        body.theme-amoled .chat-window { background: rgba(13, 13, 15, 0.90); }
+        body.theme-charcoal .chat-window { background: rgba(30, 30, 36, 0.90); }
+        body.theme-slate .chat-window { background: rgba(30, 41, 59, 0.90); }
+        .chat-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .chat-header { background: var(--folder-bg); padding: 12px 14px; border-bottom: 1px solid var(--border-color); font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+        .chat-body { flex-grow: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 88%; padding: 8px 12px; border-radius: 10px; font-size: 0.85em; line-height: 1.4; word-wrap: break-word; }
+        .bot-msg { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); align-self: flex-start; }
+        .user-msg { background: var(--highlight-text); color: white; align-self: flex-end; }
+        .chat-footer { padding: 10px; border-top: 1px solid var(--border-color); display: flex; gap: 6px; }
+        .chat-footer input { flex-grow: 1; padding: 8px 12px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.82em; }
+        .chat-footer button { background: var(--highlight-text); color: white; border: none; padding: 0 14px; border-radius: 16px; font-weight: bold; cursor: pointer; }
+
     </style>
 </head>
-<body class="antialiased bg-[#F4F6F8] dark:bg-slate-950 transition-colors duration-300 selection:bg-indigo-200 selection:text-indigo-900 dark:selection:bg-indigo-900 dark:selection:text-indigo-100">
-    <div id="root"></div>
+<body class="theme-amoled font-medium">
 
-    <!-- NOTE: Your IDE may lose color syntax highlighting here because of type="text/babel". This is a visual IDE quirk, not a code error! -->
-    <script type="text/babel" data-presets="react,env">
-        const { useState, useEffect, useRef } = React;
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <h2>📚 Study Dashboard</h2>
+            </div>
+            <div class="header-controls-group">
+                <button class="icon-btn-header" id="music-open-btn" title="Ambient Audio">🎵</button>
+                <button class="icon-btn-header" id="pomo-open-settings" title="Settings">⚙️</button>
+                <button id="theme-toggle" class="icon-btn-header" title="Toggle Light/Dark">🌙</button>
+            </div>
+        </div>
 
-        // ==========================================
-        // EXTENSIVE LECTURE DATASET (From GDrive / Kitaabi Keeda)
-        // ==========================================
-        const rawLectureData = [
-          { 
-            "title": "Physics One-Shots (PW)", 
-            "folders": ["LECTURES", "Physics", "Physics Wallah"], 
-            "playlist": [ 
-              { "title": "Basic Maths & Vectors", "url": "https://www.youtube.com/embed/RAwcPN79g0Q" }, 
-              { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" }, 
-              { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" }, 
-              { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" },
-              { "title": "COM & Collision", "url": "https://www.youtube.com/embed/Rh95KkMwklU" },
-              { "title": "Rotational Motion", "url": "https://www.youtube.com/embed/vmaKeSkjtGo" },
-              { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" },
-              { "title": "Solids & Elasticity", "url": "https://www.youtube.com/embed/1xPm3vIRIGI" },
-              { "title": "Fluid Mechanics", "url": "https://www.youtube.com/embed/griSf2U_Zlk" },
-              { "title": "SHM", "url": "https://www.youtube.com/embed/myNQbAYzD5A" },
-              { "title": "Wave Motion", "url": "https://www.youtube.com/embed/PAlXOkn_Pa8" },
-              { "title": "Thermal Properties", "url": "https://www.youtube.com/embed/1nTFrbJ8Jhg" },
-              { "title": "Thermodynamics & KTG", "url": "https://www.youtube.com/embed/Ch9jLsgYIuM" },
-              { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" },
-              { "title": "Capacitors", "url": "https://www.youtube.com/embed/FImh-a0673s" },
-              { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" },
-              { "title": "Magnetism & Moving Charges", "url": "https://www.youtube.com/embed/3h3OexznsA0" },
-              { "title": "Electromagnetic Induction", "url": "https://www.youtube.com/embed/ebOF14qP21k" },
-              { "title": "AC Circuits", "url": "https://www.youtube.com/embed/gziRcxMiO_Q" },
-              { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" },
-              { "title": "Ray Optics", "url": "https://www.youtube.com/embed/AfPD-sHayb0" },
-              { "title": "Semiconductors", "url": "https://www.youtube.com/embed/5h5ANJnVe08" },
-              { "title": "Communication Systems", "url": "https://www.youtube.com/embed/fBqJdix2NjE" },
-              { "title": "Modern Physics", "url": "https://www.youtube.com/embed/G58QS4soCuQ" },
-              { "title": "Atoms", "url": "https://www.youtube.com/embed/AqjrqRyot6w" },
-              { "title": "Nuclei", "url": "https://www.youtube.com/embed/XJZ1PdXyJU4" },
-              { "title": "Dual Nature", "url": "https://www.youtube.com/embed/wE0xrUuJLnk" }
-            ] 
-          },
-          { 
-            "title": "Physical Chemistry (PW)", 
-            "folders": ["LECTURES", "Chemistry", "Physics Wallah"], 
-            "playlist": [ 
-              { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" }, 
-              { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" }, 
-              { "title": "States of Matter", "url": "https://www.youtube.com/embed/8oypjDXAXZc" },
-              { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" },
-              { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" },
-              { "title": "Ionic Equilibrium", "url": "https://www.youtube.com/embed/BceSksiNLD4" },
-              { "title": "Redox Reactions", "url": "https://www.youtube.com/embed/1W-UvePUAKo" },
-              { "title": "Chemical Kinetics", "url": "https://www.youtube.com/embed/kwPNxC9AgZA" },
-              { "title": "Solutions", "url": "https://www.youtube.com/embed/7OkNy8vhDaw" }
-            ] 
-          },
-          { 
-            "title": "Inorganic Chemistry (PW)", 
-            "folders": ["LECTURES", "Chemistry", "Physics Wallah"], 
-            "playlist": [
-              { "title": "Periodic Table", "url": "https://www.youtube.com/embed/nLE7_YBFQNQ" },
-              { "title": "Chemical Bonding", "url": "https://www.youtube.com/embed/kS8s_WX0IlY" },
-              { "title": "Coordination Compounds", "url": "https://www.youtube.com/embed/5myJzBeN514" },
-              { "title": "P-Block Elements", "url": "https://www.youtube.com/embed/b0k5LOk_uPk" },
-              { "title": "D & F-Block Elements", "url": "https://www.youtube.com/embed/SjILQ6cX_Vo" },
-              { "title": "Salt Analysis", "url": "https://www.youtube.com/embed/8rRnn4ECwXI" }
-            ] 
-          },
-          { 
-            "title": "Organic Chemistry (PW)", 
-            "folders": ["LECTURES", "Chemistry", "Physics Wallah"], 
-            "playlist": [
-              { "title": "IUPAC Nomenclature", "url": "https://www.youtube.com/embed/A2QTsYu3fWo" },
-              { "title": "GOC", "url": "https://www.youtube.com/embed/FFCT-lh86tA" },
-              { "title": "Isomerism", "url": "https://www.youtube.com/embed/UOzWO2-Z9So" },
-              { "title": "Hydrocarbons", "url": "https://www.youtube.com/embed/02CBTEOMMsA" },
-              { "title": "Haloalkanes & Haloarenes", "url": "https://www.youtube.com/embed/7iJFvPI8vMM" },
-              { "title": "Alcohols, Phenols & Ethers", "url": "https://www.youtube.com/embed/IDo8B0c5Xis" },
-              { "title": "Aldehydes, Ketones & Acids", "url": "https://www.youtube.com/embed/oR19BqbPBu4" },
-              { "title": "Amines", "url": "https://www.youtube.com/embed/SKHrfD34Kkc" },
-              { "title": "Biomolecules", "url": "https://www.youtube.com/embed/LcVNwEWJtyI" }
-            ] 
-          },
-          { 
-            "title": "Mathematics (PW)", 
-            "folders": ["LECTURES", "Maths", "Physics Wallah"], 
-            "playlist": [
-              { "title": "Basic Maths", "url": "https://www.youtube.com/embed/Z5uGIO_11vM" },
-              { "title": "Determinants", "url": "https://www.youtube.com/embed/uhq_WUNlvh8" },
-              { "title": "Trigonometric Ratios & Identities", "url": "https://www.youtube.com/embed/DitLpxy6V48" },
-              { "title": "Vectors", "url": "https://www.youtube.com/embed/FsTlbTQyuJ0" },
-              { "title": "Quadratic Equations", "url": "https://www.youtube.com/embed/iLIPlvjDkPU" },
-              { "title": "Matrices", "url": "https://www.youtube.com/embed/2YFQIFQmPmw" },
-              { "title": "Sets", "url": "https://www.youtube.com/embed/SOXQuRrgJHo" },
-              { "title": "3D Geometry", "url": "https://www.youtube.com/embed/t_RMMkiYj4g" },
-              { "title": "Sequence & Series", "url": "https://www.youtube.com/embed/CVG9PcraP1k" },
-              { "title": "Relations & Functions", "url": "https://www.youtube.com/embed/Qs0wRt70mC4" },
-              { "title": "Inverse Trigonometric Functions", "url": "https://www.youtube.com/embed/rdWRwY2kEXI" },
-              { "title": "Permutation & Combination", "url": "https://www.youtube.com/embed/rPFlUfjcakw" },
-              { "title": "Binomial Theorem", "url": "https://www.youtube.com/embed/QMWDHOcXEQI" },
-              { "title": "Method of Differentiation", "url": "https://www.youtube.com/embed/3JMzZR2TvhA" },
-              { "title": "Straight Lines", "url": "https://www.youtube.com/embed/pufR8xp-CQA" },
-              { "title": "Indefinite Integration", "url": "https://www.youtube.com/embed/7dVDuyI_8FA" },
-              { "title": "Circles", "url": "https://www.youtube.com/embed/qcpj3jjgr6o" },
-              { "title": "Parabola", "url": "https://www.youtube.com/embed/Nv9s38ZGPes" },
-              { "title": "Definite Integration", "url": "https://www.youtube.com/embed/UwRAUIeoCtI" },
-              { "title": "Differential Equation", "url": "https://www.youtube.com/embed/H1FKKjz8hsw" },
-              { "title": "Hyperbola", "url": "https://www.youtube.com/embed/zITyahKONeg" },
-              { "title": "Application of Integrals", "url": "https://www.youtube.com/embed/x0vMQRKTmQ0" },
-              { "title": "Ellipse", "url": "https://www.youtube.com/embed/ZdCd1G0NDUI" },
-              { "title": "Complex Number", "url": "https://www.youtube.com/embed/Q-AlaLN72w0" },
-              { "title": "Limits", "url": "https://www.youtube.com/embed/JnER25G1V7o" },
-              { "title": "Statistics", "url": "https://www.youtube.com/embed/mWa7eSpT6kg" },
-              { "title": "Probability", "url": "https://www.youtube.com/embed/3OFuYbk-BV4" },
-              { "title": "Continuity & Differentiability", "url": "https://www.youtube.com/embed/hsedtF2azNQ" },
-              { "title": "Application of Derivatives", "url": "https://www.youtube.com/embed/jOVcucQLv38" }
-            ]
-          },
-          
-          { 
-            "title": "JEE Maths Playlist 1 - Neha Ma'am", 
-            "folders": ["LECTURES", "Maths", "Neha Agrawal"], 
-            "playlist": [ 
-              { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" }, 
-              { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" }, 
-              { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
-              { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" },
-              { "title": "Quadratic Equations 3.0", "url": "https://www.youtube.com/embed/MnUt4uRiUv8" },
-              { "title": "Binomial Theorem 3.0", "url": "https://www.youtube.com/embed/kTrZgk8ht6s" },
-              { "title": "Functions 3.0", "url": "https://www.youtube.com/embed/qMZbl49B2gk" },
-              { "title": "Limits, Continuity & Derivatives 3.0", "url": "https://www.youtube.com/embed/1Px2H-ZNAXc" },
-              { "title": "Application of Derivatives 3.0", "url": "https://www.youtube.com/embed/FjePwtMW_jA" },
-              { "title": "Indefinite Integration 3.0", "url": "https://www.youtube.com/embed/aBuT_NpL4kM" },
-              { "title": "Definite Integration 3.0", "url": "https://www.youtube.com/embed/bpeEpWjvG50" },
-              { "title": "Differential Equations 3.0", "url": "https://www.youtube.com/embed/PbeylmdToTs" },
-              { "title": "Sets & Relations 3.0", "url": "https://www.youtube.com/embed/BbDh_D9NOAc" },
-              { "title": "Permutations & Combinations 3.0", "url": "https://www.youtube.com/embed/dZleU5ZUDAo" },
-              { "title": "Probability 3.0", "url": "https://www.youtube.com/embed/N1gW3lZx_4I" },
-              { "title": "Straight Lines 3.0", "url": "https://www.youtube.com/embed/RHk11VC256Y" },
-              { "title": "Circles 3.0", "url": "https://www.youtube.com/embed/Se39Hv2_FzM" },
-              { "title": "Conic Sections One Shot", "url": "https://www.youtube.com/embed/ze6pUWYfAvY" },
-              { "title": "Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/EO_6mXn9szs" },
-              { "title": "Statistics 3.0", "url": "https://www.youtube.com/embed/WFY1D61ZOV0" },
-              { "title": "Trigonometry & Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/IQeeRDA6T94" },
-              { "title": "Make Your Math Superstrong Topics", "url": "https://www.youtube.com/embed/fvUETQWW34Y" },
-              { "title": "Differential Equations & Area Under Curve", "url": "https://www.youtube.com/embed/KGI1PiPN-q4" },
-              { "title": "5 Easiest Chapters Math Marathon Part 1", "url": "https://www.youtube.com/embed/p3R5yXcJdX4" },
-              { "title": "5 Easiest Chapters Math Marathon Part 2", "url": "https://www.youtube.com/embed/q44atF--01U" },
-              { "title": "Complete Formula Revision Class 11", "url": "https://www.youtube.com/embed/H3ajZU-w1Mk" },
-              { "title": "Complete Formula Revision Class 12", "url": "https://www.youtube.com/embed/yZhWIgH-wqs" },
-              { "title": "Math Super Shortcuts & Tricks", "url": "https://www.youtube.com/embed/tVN2lZQV2_M" },
-              { "title": "JEE Jan '24 PYQs with Shortcuts", "url": "https://www.youtube.com/embed/XHDRIk0UL0w" },
-              { "title": "15 Sureshot Topics Math Marathon", "url": "https://www.youtube.com/embed/Zl53W-m0wTM" },
-              { "title": "65 Topics (High Priority) for 99.5%ile", "url": "https://www.youtube.com/embed/hhLxKrIj5b4" },
-              { "title": "JEE 2025 Final Push Game Changer", "url": "https://www.youtube.com/embed/WPQzDvdJQak" },
-              { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" },
-              { "title": "Code 301: Save Your 1st Attempt", "url": "https://www.youtube.com/embed/IqiClz6TEiM" },
-              { "title": "Vectors & 3D Booster Sprint", "url": "https://www.youtube.com/embed/hezQFC6RJjs" },
-              { "title": "Algebra Revision Sprint", "url": "https://www.youtube.com/embed/LLxVhlleHRM" },
-              { "title": "Coordinate Geometry Revision Sprint", "url": "https://www.youtube.com/embed/csb-IQN_pqU" },
-              { "title": "60 Most Repeated Ques by NTA", "url": "https://www.youtube.com/embed/FgILOHipMtw" },
-              { "title": "JEE Jan 2025 Math Marathon", "url": "https://www.youtube.com/embed/D0hzgpe5L9s" },
-              { "title": "JEE Apr 2025 Analysis of All 10 Shifts", "url": "https://www.youtube.com/embed/Wr6MNW6itqo" }
-            ] 
-          },
-          {
-            "title": "JEE Maths Playlist 2 - Neha Ma'am",
-            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
-            "playlist": [
-              { "title": "Agni Series: Sequences & Series", "url": "https://www.youtube.com/embed/AVjdJITX0Nc" },
-              { "title": "Agni Series: Matrices & Determinants", "url": "https://www.youtube.com/embed/obx33lta9P4" },
-              { "title": "Agni Series: Vectors & 3D Geometry", "url": "https://www.youtube.com/embed/Ui0P-tOC-f0" },
-              { "title": "Agni Series: Quadratic Equations & Complex Nos", "url": "https://www.youtube.com/embed/pouyY30rSHo" },
-              { "title": "Agni Series: Binomial Theorem", "url": "https://www.youtube.com/embed/IKZ_2Z2OOBQ" },
-              { "title": "Agni Series: Permutations & Combinations + Probability", "url": "https://www.youtube.com/embed/--k01m3f5Cw" },
-              { "title": "Agni Series: Sets, Relations & Functions", "url": "https://www.youtube.com/embed/7HbfPG8pVhs" },
-              { "title": "Agni Series: Trigonometry & Statistics", "url": "https://www.youtube.com/embed/2DC7cdv43Ao" },
-              { "title": "Agni Series: Limits, Continuity & Derivatives + AOD", "url": "https://www.youtube.com/embed/ryAw6vipopk" },
-              { "title": "Agni Series: Integration", "url": "https://www.youtube.com/embed/mjoCuNKUzB4" },
-              { "title": "Agni Series: Differential Equations & Area", "url": "https://www.youtube.com/embed/aSAg23ixuWE" },
-              { "title": "Agni Series: Straight Lines & Circles", "url": "https://www.youtube.com/embed/2eOXSPy1MuE" },
-              { "title": "Agni Series: Conic Sections", "url": "https://www.youtube.com/embed/4vagx7oH87k" },
-              { "title": "100 Days Timetable for JEE 2026", "url": "https://www.youtube.com/embed/aIjPAFSjRcI" },
-              { "title": "Agni Series: Sequences & Series (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/0DJXH0ql7BI" },
-              { "title": "Agni Series: Matrices & Determinants (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/JdHwa70kY3s" },
-              { "title": "Agni Series: Trigonometry & Inverse + Statistics (Jan 2025)", "url": "https://www.youtube.com/embed/qcDGzbWSTjo" },
-              { "title": "Agni Series: Sets, Relations & Functions (Jan 2025)", "url": "https://www.youtube.com/embed/o07B71pxaBo" },
-              { "title": "Agni Series: Complex Numbers & Quadratic Eqns (Jan 2025)", "url": "https://www.youtube.com/embed/EJtgkGdqOgY" },
-              { "title": "Agni Series: Permutations & Combinations + Probability (Jan 2025)", "url": "https://www.youtube.com/embed/jUxPvBZAK_4" },
-              { "title": "Agni Series: Binomial Theorem (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/56Odj-FzH18" },
-              { "title": "Agni Series: Limits, Continuity & Derivatives (Jan 2025)", "url": "https://www.youtube.com/embed/PTO6XHJfFU8" },
-              { "title": "Agni Series: AOD & Area Under Curve (Jan 2025)", "url": "https://www.youtube.com/embed/yMiEhnxQe8Y" },
-              { "title": "Agni Series: Integration (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/dgUEfZohNJU" },
-              { "title": "Agni Series: Vectors (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/UI_SOsUZBJE" },
-              { "title": "Agni Series: 3D Geometry (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/FJia0zLEq4U" },
-              { "title": "Agni Series: Straight Lines (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/Me9E0PFbuGQ" },
-              { "title": "Agni Series: Parabola (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/feBdaVYlkNs" },
-              { "title": "Agni Series: Circles, Ellipse & Hyperbola (Jan 2025 PYQs)", "url": "https://www.youtube.com/embed/kHj73PtXHQE" },
-              { "title": "Complete Formula Revision Class 12", "url": "https://www.youtube.com/embed/yZhWIgH-wqs" },
-              { "title": "Complete Formula Revision Class 11", "url": "https://www.youtube.com/embed/H3ajZU-w1Mk" },
-              { "title": "100 Most Repeated Math PYQs Last 7 Years", "url": "https://www.youtube.com/embed/FZJt1h-gO4w" },
-              { "title": "Booster: 7 Easiest Chapters = 36+ Marks", "url": "https://www.youtube.com/embed/mcMHaUuhe6o" },
-              { "title": "Booster: 67 Most Asked Topics by NTA", "url": "https://www.youtube.com/embed/UNOBGZjYiFk" },
-              { "title": "Booster: 6 Highest Weightage Chapters = 48+ Marks", "url": "https://www.youtube.com/embed/mb_ZpNpL4Go" },
-              { "title": "Math Marathon: Most Trending Topics & PYQs", "url": "https://www.youtube.com/embed/v8qnbEQulmA" },
-              { "title": "100 Most Asked Questions by NTA", "url": "https://www.youtube.com/embed/vMGMYl00kJI" }
-            ]
-          },
-          {
-            "title": "JEE Maths Playlist 3 - Neha Ma'am",
-            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
-            "playlist": [
-              { "title": "Logarithms | Beginner's Course", "url": "https://www.youtube.com/embed/j1pDmQJ0wOY" },
-              { "title": "Trigonometry | Beginner's Course", "url": "https://www.youtube.com/embed/nfPvo7p-8t0" },
-              { "title": "Inequalities : Wavy Curve | Beginner's Course", "url": "https://www.youtube.com/embed/F0eIeAYiUUM" },
-              { "title": "Functions Basics, Domain & Range | Beginner's Course", "url": "https://www.youtube.com/embed/GNtYHAk_C4s" },
-              { "title": "Modulus & Greatest Integer Functions | Beginner's Course", "url": "https://www.youtube.com/embed/Q1AMRktu4pc" },
-              { "title": "Transformation of Graphs | Beginner's Course", "url": "https://www.youtube.com/embed/V3PYBhJS0Po" },
-              { "title": "Complex Numbers | Beginner's Course", "url": "https://www.youtube.com/embed/0Bul5m9fN_8" },
-              { "title": "Sequences & Series | Beginner's Course", "url": "https://www.youtube.com/embed/AmUO2o9NOYk" },
-              { "title": "Limits with Tricks | Beginner's Course", "url": "https://www.youtube.com/embed/WvmEDNxgVxg" },
-              { "title": "Differentiation | Beginner's Course", "url": "https://www.youtube.com/embed/KUu18_pkvbk" },
-              { "title": "Integration | Beginner's Course", "url": "https://www.youtube.com/embed/C3DS0tqK2TY" },
-              { "title": "Vectors | Beginner's Course", "url": "https://www.youtube.com/embed/BPgL5Xrp1LA" },
-              { "title": "Matrices and Determinants | Beginner's Course", "url": "https://www.youtube.com/embed/lkAPODbXnS0" },
-              { "title": "Binomial Theorem | Beginner's Course", "url": "https://www.youtube.com/embed/Bk6PQ6huy68" },
-              { "title": "Permutations and Combinations | Beginner's Course", "url": "https://www.youtube.com/embed/Sh6yppz4nzs" },
-              { "title": "Probability | Beginner's Course", "url": "https://www.youtube.com/embed/HkBKPCNFZ4k" },
-              { "title": "Straight Lines | Beginner's Course", "url": "https://www.youtube.com/embed/QS59lEJgPb8" },
-              { "title": "Conic Sections | Beginner's Course", "url": "https://www.youtube.com/embed/u4Fu2PcRSo4" },
-              { "title": "Quadratic Equations | Beginner's Course", "url": "https://www.youtube.com/embed/_P2GRAVyk_Q" },
-              { "title": "Sets | Beginner's Course", "url": "https://www.youtube.com/embed/LK0cQmgJsdk" },
-              { "title": "Relations | Beginner's Course", "url": "https://www.youtube.com/embed/MvTfxcM8hHs" },
-              { "title": "3D Geometry | Beginner's Course", "url": "https://www.youtube.com/embed/fdfT1w9rVJQ" }
-            ]
-          },
-          {
-            "title": "JEE Maths Playlist 4 - Neha Ma'am",
-            "folders": ["LECTURES", "Maths", "Neha Agrawal"],
-            "playlist": [
-              { "title": "Differentiation | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/ct-vCt9NU08" },
-              { "title": "Logarithms | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/cJceE7-8TBY" },
-              { "title": "Linear Inequalities & Wavy Curve | Foundation Series", "url": "https://www.youtube.com/embed/UJXel5_AOSY" },
-              { "title": "Trigonometry | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/GN9uAEisDtM" },
-              { "title": "Functions - Domain & Range | Foundation Series", "url": "https://www.youtube.com/embed/peKwXDIcYss" },
-              { "title": "Integration | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/iaK4ukVmFvc" },
-              { "title": "Sequences and Series | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/yP0EKKN0zys" },
-              { "title": "Probability | Class 11 Foundation Series", "url": "https://www.youtube.com/embed/7_ZpO1hneXk" },
-              { "title": "Complete Class 11 Maths Required for Class 12 & JEE", "url": "https://www.youtube.com/embed/TQX02-rVCsA" }
-            ]
-          },
-          {
-            "title": "Eduniti Physics Sure Shot (Mohit Sir)",
-            "folders": ["LECTURES", "Physics", "Eduniti"],
-            "playlist": [
-              { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
-              { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
-              { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
-              { "title": "Mechanics P1", "url": "https://www.youtube.com/embed/3vkFbQxEYqE" },
-              { "title": "Mechanics P2", "url": "https://www.youtube.com/embed/JJMhkssd4GQ" },
-              { "title": "Mechanics P3", "url": "https://www.youtube.com/embed/Qbb6H6MhmRc" },
-              { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" },
-              { "title": "VCM Sure Shot", "url": "https://www.youtube.com/embed/EwOMzB63gBI" },
-              { "title": "Gravitation", "url": "https://www.youtube.com/embed/xF9ysyykedw" },
-              { "title": "Rotation P1", "url": "https://www.youtube.com/embed/Q8Rujg2Mkio" },
-              { "title": "SHM", "url": "https://www.youtube.com/embed/t7-G5GEfQXI" },
-              { "title": "Thermodynamics Graphs", "url": "https://www.youtube.com/embed/IySVKH_OttE" },
-              { "title": "Cylinder Piston", "url": "https://www.youtube.com/embed/0Ro_F6Af0Zg" },
-              { "title": "Fluids P1", "url": "https://www.youtube.com/embed/gwC-whA3M3g" },
-              { "title": "Fluids P2", "url": "https://www.youtube.com/embed/LIp4AZu3P0g" },
-              { "title": "Wave Motion", "url": "https://www.youtube.com/embed/4ioZfE3kGMg" },
-              { "title": "Electrostatics P1", "url": "https://www.youtube.com/embed/gf75PPW10oI" },
-              { "title": "Electrostatics P2", "url": "https://www.youtube.com/embed/MqeFMKAf5x8" },
-              { "title": "Electric Dipoles", "url": "https://www.youtube.com/embed/NKO1Szf4otc" },
-              { "title": "Capacitors", "url": "https://www.youtube.com/embed/qx-CMGn2ud4" },
-              { "title": "Circuits", "url": "https://www.youtube.com/embed/ie81MM1V4mE" },
-              { "title": "Electrodynamics P1", "url": "https://www.youtube.com/embed/lllAWLu5mso" },
-              { "title": "Electrodynamics P2", "url": "https://www.youtube.com/embed/1RdDchv2j_o" },
-              { "title": "Physics Concepts Marathon", "url": "https://www.youtube.com/embed/2qGiA1vKwjg" },
-              { "title": "Charge in Magnetic/Electric Field", "url": "https://www.youtube.com/embed/YmQvWuXsNhs" },
-              { "title": "Magnetic Effect P1", "url": "https://www.youtube.com/embed/XBMDnZPLd90" },
-              { "title": "Cavity Problem", "url": "https://www.youtube.com/embed/JcEaz2o0sL4" },
-              { "title": "MEC Rank Decider", "url": "https://www.youtube.com/embed/2fhxJ9ukudY" },
-              { "title": "Alternating Current", "url": "https://www.youtube.com/embed/H_9Pl8HeZ-o" },
-              { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" },
-              { "title": "Ray Optics Reflection/Refraction", "url": "https://www.youtube.com/embed/3Wmsf3lI73Y" },
-              { "title": "Image Velocity", "url": "https://www.youtube.com/embed/X1_c_4JaNwU" },
-              { "title": "Fish Bird Problem", "url": "https://www.youtube.com/embed/UTUyY5a9G3Y" },
-              { "title": "Ray Optics Sure Shot", "url": "https://www.youtube.com/embed/FXJO4GYTmXI" },
-              { "title": "Binding Energy", "url": "https://www.youtube.com/embed/5Tb_8wHchbU" },
-              { "title": "Modern Physics", "url": "https://www.youtube.com/embed/MWJdpWvwhwc" },
-              { "title": "Energy Conservation Cases", "url": "https://www.youtube.com/embed/_xOTxiWGGpI" },
-              { "title": "Assertion Reason P1", "url": "https://www.youtube.com/embed/jka_UoZPqHs" },
-              { "title": "Assertion Reason P2", "url": "https://www.youtube.com/embed/lauuB4VKWw4" },
-              { "title": "Mixed Concepts P1", "url": "https://www.youtube.com/embed/vHIhXfilkpg" },
-              { "title": "Mixed Concepts P2", "url": "https://www.youtube.com/embed/sdnEI-mpV4Y" },
-              { "title": "Competency Based Questions", "url": "https://www.youtube.com/embed/U7xuWZaYJ0M" }
-            ]
-          }
-        ];
+        <!-- POMODORO WIDGET -->
+        <div class="pomodoro-container" id="pomo-container">
+            <div class="pomodoro-card" id="pomo-card">
+                <div class="pomo-left">
+                    <span class="pomo-icon" id="pomo-logo-icon">🍅</span>
+                    <div class="pomo-info">
+                        <span class="pomo-status" id="pomo-status-text">Focus Session</span>
+                        <span class="pomodoro-display" id="pomo-time">25:00</span>
+                    </div>
+                </div>
+                <div class="pomo-controls">
+                    <button class="pomo-btn" id="pomo-toggle" title="Start/Pause">▶️</button>
+                    <button class="pomo-btn" id="pomo-reset" title="Reset">🔄</button>
+                </div>
+            </div>
+            <div class="pomo-bubble" id="pomo-bubble">Let's lock in and conquer some concepts! 💪</div>
+        </div>
 
-        // Transform raw lectures into a flat database array
-        let lectureIdCounter = 1;
-        const flattenedLectures = [];
-        rawLectureData.forEach(playlist => {
-          const category = playlist.folders[1] || 'General'; 
-          const author = playlist.folders[2] || 'Unknown';
-          const sourcePath = `Drive > ${playlist.folders.join(' > ')}`;
-          
-          playlist.playlist.forEach(vid => {
-            flattenedLectures.push({
-              id: lectureIdCounter++,
-              title: vid.title,
-              course: playlist.title,
-              category: category,
-              author: author,
-              type: 'video',
-              url: vid.url,
-              source: sourcePath,
-              duration: '45m-2h'
+        <!-- MODULE SELECTOR -->
+        <div class="mode-selector" id="dynamic-mode-selector">
+            <button class="mode-btn active" data-target="LECTURES">📺 Lectures</button>
+            <button class="mode-btn" data-target="UTILITIES">🛠️ Utilities</button>
+        </div>
+
+        <!-- LIBRARY VIEW (Lectures) -->
+        <div id="library-sidebar-view" style="display:flex; flex-direction:column; flex-grow:1; overflow:hidden;">
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="search-bar" class="search-input" placeholder="Search lectures (Ctrl+K)...">
+                </div>
+            </div>
+            <div class="book-list" id="book-list"></div>
+        </div>
+
+        <!-- UTILITIES VIEW -->
+        <div id="utilities-sidebar-view" style="display:none; padding: 20px; flex-direction:column; gap:12px; overflow-y:auto;">
+            <button class="utility-menu-btn" data-util="analytics">📊 Analytics Dashboard</button>
+            <button class="utility-menu-btn" data-util="timetable">📅 Study Timetable</button>
+            <button class="utility-menu-btn" data-util="syllabus">📑 Syllabus Tracker</button>
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="main-content">
+        <div class="reader-header">
+            <div class="reader-header-info">
+                <div class="title-row">
+                    <h2 id="current-book-title">Welcome to Study Dashboard</h2>
+                </div>
+                <div id="current-book-breadcrumb" class="breadcrumb">Select a module to begin.</div>
+                <select id="playlist-dropdown" class="playlist-select" style="display:none;"></select>
+            </div>
+            
+            <div class="header-actions">
+                <button id="split-screen-btn" class="icon-btn" title="Toggle Split-Screen View" style="display:none;">🔲</button>
+                <button id="notes-toggle-btn" class="icon-btn" title="Quick Notes">📝</button>
+                <button id="fullscreen-btn" class="icon-btn primary-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+        
+        <div class="reader-container" id="reader-container-main">
+            <!-- PLACEHOLDER -->
+            <div class="placeholder-container" id="placeholder-box">
+                <h2 style="font-size: 1.8em; margin-bottom: 10px;">Ready to Focus?</h2>
+                <p style="opacity: 0.8; line-height: 1.5;">Select a lecture from the sidebar to start studying, or open your Utilities to plan your day.</p>
+            </div>
+            
+            <!-- Viewer 1 (Main Video/PDF) -->
+            <div id="viewer-wrapper">
+                <iframe id="book-frame" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
+            </div>
+
+            <!-- Draggable Split Resizer -->
+            <div id="split-resizer" class="resizer"></div>
+            
+            <!-- Viewer 2 (Split Screen) -->
+            <div id="viewer-wrapper-split">
+                <iframe id="book-frame-split" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
+            </div>
+
+            <!-- UTILITIES FULL-SCREEN WORKSPACE -->
+            <div id="utilities-workspace"></div>
+        </div>
+
+        <!-- QUICK NOTES DRAWER -->
+        <div id="notes-panel" class="notes-panel">
+            <div class="notes-header">
+                <span id="notes-title-label">📝 Quick Notes</span>
+                <button class="icon-btn" id="close-notes-btn">✖</button>
+            </div>
+            <textarea id="notes-area" class="notes-area" placeholder="Type your notes here... They auto-save specifically to the file you are reading!"></textarea>
+        </div>
+        
+        <!-- LOCAL COPILOT CHAT -->
+        <button class="chat-fab" id="chat-fab-btn" title="Local Search Copilot">🤖</button>
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <span>🧭 Local Copilot</span>
+                <button class="icon-btn" id="chat-close-btn">✖</button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="chat-msg bot-msg">
+                    👋 <strong>Hi! I'm your offline assistant.</strong><br>
+                    Type a topic (e.g., "Kinematics", "Organic Chemistry") and I'll find the best lectures for you instantly!
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chat-input" placeholder="Find a topic...">
+                <button id="chat-send-btn">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO MODAL -->
+    <div class="pomo-modal-overlay" id="music-modal-overlay">
+        <div class="pomo-modal">
+            <div class="pomo-modal-header">
+                <span>🎵 Focus Audio Hub</span>
+                <button class="icon-btn" id="music-close-modal">✖</button>
+            </div>
+            <div class="pomo-modal-body">
+                <div class="pomo-setting-group">
+                    <label>Audio Mode:</label>
+                    <select id="music-preset-select">
+                        <option value="ambient-rain">🌧️ Synthesized Ambient Rain</option>
+                        <option value="ambient-brown">🌊 Synthesized Brown Noise</option>
+                        <option value="ambient-white">📻 Synthesized White Noise</option>
+                        <option value="spotify-lofi">Spotify: Lofi Study Beats</option>
+                        <option value="yt-lofi">YouTube: Lofi Girl Live</option>
+                    </select>
+                </div>
+                <div id="ambient-controls-box">
+                    <button class="primary-btn" id="ambient-play-toggle" style="width: 100%; justify-content: center;">▶ Start Ambient Sound</button>
+                </div>
+                <div id="music-iframe-container" style="display:none; border-radius:8px; overflow:hidden; margin-top:10px;">
+                    <iframe id="music-frame" src="" width="100%" height="152" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="pomo-modal-overlay" id="settings-modal-overlay">
+        <div class="pomo-modal">
+            <div class="pomo-modal-header">
+                <span>⚙️ Settings</span>
+                <button class="icon-btn" id="settings-close-modal">✖</button>
+            </div>
+            <div class="pomo-modal-body">
+                <div class="pomo-setting-group">
+                    <label>Focus Duration (mins):</label>
+                    <select id="setting-focus-time">
+                        <option value="15">15 Minutes</option>
+                        <option value="25" selected>25 Minutes</option>
+                        <option value="45">45 Minutes (Deep Work)</option>
+                        <option value="60">60 Minutes</option>
+                    </select>
+                </div>
+                <div class="pomo-setting-group">
+                    <label>App Theme:</label>
+                    <select id="setting-theme">
+                        <option value="theme-amoled" selected>AMOLED Black</option>
+                        <option value="theme-charcoal">Charcoal Dark</option>
+                        <option value="theme-slate">Slate Navy</option>
+                        <option value="theme-light">Light Mode</option>
+                    </select>
+                </div>
+                <button class="primary-btn" id="save-settings-btn" style="justify-content:center; margin-top:10px;">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // ==========================================
+            // 1. DATA INJECTION (Lectures Data)
+            // ==========================================
+            const lectureVideos = [
+                {
+                    "title": "Physics One-Shots (PW)",
+                    "folders": ["LECTURES", "Physics", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Basic Maths & Vectors", "url": "https://www.youtube.com/embed/RAwcPN79g0Q" },
+                        { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" },
+                        { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" },
+                        { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" },
+                        { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" },
+                        { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" },
+                        { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" },
+                        { "title": "Magnetism & Moving Charges", "url": "https://www.youtube.com/embed/3h3OexznsA0" },
+                        { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" }
+                    ]
+                },
+                {
+                    "title": "Physical Chemistry (PW)",
+                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" },
+                        { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" },
+                        { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" },
+                        { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" }
+                    ]
+                },
+                {
+                    "title": "Organic Chemistry (PW)",
+                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "IUPAC Nomenclature", "url": "https://www.youtube.com/embed/A2QTsYu3fWo" },
+                        { "title": "GOC", "url": "https://www.youtube.com/embed/FFCT-lh86tA" },
+                        { "title": "Isomerism", "url": "https://www.youtube.com/embed/UOzWO2-Z9So" },
+                        { "title": "Hydrocarbons", "url": "https://www.youtube.com/embed/02CBTEOMMsA" }
+                    ]
+                },
+                {
+                    "title": "JEE Maths - Neha Ma'am",
+                    "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+                    "playlist": [
+                        { "title": "Sequences & Series", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" },
+                        { "title": "Matrices & Determinants", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" },
+                        { "title": "Vectors & 3D Geometry", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
+                        { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" }
+                    ]
+                },
+                {
+                    "title": "Eduniti Physics Sure Shot",
+                    "folders": ["LECTURES", "Physics", "Eduniti"],
+                    "playlist": [
+                        { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
+                        { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
+                        { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
+                        { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" }
+                    ]
+                }
+            ];
+
+            const libraryData = [...lectureVideos];
+            let activeModule = 'LECTURES';
+            let studyStats = JSON.parse(localStorage.getItem('study_stats_v2')) || {};
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (!studyStats[todayStr]) studyStats[todayStr] = 0;
+
+            // ==========================================
+            // 2. POMODORO SYSTEM
+            // ==========================================
+            let pomoSettings = JSON.parse(localStorage.getItem('pomo_settings_v2')) || { focusTime: 25, theme: 'theme-amoled' };
+            document.body.className = `${pomoSettings.theme} font-medium`;
+            
+            let pomoSeconds = pomoSettings.focusTime * 60;
+            let pomoInterval = null;
+            let isPomoRunning = false;
+
+            const pomoDisplay = document.getElementById('pomo-time');
+            const pomoToggle = document.getElementById('pomo-toggle');
+            const pomoReset = document.getElementById('pomo-reset');
+            const pomoCard = document.getElementById('pomo-card');
+
+            function updatePomoDisplay() {
+                let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+                let s = String(pomoSeconds % 60).padStart(2, '0');
+                pomoDisplay.textContent = `${m}:${s}`;
+            }
+
+            pomoToggle.addEventListener('click', () => {
+                if (isPomoRunning) {
+                    clearInterval(pomoInterval);
+                    isPomoRunning = false;
+                    pomoToggle.textContent = '▶️';
+                    pomoCard.classList.remove('running');
+                } else {
+                    isPomoRunning = true;
+                    pomoToggle.textContent = '⏸️';
+                    pomoCard.classList.add('running');
+                    pomoInterval = setInterval(() => {
+                        if (pomoSeconds > 0) {
+                            pomoSeconds--;
+                            updatePomoDisplay();
+                        } else {
+                            clearInterval(pomoInterval);
+                            isPomoRunning = false;
+                            pomoToggle.textContent = '▶️';
+                            pomoCard.classList.remove('running');
+                            
+                            studyStats[todayStr]++;
+                            localStorage.setItem('study_stats_v2', JSON.stringify(studyStats));
+                            alert("Focus Session Complete! Great job.");
+                            pomoSeconds = pomoSettings.focusTime * 60;
+                            updatePomoDisplay();
+                        }
+                    }, 1000);
+                }
             });
-          });
+
+            pomoReset.addEventListener('click', () => {
+                clearInterval(pomoInterval);
+                isPomoRunning = false;
+                pomoSeconds = pomoSettings.focusTime * 60;
+                pomoToggle.textContent = '▶️';
+                pomoCard.classList.remove('running');
+                updatePomoDisplay();
+            });
+            updatePomoDisplay();
+
+            // ==========================================
+            // 3. AUDIO SYNTHESIZER
+            // ==========================================
+            let audioCtx = null;
+            let ambientNode = null;
+            let isAmbientPlaying = false;
+
+            function getAudioContext() {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                return audioCtx;
+            }
+
+            function startAmbient(type) {
+                const ctx = getAudioContext();
+                const bufferSize = 2 * ctx.sampleRate;
+                const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                let lastOut = 0.0, b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+
+                for (let i = 0; i < bufferSize; i++) {
+                    const white = Math.random() * 2 - 1;
+                    if (type === 'ambient-white') {
+                        output[i] = white * 0.15;
+                    } else if (type === 'ambient-brown') {
+                        lastOut = (lastOut + (0.02 * white)) / 1.02;
+                        output[i] = lastOut * 1.5;
+                    } else { // Rain-like filtering
+                        b0 = 0.99886 * b0 + white * 0.0555179;
+                        b1 = 0.99332 * b1 + white * 0.0750759;
+                        b2 = 0.96900 * b2 + white * 0.1538520;
+                        b3 = 0.86650 * b3 + white * 0.3104856;
+                        b4 = 0.55000 * b4 + white * 0.5329522;
+                        b5 = -0.7616 * b5 - white * 0.0168980;
+                        output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.04;
+                        b6 = white * 0.115926;
+                    }
+                }
+                const noise = ctx.createBufferSource();
+                noise.buffer = noiseBuffer;
+                noise.loop = true;
+                const gain = ctx.createGain();
+                gain.gain.value = 0.4;
+                noise.connect(gain);
+                gain.connect(ctx.destination);
+                noise.start(0);
+                return { source: noise };
+            }
+
+            const playToggle = document.getElementById('ambient-play-toggle');
+            playToggle.addEventListener('click', () => {
+                const type = document.getElementById('music-preset-select').value;
+                if (isAmbientPlaying && ambientNode) {
+                    try { ambientNode.source.stop(); ambientNode.source.disconnect(); } catch(e){}
+                    isAmbientPlaying = false;
+                    playToggle.textContent = "▶ Start Ambient Sound";
+                } else {
+                    ambientNode = startAmbient(type);
+                    isAmbientPlaying = true;
+                    playToggle.textContent = "⏹ Stop Ambient Sound";
+                }
+            });
+
+            const musicPresets = {
+                'spotify-lofi': 'https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator&theme=0',
+                'yt-lofi': 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0'
+            };
+
+            document.getElementById('music-preset-select').addEventListener('change', (e) => {
+                const val = e.target.value;
+                const ambientBox = document.getElementById('ambient-controls-box');
+                const iframeBox = document.getElementById('music-iframe-container');
+                const frame = document.getElementById('music-frame');
+
+                if (isAmbientPlaying && ambientNode) {
+                    try { ambientNode.source.stop(); } catch(e){}
+                    isAmbientPlaying = false;
+                    playToggle.textContent = "▶ Start Ambient Sound";
+                }
+
+                if (val.startsWith('ambient-')) {
+                    ambientBox.style.display = 'block';
+                    iframeBox.style.display = 'none';
+                    frame.src = '';
+                } else {
+                    ambientBox.style.display = 'none';
+                    iframeBox.style.display = 'block';
+                    frame.src = musicPresets[val];
+                }
+            });
+
+            // ==========================================
+            // 4. RENDERING & UI NAVIGATION
+            // ==========================================
+            const bookList = document.getElementById('book-list');
+            const searchBar = document.getElementById('search-bar');
+            
+            function renderLibrary(query = '') {
+                bookList.innerHTML = '';
+                let filtered = libraryData.filter(b => {
+                    const text = (b.title + " " + b.folders.join(" ")).toLowerCase();
+                    return text.includes(query.toLowerCase());
+                });
+
+                if(filtered.length === 0) {
+                    bookList.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.7;">No lectures found.</div>`;
+                    return;
+                }
+
+                // Simple tree generation based on folders[1] (Subject) -> folders[2] (Creator)
+                const tree = {};
+                filtered.forEach(b => {
+                    const subj = b.folders[1] || 'General';
+                    const creator = b.folders[2] || 'Various';
+                    if (!tree[subj]) tree[subj] = {};
+                    if (!tree[subj][creator]) tree[subj][creator] = [];
+                    tree[subj][creator].push(b);
+                });
+
+                Object.keys(tree).sort().forEach(subj => {
+                    let detailsSubj = document.createElement('details');
+                    detailsSubj.open = query.length > 0;
+                    detailsSubj.innerHTML = `<summary>${subj}</summary><div class="folder-contents"></div>`;
+                    let contentSubj = detailsSubj.querySelector('.folder-contents');
+
+                    Object.keys(tree[subj]).sort().forEach(creator => {
+                        let detailsCreator = document.createElement('details');
+                        detailsCreator.open = query.length > 0;
+                        detailsCreator.innerHTML = `<summary>${creator}</summary><div class="folder-contents"></div>`;
+                        let contentCreator = detailsCreator.querySelector('.folder-contents');
+
+                        tree[subj][creator].forEach(book => {
+                            let item = document.createElement('div');
+                            item.className = 'book-item';
+                            item.innerHTML = `<div class="book-item-content">${book.title}</div>`;
+                            item.addEventListener('click', () => loadLecture(book, item));
+                            contentCreator.appendChild(item);
+                        });
+                        contentSubj.appendChild(detailsCreator);
+                    });
+                    bookList.appendChild(detailsSubj);
+                });
+            }
+
+            searchBar.addEventListener('input', (e) => renderLibrary(e.target.value));
+
+            function loadLecture(book, el) {
+                document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
+                if (el) el.classList.add('active');
+
+                document.getElementById('placeholder-box').style.display = 'none';
+                document.getElementById('utilities-workspace').style.display = 'none';
+                document.getElementById('viewer-wrapper').style.display = 'block';
+                document.getElementById('split-screen-btn').style.display = 'flex';
+                
+                document.getElementById('current-book-title').textContent = book.title;
+                document.getElementById('current-book-breadcrumb').textContent = book.folders.join(" > ");
+                
+                const dropdown = document.getElementById('playlist-dropdown');
+                const frame = document.getElementById('book-frame');
+                const splitFrame = document.getElementById('book-frame-split');
+                
+                if (book.playlist && book.playlist.length > 0) {
+                    dropdown.style.display = 'block';
+                    dropdown.innerHTML = '';
+                    book.playlist.forEach((vid) => {
+                        let opt = document.createElement('option');
+                        opt.value = vid.url;
+                        opt.textContent = vid.title;
+                        dropdown.appendChild(opt);
+                    });
+                    dropdown.onchange = (e) => { 
+                        frame.src = e.target.value; 
+                        if(splitFrame) splitFrame.src = e.target.value;
+                    };
+                    frame.src = book.playlist[0].url;
+                    if(splitFrame) splitFrame.src = book.playlist[0].url;
+                } else {
+                    dropdown.style.display = 'none';
+                }
+
+                // Load contextual notes
+                const notesArea = document.getElementById('notes-area');
+                notesArea.value = localStorage.getItem('notes_' + book.title) || '';
+                notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
+            }
+
+            // ==========================================
+            // 5. UTILITIES WORKSPACE (Refactored)
+            // ==========================================
+            const utilBtns = document.querySelectorAll('.utility-menu-btn');
+            utilBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const utilType = btn.getAttribute('data-util');
+                    openUtility(utilType);
+                });
+            });
+
+            function openUtility(type) {
+                document.getElementById('placeholder-box').style.display = 'none';
+                document.getElementById('viewer-wrapper').style.display = 'none';
+                document.getElementById('viewer-wrapper-split').style.display = 'none';
+                document.getElementById('split-resizer').style.display = 'none';
+                document.getElementById('split-screen-btn').style.display = 'none';
+                document.getElementById('playlist-dropdown').style.display = 'none';
+                document.getElementById('reader-container-main').classList.remove('split-active');
+                
+                const workspace = document.getElementById('utilities-workspace');
+                workspace.style.display = 'flex';
+                
+                document.getElementById('current-book-title').textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                document.getElementById('current-book-breadcrumb').textContent = "Utilities > " + type;
+
+                if (type === 'analytics') {
+                    let total = 0, streak = 0, d = new Date();
+                    for(let k in studyStats) total += studyStats[k];
+                    while(studyStats[d.toISOString().split('T')[0]] > 0) {
+                        streak++; d.setDate(d.getDate()-1);
+                    }
+                    workspace.innerHTML = `
+                        <div class="util-workspace-inner">
+                            <h2 style="font-size:2em; margin-bottom:30px;">📊 Analytics Dashboard</h2>
+                            <div class="util-dashboard-grid">
+                                <div class="stat-card">
+                                    <div class="stat-value">${total}</div>
+                                    <div class="stat-label">Total Focus Sessions</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value" style="color:var(--danger);">${streak} 🔥</div>
+                                    <div class="stat-label">Current Streak</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${((total * pomoSettings.focusTime) / 60).toFixed(1)}</div>
+                                    <div class="stat-label">Hours Studied</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (type === 'timetable') {
+                    workspace.innerHTML = `
+                        <div class="util-workspace-inner" style="max-width:1200px; padding:0;">
+                            <h2 style="text-align:center; margin-bottom:20px;">📅 Study Timetable</h2>
+                            <div class="tt-layout">
+                                <div class="tt-daily">
+                                    <div class="tt-add-task-form">
+                                        <input type="time" id="tt-start" class="tt-time-input">
+                                        <input type="text" id="tt-task" class="tt-task-input" placeholder="Task / Lecture...">
+                                        <button class="primary-btn" id="tt-add-btn">Add</button>
+                                    </div>
+                                    <div class="tt-tasks-container" id="tt-tasks-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    let tasks = JSON.parse(localStorage.getItem('timetable_tasks')) || [];
+                    const renderTasks = () => {
+                        const list = document.getElementById('tt-tasks-list');
+                        list.innerHTML = '';
+                        tasks.sort((a,b)=>a.time.localeCompare(b.time)).forEach((t, i) => {
+                            list.innerHTML += `
+                                <div class="tt-task-item ${t.done ? 'completed':''}">
+                                    <div style="display:flex; align-items:center; gap:10px; width:100%;">
+                                        <input type="checkbox" style="accent-color:var(--success); width:18px; height:18px;" ${t.done?'checked':''} onchange="toggleTask(${i})">
+                                        <span class="tt-task-time">${t.time}</span>
+                                        <span style="flex-grow:1; font-weight:600; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
+                                        <button onclick="delTask(${i})" style="background:none; border:none; color:var(--danger); font-size:1.2em; cursor:pointer;">✖</button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    };
+                    window.toggleTask = (i) => { tasks[i].done = !tasks[i].done; localStorage.setItem('timetable_tasks', JSON.stringify(tasks)); renderTasks(); };
+                    window.delTask = (i) => { tasks.splice(i, 1); localStorage.setItem('timetable_tasks', JSON.stringify(tasks)); renderTasks(); };
+                    
+                    document.getElementById('tt-add-btn').onclick = () => {
+                        let tm = document.getElementById('tt-start').value || "12:00";
+                        let txt = document.getElementById('tt-task').value.trim();
+                        if(txt) { tasks.push({time:tm, text:txt, done:false}); localStorage.setItem('timetable_tasks', JSON.stringify(tasks)); renderTasks(); }
+                    };
+                    renderTasks();
+                } else if (type === 'syllabus') {
+                    workspace.innerHTML = `
+                        <div class="util-workspace-inner">
+                            <h2 style="text-align:center; margin-bottom:20px;">📑 Syllabus Tracker (Physics)</h2>
+                            <div class="syl-subject">
+                                <summary>Class 11 & 12 Core Mechanics</summary>
+                                <div class="syl-grid">
+                                    <div class="syl-item"><span class="syl-item-title">Kinematics</span><button class="syl-btn" style="background:#22c55e; color:white;">Mastered</button></div>
+                                    <div class="syl-item"><span class="syl-item-title">Laws of Motion</span><button class="syl-btn" style="background:#3b82f6; color:white;">Practicing PYQs</button></div>
+                                    <div class="syl-item"><span class="syl-item-title">Work, Energy, Power</span><button class="syl-btn" style="background:#fde047; color:black;">Reading Theory</button></div>
+                                    <div class="syl-item"><span class="syl-item-title">Rotational Motion</span><button class="syl-btn" style="border:1px solid var(--border-color);">Unstudied</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Module Navigation
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    activeModule = e.target.getAttribute('data-target');
+                    
+                    if(activeModule === 'LECTURES') {
+                        document.getElementById('utilities-sidebar-view').style.display = 'none';
+                        document.getElementById('library-sidebar-view').style.display = 'flex';
+                        renderLibrary();
+                    } else {
+                        document.getElementById('library-sidebar-view').style.display = 'none';
+                        document.getElementById('utilities-sidebar-view').style.display = 'flex';
+                    }
+                });
+            });
+
+            // Local Copilot Logic
+            const chatFab = document.getElementById('chat-fab-btn');
+            const chatWin = document.getElementById('chat-window');
+            const chatInp = document.getElementById('chat-input');
+            const chatBody = document.getElementById('chat-body');
+
+            chatFab.onclick = () => chatWin.classList.add('open');
+            document.getElementById('chat-close-btn').onclick = () => chatWin.classList.remove('open');
+            
+            document.getElementById('chat-send-btn').onclick = () => {
+                let q = chatInp.value.trim().toLowerCase();
+                if(!q) return;
+                chatBody.innerHTML += `<div class="chat-msg user-msg">${q}</div>`;
+                chatInp.value = '';
+                
+                setTimeout(() => {
+                    let matches = [];
+                    libraryData.forEach(cat => {
+                        cat.playlist.forEach(vid => {
+                            if(vid.title.toLowerCase().includes(q) || cat.title.toLowerCase().includes(q)) {
+                                matches.push(`<button onclick="playSearchedVideo('${vid.url}', '${vid.title}', '${cat.title}')" style="background:var(--highlight); color:var(--highlight-text); border:1px solid var(--border-color); padding:4px 8px; border-radius:4px; margin-top:4px; width:100%; text-align:left; cursor:pointer;">▶️ ${vid.title}</button>`);
+                            }
+                        });
+                    });
+                    
+                    let reply = matches.length > 0 ? `I found these lectures for you:<br>${matches.slice(0,3).join('')}` : "Sorry, I couldn't find any local lectures matching that topic.";
+                    chatBody.innerHTML += `<div class="chat-msg bot-msg">${reply}</div>`;
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 400);
+            };
+
+            window.playSearchedVideo = function(url, title, catTitle) {
+                document.getElementById('placeholder-box').style.display = 'none';
+                document.getElementById('utilities-workspace').style.display = 'none';
+                document.getElementById('viewer-wrapper').style.display = 'block';
+                document.getElementById('split-screen-btn').style.display = 'flex';
+                
+                document.getElementById('current-book-title').textContent = title;
+                document.getElementById('current-book-breadcrumb').textContent = `Search > ${catTitle} > ${title}`;
+                
+                document.getElementById('playlist-dropdown').style.display = 'none';
+                
+                document.getElementById('book-frame').src = url;
+                if(document.getElementById('book-frame-split')) document.getElementById('book-frame-split').src = url;
+                document.getElementById('chat-window').classList.remove('open');
+            }
+
+            // Modal Toggles & Actions
+            document.getElementById('music-open-btn').onclick = () => document.getElementById('music-modal-overlay').classList.add('open');
+            document.getElementById('music-close-modal').onclick = () => document.getElementById('music-modal-overlay').classList.remove('open');
+            
+            document.getElementById('pomo-open-settings').onclick = () => document.getElementById('settings-modal-overlay').classList.add('open');
+            document.getElementById('settings-close-modal').onclick = () => document.getElementById('settings-modal-overlay').classList.remove('open');
+            
+            document.getElementById('save-settings-btn').onclick = () => {
+                pomoSettings.focusTime = parseInt(document.getElementById('setting-focus-time').value);
+                pomoSettings.theme = document.getElementById('setting-theme').value;
+                localStorage.setItem('pomo_settings_v2', JSON.stringify(pomoSettings));
+                document.body.className = `${pomoSettings.theme} font-medium`;
+                document.getElementById('settings-modal-overlay').classList.remove('open');
+                
+                if(!isPomoRunning) {
+                    pomoSeconds = pomoSettings.focusTime * 60;
+                    updatePomoDisplay();
+                }
+            };
+            
+            document.getElementById('theme-toggle').onclick = () => {
+                pomoSettings.theme = pomoSettings.theme.includes('light') ? 'theme-amoled' : 'theme-light';
+                document.body.className = `${pomoSettings.theme} font-medium`;
+                localStorage.setItem('pomo_settings_v2', JSON.stringify(pomoSettings));
+            };
+
+            const notesPanel = document.getElementById('notes-panel');
+            document.getElementById('notes-toggle-btn').onclick = () => notesPanel.classList.add('open');
+            document.getElementById('close-notes-btn').onclick = () => notesPanel.classList.remove('open');
+
+            // Split Screen Logic
+            let isSplitActive = false;
+            document.getElementById('split-screen-btn').onclick = () => {
+                isSplitActive = !isSplitActive;
+                const main = document.getElementById('reader-container-main');
+                const v1 = document.getElementById('viewer-wrapper');
+                const v2 = document.getElementById('viewer-wrapper-split');
+                const res = document.getElementById('split-resizer');
+                
+                if(isSplitActive) {
+                    main.classList.add('split-active');
+                    v2.style.display = 'block';
+                    res.style.display = 'block';
+                    document.getElementById('book-frame-split').src = document.getElementById('book-frame').src;
+                    v1.style.width = '50%'; v2.style.width = '50%';
+                } else {
+                    main.classList.remove('split-active');
+                    v2.style.display = 'none';
+                    res.style.display = 'none';
+                    v1.style.width = '100%';
+                }
+            };
+
+            // Resizer Drag Logic
+            const resizer = document.getElementById('split-resizer');
+            let isResizing = false;
+            resizer.onmousedown = () => { isResizing = true; resizer.classList.add('dragging'); document.body.style.cursor='col-resize'; };
+            document.onmousemove = (e) => {
+                if(!isResizing) return;
+                const main = document.getElementById('reader-container-main');
+                const rect = main.getBoundingClientRect();
+                let pct = ((e.clientX - rect.left) / rect.width) * 100;
+                if(pct>20 && pct<80) {
+                    document.getElementById('viewer-wrapper').style.width = `${pct}%`;
+                    document.getElementById('viewer-wrapper-split').style.width = `${100-pct}%`;
+                }
+            };
+            document.onmouseup = () => { if(isResizing) { isResizing = false; resizer.classList.remove('dragging'); document.body.style.cursor='default'; }};
+
+            // Fullscreen
+            document.getElementById('fullscreen-btn').onclick = () => {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else if (document.exitFullscreen) document.exitFullscreen();
+            };
+
+            // Init
+            renderLibrary();
         });
-
-        const MOCK_DB = {
-          users: {
-            'demo-user-123': {
-              profile: { name: 'Student', studyGoal: 'Ace JEE/Finals' },
-              lectures: flattenedLectures,
-              tasks: [
-                { id: 101, text: 'Review Mechanics Short Notes', status: 'todo' },
-                { id: 102, text: 'Watch Eduniti Kinematics', status: 'in-progress' },
-                { id: 103, text: 'Solve 20 PYQs on Vectors', status: 'done' },
-              ],
-              flashcards: [
-                { id: 201, front: 'What is the formula for escape velocity?', back: 'v = √(2GM/R) or √(2gR)', nextReview: Date.now(), easeFactor: 2.5, interval: 0, deck: 'Drive > Books > HC_Verma_Vol1.pdf' },
-                { id: 202, front: 'What is the hybridization of Carbon in Benzene?', back: 'sp2 hybridized.', nextReview: Date.now(), easeFactor: 2.5, interval: 0, deck: 'Drive > Books > NCERT_Chemistry.pdf' },
-                { id: 203, front: 'Integral of tan(x) dx?', back: 'ln|sec(x)| + C', nextReview: Date.now(), easeFactor: 2.6, interval: 0, deck: 'Drive > Books > RD_Sharma_Maths.pdf' },
-                { id: 204, front: 'Newton\'s Second Law?', back: 'F = dp/dt (Rate of change of momentum)', nextReview: Date.now() + 86400000, easeFactor: 2.6, interval: 1, deck: 'Drive > Books > HC_Verma_Vol1.pdf' }, 
-              ],
-              analytics: {
-                totalFocusMinutes: 2150,
-                cardsMastered: 112,
-                tasksCompleted: 45,
-                weeklyData: [
-                  { day: 'Mon', hours: 3.5 }, { day: 'Tue', hours: 4.8 }, { day: 'Wed', hours: 2.5 },
-                  { day: 'Thu', hours: 5.2 }, { day: 'Fri', hours: 3.0 }, { day: 'Sat', hours: 6.5 }, { day: 'Sun', hours: 4.0 }
-                ]
-              }
-            }
-          }
-        };
-
-        const THEMES = {
-          indigo: { name: 'Indigo', primary: 'bg-indigo-600', text: 'text-indigo-600', hover: 'hover:bg-indigo-700', bgLight: 'bg-indigo-50', bgDark: 'dark:bg-indigo-500/15', border: 'border-indigo-200', borderDark: 'dark:border-indigo-500/30', shadow: 'shadow-indigo-500/25', ring: 'ring-indigo-500/50' },
-          rose: { name: 'Rose', primary: 'bg-rose-500', text: 'text-rose-500', hover: 'hover:bg-rose-600', bgLight: 'bg-rose-50', bgDark: 'dark:bg-rose-500/15', border: 'border-rose-200', borderDark: 'dark:border-rose-500/30', shadow: 'shadow-rose-500/25', ring: 'ring-rose-500/50' },
-          emerald: { name: 'Emerald', primary: 'bg-emerald-500', text: 'text-emerald-500', hover: 'hover:bg-emerald-600', bgLight: 'bg-emerald-50', bgDark: 'dark:bg-emerald-500/15', border: 'border-emerald-200', borderDark: 'dark:border-emerald-500/30', shadow: 'shadow-emerald-500/25', ring: 'ring-emerald-500/50' },
-          amber: { name: 'Amber', primary: 'bg-amber-500', text: 'text-amber-500', hover: 'hover:bg-amber-600', bgLight: 'bg-amber-50', bgDark: 'dark:bg-amber-500/15', border: 'border-amber-200', borderDark: 'dark:border-amber-500/30', shadow: 'shadow-amber-500/25', ring: 'ring-amber-500/50' }
-        };
-
-        const SHADES = {
-          slate: { name: 'Soft Slate', main: 'dark:bg-slate-950', panel: 'dark:bg-slate-900', border: 'dark:border-slate-800/50' },
-          midnight: { name: 'Deep Midnight', main: 'dark:bg-[#060913]', panel: 'dark:bg-[#0B101E]', border: 'dark:border-[#1F2937]/50' },
-          black: { name: 'OLED Black', main: 'dark:bg-black', panel: 'dark:bg-[#101010]', border: 'dark:border-[#222]/50' }
-        };
-
-        const INITIAL_SOUNDS = [
-          { id: '1', name: 'Lo-Fi Beats', desc: 'Chill study vibes', icon: '🎧', playing: true, volume: 60 },
-          { id: '2', name: 'Rainfall', desc: 'Light ambient rain', icon: '🌧️', playing: false, volume: 40 },
-          { id: '3', name: 'Cafe Chatter', desc: 'Busy coffee shop', icon: '☕', playing: false, volume: 30 },
-          { id: '4', name: 'Deep Focus', desc: 'Binaural beats', icon: '🧠', playing: false, volume: 50 },
-          { id: '5', name: 'Library', desc: 'Pages & whispers', icon: '📚', playing: false, volume: 40 },
-          { id: '6', name: 'Fireplace', desc: 'Crackling wood', icon: '🔥', playing: false, volume: 60 },
-          { id: '7', name: 'Ocean Waves', desc: 'Calming beach sounds', icon: '🌊', playing: false, volume: 50 },
-          { id: '8', name: 'Forest', desc: 'Birds and leaves', icon: '🌲', playing: false, volume: 45 },
-        ];
-
-
-        // ==========================================
-        // REACT COMPONENTS (Using FontAwesome Classes instead of Lucide)
-        // ==========================================
-
-        const SidebarItem = ({ iconClass, label, active, onClick, theme }) => (
-          <button 
-            onClick={onClick}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all duration-200 ${
-              active 
-                ? `${theme.primary} text-white shadow-md ${theme.shadow}` 
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'
-            }`}
-          >
-            <i className={`${iconClass} text-xl ${active ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`}></i>
-            <span className="font-medium text-sm">{label}</span>
-          </button>
-        );
-
-        // --- FLASHCARDS MODULE ---
-        const FlashcardsView = ({ theme, userData, updateData }) => {
-          const [activeCardIndex, setActiveCardIndex] = useState(0);
-          const [isFlipped, setIsFlipped] = useState(false);
-
-          const dueCards = userData?.flashcards.filter(card => card.nextReview <= Date.now()) || [];
-          const currentCard = dueCards[activeCardIndex];
-
-          const handleReview = (quality) => {
-            if (!currentCard) return;
-
-            let newInterval = currentCard.interval;
-            let newEase = currentCard.easeFactor;
-
-            if (quality === 0) { 
-              newInterval = 0;
-              newEase = Math.max(1.3, newEase - 0.2);
-            } else if (quality === 1) { 
-              newInterval = newInterval === 0 ? 1 : newInterval * 1.2;
-              newEase = Math.max(1.3, newEase - 0.15);
-            } else if (quality === 2) { 
-              newInterval = newInterval === 0 ? 1 : (newInterval === 1 ? 6 : newInterval * newEase);
-            } else if (quality === 3) { 
-              newInterval = newInterval === 0 ? 4 : (newInterval === 1 ? 6 : newInterval * newEase * 1.3);
-              newEase += 0.15;
-            }
-
-            const nextReviewTime = Date.now() + (newInterval * 24 * 60 * 60 * 1000); 
-
-            const updatedCards = userData.flashcards.map(c => 
-              c.id === currentCard.id 
-                ? { ...c, interval: newInterval, easeFactor: newEase, nextReview: nextReviewTime }
-                : c
-            );
-
-            updateData('flashcards', updatedCards);
-            setIsFlipped(false);
-            
-            if (activeCardIndex >= dueCards.length - 1) {
-              setActiveCardIndex(0); 
-            }
-          };
-
-          if (dueCards.length === 0) {
-            return (
-              <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in zoom-in-95 duration-500">
-                <div className={`w-24 h-24 rounded-full ${theme.bgLight} ${theme.text} ${theme.bgDark} flex items-center justify-center mb-6`}>
-                  <i className="fas fa-brain text-5xl"></i>
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">You're all caught up!</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-center max-w-sm">
-                  No flashcards due right now. Pull more notes from Drive or wait for your next spaced repetition cycle.
-                </p>
-              </div>
-            );
-          }
-
-          return (
-            <div className="max-w-3xl mx-auto animate-in fade-in duration-500">
-              <div className="mb-8 flex justify-between items-end">
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Spaced Repetition</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{dueCards.length} cards due for review</p>
-                </div>
-              </div>
-
-              <div 
-                className="relative w-full h-[400px] cursor-pointer group perspective-1000"
-                onClick={() => !isFlipped && setIsFlipped(true)}
-              >
-                <div className={`w-full h-full transition-transform duration-500 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
-                  
-                  {/* Front */}
-                  <div className="absolute w-full h-full backface-hidden bg-white dark:bg-slate-800/80 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-lg p-8 flex flex-col hover:shadow-xl transition-shadow">
-                    <div className="flex justify-between items-start w-full">
-                      <span className={`text-xs font-bold uppercase tracking-wider ${theme.text}`}>Question</span>
-                      {currentCard.deck && (
-                         <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-white/5 max-w-[50%] overflow-hidden">
-                           {currentCard.deck.includes('Drive') ? <i className="fas fa-database text-xs text-blue-500 flex-shrink-0"></i> : <i className="fas fa-file-code text-xs text-orange-500 flex-shrink-0"></i>}
-                           <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 truncate">{currentCard.deck}</span>
-                         </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 flex items-center justify-center text-center px-4">
-                      <p className="text-2xl sm:text-3xl font-medium text-slate-800 dark:text-slate-100 leading-snug">
-                        {currentCard.front}
-                      </p>
-                    </div>
-                    
-                    <div className="w-full text-center text-sm text-slate-400 dark:text-slate-500 animate-pulse pb-2">
-                      Click to reveal answer
-                    </div>
-                  </div>
-
-                  {/* Back */}
-                  <div className="absolute w-full h-full backface-hidden rotate-y-180 bg-white dark:bg-slate-800/80 rounded-[2rem] border border-slate-200 dark:border-white/10 shadow-lg p-8 flex flex-col justify-between items-center text-center">
-                    <div className="flex-1 flex flex-col justify-center w-full">
-                      <span className={`text-xs font-bold uppercase tracking-wider ${theme.text} mb-6 block`}>Answer</span>
-                      <p className="text-xl sm:text-2xl text-slate-700 dark:text-slate-200 leading-relaxed">
-                        {currentCard.back}
-                      </p>
-                    </div>
-
-                    <div className="w-full grid grid-cols-4 gap-3 sm:gap-4 mt-8">
-                      <button onClick={(e) => { e.stopPropagation(); handleReview(0); }} className="p-3 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100 transition-colors">
-                        <span className="block font-bold text-sm sm:text-base mb-1">Again</span>
-                        <span className="text-[10px] opacity-70">&lt; 1m</span>
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); handleReview(1); }} className="p-3 rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400 hover:bg-orange-100 transition-colors">
-                        <span className="block font-bold text-sm sm:text-base mb-1">Hard</span>
-                        <span className="text-[10px] opacity-70">1d</span>
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); handleReview(2); }} className={`p-3 rounded-xl ${theme.bgLight} ${theme.text} dark:bg-white/5 hover:bg-indigo-100 transition-colors`}>
-                        <span className="block font-bold text-sm sm:text-base mb-1">Good</span>
-                        <span className="text-[10px] opacity-70">2d</span>
-                      </button>
-                      <button onClick={(e) => { e.stopPropagation(); handleReview(3); }} className="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100 transition-colors">
-                        <span className="block font-bold text-sm sm:text-base mb-1">Easy</span>
-                        <span className="text-[10px] opacity-70">4d</span>
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-
-        // --- LECTURES MODULE ---
-        const VideoModal = ({ isOpen, onClose, lecture, theme }) => {
-          if (!isOpen || !lecture) return null;
-
-          return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-slate-900 w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300">
-                
-                <div className={`p-4 border-b border-slate-100 dark:border-white/5 flex justify-between items-center ${theme.bgLight} dark:bg-white/5`}>
-                  <div>
-                    <h3 className="font-bold text-lg text-slate-800 dark:text-white line-clamp-1">{lecture.title}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{lecture.course} • {lecture.author}</p>
-                  </div>
-                  <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200/50 dark:hover:bg-white/10 text-slate-500 transition-colors flex-shrink-0">
-                    <i className="fas fa-times text-xl"></i>
-                  </button>
-                </div>
-
-                <div className="w-full aspect-video bg-black relative">
-                  <iframe 
-                    src={lecture.url} 
-                    title={lecture.title}
-                    className="w-full h-full absolute top-0 left-0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowFullScreen
-                  ></iframe>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        const LecturesView = ({ theme, userData }) => {
-          const allLectures = userData?.lectures || [];
-          const [activeCategory, setActiveCategory] = useState('All');
-          const [playingVideo, setPlayingVideo] = useState(null);
-
-          const categories = ['All', ...new Set(allLectures.map(l => l.category))];
-          const filteredLectures = activeCategory === 'All' 
-            ? allLectures 
-            : allLectures.filter(l => l.category === activeCategory);
-
-          return (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Drive Lectures</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sourced directly from your Google Drive integration.</p>
-                </div>
-                
-                <div className="flex space-x-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-                  {categories.map(cat => (
-                     <button 
-                       key={cat} 
-                       onClick={() => setActiveCategory(cat)}
-                       className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
-                         activeCategory === cat 
-                           ? `${theme.primary} text-white shadow-md ${theme.shadow}` 
-                           : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10'
-                       }`}
-                     >
-                       {cat}
-                     </button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {filteredLectures.map((lecture) => (
-                  <div key={lecture.id} className="group flex flex-col p-5 bg-white dark:bg-white/5 rounded-[2rem] border border-slate-100 dark:border-white/5 hover:shadow-xl dark:hover:shadow-2xl dark:hover:bg-white/10 transition-all duration-300">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className={`p-2.5 rounded-xl ${lecture.type === 'video' ? 'bg-blue-50 text-blue-500 dark:bg-blue-500/10 dark:text-blue-400' : 'bg-orange-50 text-orange-500 dark:bg-orange-500/10 dark:text-orange-400'}`}>
-                        {lecture.type === 'video' ? <i className="fas fa-video text-lg"></i> : <i className="fas fa-file-alt text-lg"></i>}
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${lecture.source.includes('Drive') ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30'}`}>
-                          {lecture.source}
-                        </span>
-                      </div>
-                    </div>
-                    <h3 className={`font-semibold text-base text-slate-800 dark:text-slate-100 mb-1 transition-colors group-hover:${theme.text} line-clamp-2`}>{lecture.title}</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-1">{lecture.course} • {lecture.author}</p>
-                    
-                    <div className="mt-auto flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-4">
-                      <button 
-                        onClick={() => setPlayingVideo(lecture)}
-                        className={`flex items-center space-x-1.5 px-4 py-2 rounded-lg text-xs font-bold ${theme.primary} text-white hover:opacity-90 transition-all shadow-sm ${theme.shadow} w-full justify-center`}
-                      >
-                        <i className="fas fa-play text-xs ml-0.5"></i>
-                        <span>Watch Lecture</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <VideoModal 
-                isOpen={!!playingVideo} 
-                onClose={() => setPlayingVideo(null)} 
-                lecture={playingVideo}
-                theme={theme}
-              />
-            </div>
-          );
-        };
-
-        // --- TASK BOARD MODULE ---
-        const TaskBoard = ({ theme, userData, updateData }) => {
-          const tasks = userData?.tasks || [];
-          const [newTask, setNewTask] = useState('');
-          const [draggedTaskId, setDraggedTaskId] = useState(null);
-
-          const columns = [
-            { id: 'todo', title: 'To Do', color: 'bg-slate-100 dark:bg-slate-800/50' },
-            { id: 'in-progress', title: 'In Progress', color: 'bg-blue-50 dark:bg-blue-900/10' },
-            { id: 'done', title: 'Completed', color: 'bg-emerald-50 dark:bg-emerald-900/10' }
-          ];
-
-          const handleDragStart = (e, id) => {
-            setDraggedTaskId(id);
-            e.dataTransfer.effectAllowed = 'move';
-            setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
-          };
-
-          const handleDragEnd = (e) => {
-            e.target.style.opacity = '1';
-            setDraggedTaskId(null);
-          };
-
-          const handleDragOver = (e) => {
-            e.preventDefault(); 
-            e.dataTransfer.dropEffect = 'move';
-          };
-
-          const handleDrop = (e, status) => {
-            e.preventDefault();
-            if (!draggedTaskId) return;
-            
-            const updatedTasks = tasks.map(t => 
-              t.id === draggedTaskId ? { ...t, status } : t
-            );
-            updateData('tasks', updatedTasks);
-          };
-
-          const addTask = (e) => {
-            e.preventDefault();
-            if (!newTask.trim()) return;
-            const newTaskObj = { id: Date.now(), text: newTask, status: 'todo' };
-            updateData('tasks', [...tasks, newTaskObj]);
-            setNewTask('');
-          };
-
-          return (
-            <div className="animate-in fade-in duration-500 h-full flex flex-col">
-              <div className="mb-6 flex-shrink-0">
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight mb-2">Task Flow</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-2xl">
-                  Organize your tasks visually. Drag and drop cards between columns to track them from creation to completion.
-                </p>
-              </div>
-
-              <div className="mb-6 flex-shrink-0">
-                <form onSubmit={addTask} className="relative max-w-md">
-                  <input 
-                    type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="Add a new task..." 
-                    className="w-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-3 pl-4 pr-12 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <button type="submit" className={`absolute right-2 top-2 p-1.5 ${theme.primary} ${theme.hover} text-white rounded-xl transition-colors`}>
-                    <i className="fas fa-plus text-xl"></i>
-                  </button>
-                </form>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 min-h-0">
-                {columns.map(column => (
-                  <div 
-                    key={column.id} 
-                    className={`flex flex-col rounded-[2rem] p-4 border border-slate-100 dark:border-white/5 ${column.color}`}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, column.id)}
-                  >
-                    <div className="flex items-center justify-between mb-4 px-2">
-                      <h3 className="font-bold text-slate-700 dark:text-slate-200">{column.title}</h3>
-                      <span className="bg-white/50 dark:bg-black/20 text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-full text-xs font-semibold">
-                        {tasks.filter(t => t.status === column.id).length}
-                      </span>
-                    </div>
-                    
-                    <div className="flex-1 overflow-y-auto space-y-3">
-                      {tasks.filter(t => t.status === column.id).map(task => (
-                        <div 
-                          key={task.id}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, task.id)}
-                          onDragEnd={handleDragEnd}
-                          className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-white/5 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing group transition-all"
-                        >
-                          <div className="flex items-start">
-                            <i className="fas fa-grip-vertical text-base text-slate-300 dark:text-slate-600 mr-2 mt-0.5 flex-shrink-0"></i>
-                            <span className={`text-sm flex-1 ${task.status === 'done' ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-200'}`}>
-                              {task.text}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        };
-
-        // --- POMODORO MODULE ---
-        const PomodoroView = ({ theme, userData, updateData }) => {
-          const [timeLeft, setTimeLeft] = useState(25 * 60);
-          const [isActive, setIsActive] = useState(false);
-          const [mode, setMode] = useState('focus');
-          const sessionStartRef = useRef(null);
-
-          useEffect(() => {
-            let interval = null;
-            if (isActive && timeLeft > 0) {
-              if (!sessionStartRef.current) sessionStartRef.current = Date.now();
-              interval = setInterval(() => setTimeLeft(timeLeft - 1), 1000);
-            } else if (timeLeft === 0 && isActive) {
-              setIsActive(false);
-              if (mode === 'focus' && userData) {
-                const newTotal = userData.analytics.totalFocusMinutes + 25;
-                updateData('analytics', { ...userData.analytics, totalFocusMinutes: newTotal });
-              }
-              sessionStartRef.current = null;
-            }
-            return () => clearInterval(interval);
-          }, [isActive, timeLeft, mode, userData, updateData]);
-
-          const toggleTimer = () => setIsActive(!isActive);
-          const resetTimer = () => {
-            setIsActive(false);
-            sessionStartRef.current = null;
-            setTimeLeft(mode === 'focus' ? 25 * 60 : mode === 'shortBreak' ? 5 * 60 : 15 * 60);
-          };
-
-          const setTimerMode = (newMode) => {
-            setMode(newMode);
-            setIsActive(false);
-            sessionStartRef.current = null;
-            setTimeLeft(newMode === 'focus' ? 25 * 60 : newMode === 'shortBreak' ? 5 * 60 : 15 * 60);
-          };
-
-          const formatTime = (seconds) => {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-          };
-
-          return (
-            <div className="flex flex-col items-center justify-center min-h-[70vh] animate-in fade-in zoom-in-95 duration-500">
-              <div className="bg-white dark:bg-white/5 p-10 rounded-[3rem] shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/5 max-w-md w-full text-center">
-                <div className="flex justify-center space-x-2 mb-10 bg-slate-50 dark:bg-black/20 p-1.5 rounded-full">
-                  {['focus', 'shortBreak', 'longBreak'].map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => setTimerMode(m)}
-                      className={`px-5 py-2.5 rounded-full text-sm font-medium capitalize transition-all ${
-                        mode === m 
-                          ? 'bg-white dark:bg-white/10 text-slate-800 dark:text-white shadow-sm' 
-                          : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                      }`}
-                    >
-                      {m.replace(/([A-Z])/g, ' $1').trim()}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="text-[5.5rem] font-light text-slate-800 dark:text-white tracking-tighter mb-10 tabular-nums font-mono leading-none">
-                  {formatTime(timeLeft)}
-                </div>
-
-                <div className="flex justify-center items-center space-x-6">
-                  <button 
-                    onClick={toggleTimer}
-                    className={`w-20 h-20 rounded-full flex items-center justify-center text-white shadow-lg transition-transform hover:scale-105 active:scale-95 ${
-                      isActive ? 'bg-rose-500 shadow-rose-500/30' : `${theme.primary} ${theme.shadow}`
-                    }`}
-                  >
-                    {isActive ? <i className="fas fa-pause text-3xl"></i> : <i className="fas fa-play text-3xl ml-1.5"></i>}
-                  </button>
-                  <button 
-                    onClick={resetTimer}
-                    className="w-14 h-14 rounded-full bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
-                  >
-                    <i className="fas fa-undo text-2xl"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        // --- AUDIO MIXER MODULE ---
-        const AudioMixerView = ({ theme }) => {
-          const [sounds, setSounds] = useState(INITIAL_SOUNDS);
-
-          const togglePlay = (id) => {
-            setSounds(sounds.map(s => s.id === id ? { ...s, playing: !s.playing } : s));
-          };
-
-          const handleVolumeChange = (id, newVolume) => {
-            setSounds(sounds.map(s => s.id === id ? { ...s, volume: parseInt(newVolume) } : s));
-          };
-
-          const stopAll = () => {
-            setSounds(sounds.map(s => ({ ...s, playing: false })));
-          };
-
-          const activeCount = sounds.filter(s => s.playing).length;
-
-          return (
-            <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl">
-              <div className="flex justify-between items-end">
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Audio Mixer</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Blend environments to create your perfect focus zone.</p>
-                </div>
-                {activeCount > 0 && (
-                  <button 
-                    onClick={stopAll}
-                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors flex items-center bg-white dark:bg-white/5 px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm"
-                  >
-                    <i className="fas fa-volume-mute text-base mr-1.5"></i> Stop All
-                  </button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                {sounds.map((sound) => (
-                  <div key={sound.id} className={`p-6 rounded-[2rem] border transition-all duration-300 ${
-                    sound.playing 
-                      ? `${theme.bgLight} border-transparent dark:border-transparent ${theme.bgDark} shadow-sm scale-[1.02]` 
-                      : 'bg-white border-slate-100 dark:bg-white/5 dark:border-white/5 hover:border-slate-200 dark:hover:border-white/10'
-                  }`}>
-                    <div className="flex flex-col items-center text-center space-y-4 mb-4">
-                      <button 
-                        onClick={() => togglePlay(sound.id)}
-                        className={`w-20 h-20 text-3xl rounded-3xl flex items-center justify-center transition-all ${
-                          sound.playing 
-                            ? `${theme.primary} text-white shadow-xl ${theme.shadow}` 
-                            : 'bg-slate-50 text-slate-500 dark:bg-black/20 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 shadow-inner'
-                        }`}
-                      >
-                        {sound.playing ? <i className="fas fa-pause text-xl text-white absolute opacity-0 hover:opacity-100 transition-opacity"></i> : <i className="fas fa-play text-xl ml-1 text-slate-400 dark:text-slate-500 absolute opacity-0 hover:opacity-100 transition-opacity"></i>}
-                        <span className={`transition-opacity ${sound.playing ? 'opacity-20 hover:opacity-0' : ''}`}>{sound.icon}</span>
-                      </button>
-                      <div>
-                        <h3 className={`font-bold ${sound.playing ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}>{sound.name}</h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{sound.desc}</p>
-                      </div>
-                    </div>
-                    
-                    <div className={`transition-all duration-500 overflow-hidden ${sound.playing ? 'h-16 opacity-100' : 'h-0 opacity-0'}`}>
-                       <div className="h-6 w-full flex items-end justify-center space-x-1 opacity-60 mb-4">
-                          {[...Array(8)].map((_, i) => (
-                            <div key={i} className={`w-1.5 rounded-full ${theme.primary} animate-pulse`} 
-                                 style={{ 
-                                   height: `${Math.random() * (sound.volume / 100) * 100}%`, 
-                                   animationDelay: `${i * 0.1}s`, 
-                                   animationDuration: '0.5s' 
-                                 }} />
-                          ))}
-                       </div>
-                       <div className="flex items-center space-x-3 px-2">
-                         <i className={`fas fa-volume-up text-base ${theme.text}`}></i>
-                         <input 
-                            type="range" min="0" max="100" 
-                            value={sound.volume}
-                            onChange={(e) => handleVolumeChange(sound.id, e.target.value)}
-                            className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                            style={{ 
-                               background: `linear-gradient(to right, var(--tw-colors-indigo-500) 0%, var(--tw-colors-indigo-500) ${sound.volume}%, transparent ${sound.volume}%)` 
-                            }} 
-                         />
-                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        };
-
-        // --- ANALYTICS MODULE ---
-        const AnalyticsView = ({ theme, userData }) => {
-          const analytics = userData?.analytics;
-          if (!analytics) return null;
-
-          const maxHours = Math.max(...analytics.weeklyData.map(d => d.hours), 1); 
-
-          return (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Study Analytics</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Track your progress and focus trends.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
-                  <div className={`p-4 rounded-2xl ${theme.bgLight} ${theme.text} ${theme.bgDark}`}>
-                    <i className="far fa-clock text-2xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Focus Time</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{Math.floor(analytics.totalFocusMinutes / 60)}h {analytics.totalFocusMinutes % 60}m</p>
-                  </div>
-                </div>
-                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
-                  <div className={`p-4 rounded-2xl bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10`}>
-                    <i className="fas fa-brain text-2xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Cards Mastered</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{analytics.cardsMastered}</p>
-                  </div>
-                </div>
-                <div className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-slate-100 dark:border-white/5 flex items-center space-x-4 shadow-sm">
-                  <div className={`p-4 rounded-2xl bg-orange-50 text-orange-500 dark:bg-orange-500/10`}>
-                    <i className="fas fa-check-circle text-2xl"></i>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-1">Tasks Completed</p>
-                    <p className="text-2xl font-bold text-slate-800 dark:text-white">{analytics.tasksCompleted}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-slate-100 dark:border-white/5 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Hours Studied This Week</h3>
-                <div className="flex items-end justify-between h-64 mt-4 gap-2">
-                  {analytics.weeklyData.map((day, idx) => {
-                    const heightPercent = (day.hours / maxHours) * 100;
-                    return (
-                      <div key={idx} className="flex flex-col items-center flex-1 group">
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity mb-2 text-xs font-bold text-slate-600 dark:text-slate-300">
-                          {day.hours}h
-                        </div>
-                        <div className="w-full relative flex justify-center flex-1">
-                          <div 
-                            className={`absolute bottom-0 w-full max-w-[3rem] rounded-t-xl transition-all duration-700 ease-out ${theme.primary} ${theme.shadow} opacity-80 group-hover:opacity-100`}
-                            style={{ height: `${heightPercent}%` }}
-                          />
-                        </div>
-                        <span className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{day.day}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        // --- SETTINGS MODULE ---
-        const SettingsView = ({ isDarkMode, setIsDarkMode, currentTheme, setTheme, currentShade, setShade, theme }) => (
-          <div className="max-w-3xl animate-in fade-in duration-500 space-y-8 pb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">Settings</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Customize your workspace appearance and behavior.</p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="bg-white dark:bg-white/5 rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-sm">
-                 <div className="flex items-center space-x-3 mb-8">
-                   <div className={`p-2 rounded-lg ${theme.bgLight} ${theme.bgDark} ${theme.text}`}>
-                     <i className="fas fa-palette text-xl"></i>
-                   </div>
-                   <h3 className="text-xl font-semibold text-slate-800 dark:text-white">Theme & Colors</h3>
-                 </div>
-
-                 <div className="space-y-8">
-                   <div>
-                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Color Mode</label>
-                     <div className="flex space-x-4">
-                       <button onClick={() => setIsDarkMode(false)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${!isDarkMode ? `${theme.border} ${theme.bgLight} ${theme.text} ring-2 ${theme.ring} ring-offset-2` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
-                         <i className="fas fa-sun text-lg"></i> <span className="font-medium">Light</span>
-                       </button>
-                       <button onClick={() => setIsDarkMode(true)} className={`flex items-center space-x-2 px-6 py-3 rounded-2xl border transition-all ${isDarkMode ? `${theme.borderDark} ${theme.bgDark} ${theme.text} ring-2 ${theme.ring} ring-offset-2 dark:ring-offset-slate-900` : 'border-slate-200 dark:border-white/10 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}> 
-                         <i className="fas fa-moon text-lg"></i> <span className="font-medium">Dark</span>
-                       </button>
-                     </div>
-                   </div>
-
-                   <div>
-                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Accent Color</label>
-                     <div className="flex space-x-4">
-                       {Object.entries(THEMES).map(([key, t]) => (
-                         <button 
-                           key={key} 
-                           onClick={() => setTheme(key)} 
-                           className={`w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 ${t.primary} ${currentTheme === key ? `ring-4 ring-offset-2 dark:ring-offset-[#111] ${t.ring}` : 'opacity-80 hover:opacity-100'}`}
-                         >
-                            {currentTheme === key && <i className="fas fa-check-circle text-xl text-white drop-shadow-sm"></i>}
-                         </button>
-                       ))}
-                     </div>
-                   </div>
-
-                   {isDarkMode && (
-                     <div className="animate-in fade-in slide-in-from-top-2 duration-300 pt-2">
-                       <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-4">Dark Mode Background</label>
-                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                         {Object.entries(SHADES).map(([key, s]) => (
-                           <button 
-                             key={key} 
-                             onClick={() => setShade(key)} 
-                             className={`p-5 rounded-2xl border text-left transition-all ${currentShade === key ? `${theme.borderDark} ${theme.bgDark}` : 'border-transparent bg-white/5 hover:bg-white/10'}`}
-                           >
-                             <div className="font-medium text-white mb-3">{s.name}</div>
-                             <div className={`w-full h-10 rounded-xl ${key === 'slate' ? 'bg-slate-950' : key === 'midnight' ? 'bg-[#060913]' : 'bg-black'} border border-white/10 shadow-inner`}></div>
-                           </button>
-                         ))}
-                       </div>
-                     </div>
-                   )}
-                 </div>
-              </div>
-            </div>
-          </div>
-        );
-
-        // ==========================================
-        // MAIN APP COMPONENT
-        // ==========================================
-        function App() {
-          const [activeTab, setActiveTab] = useState('lectures');
-          const [isDarkMode, setIsDarkMode] = useState(false);
-          const [currentTheme, setCurrentTheme] = useState('indigo');
-          const [currentShade, setCurrentShade] = useState('slate');
-          
-          const [currentUserId, setCurrentUserId] = useState('demo-user-123');
-          const [userData, setUserData] = useState(null);
-
-          // Initial Load Simulation
-          useEffect(() => {
-            setTimeout(() => { setUserData(MOCK_DB.users[currentUserId]); }, 500);
-          }, [currentUserId]);
-
-          const updateData = (key, newData) => {
-            setUserData(prev => ({ ...prev, [key]: newData }));
-          };
-
-          const theme = THEMES[currentTheme];
-          const shade = SHADES[currentShade];
-
-          useEffect(() => {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) setIsDarkMode(true);
-          }, []);
-
-          useEffect(() => {
-            if (isDarkMode) document.documentElement.classList.add('dark');
-            else document.documentElement.classList.remove('dark');
-          }, [isDarkMode]);
-
-          const renderContent = () => {
-            // Loading State
-            if (!userData) {
-              return (
-                <div className="flex h-full items-center justify-center animate-in fade-in duration-500">
-                   <div className="flex flex-col items-center space-y-4">
-                     <div className={`p-4 rounded-full ${theme.bgLight} ${theme.bgDark}`}>
-                       <i className={`fas fa-book-open animate-pulse ${theme.text} text-3xl`}></i>
-                     </div>
-                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading Dashboard...</p>
-                   </div>
-                </div>
-              );
-            }
-
-            switch (activeTab) {
-              case 'analytics': return <AnalyticsView theme={theme} userData={userData} />;
-              case 'lectures': return <LecturesView theme={theme} userData={userData} updateData={updateData} />;
-              case 'flashcards': return <FlashcardsView theme={theme} userData={userData} updateData={updateData} />;
-              case 'pomodoro': return <PomodoroView theme={theme} userData={userData} updateData={updateData} />;
-              case 'audio': return <AudioMixerView theme={theme} />;
-              case 'tasks': return <TaskBoard theme={theme} userData={userData} updateData={updateData} />;
-              case 'settings': return <SettingsView isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} currentTheme={currentTheme} setTheme={setCurrentTheme} currentShade={currentShade} setShade={setCurrentShade} theme={theme} />;
-              default: return <LecturesView theme={theme} userData={userData} updateData={updateData} />;
-            }
-          };
-
-          return (
-            <div className={`min-h-screen flex`}>
-              
-              {/* DESKTOP SIDEBAR */}
-              <aside className={`w-[280px] border-r flex-shrink-0 hidden md:flex flex-col transition-colors duration-300 ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
-                <div className={`h-20 flex items-center px-8 border-b ${isDarkMode ? shade.border : 'border-slate-100'}`}>
-                  <div className={`w-9 h-9 ${theme.primary} rounded-xl flex items-center justify-center mr-3 ${theme.shadow}`}>
-                    <i className="fas fa-book-open text-white text-xl"></i>
-                  </div>
-                  <h1 className="font-bold text-xl tracking-tight text-slate-800 dark:text-white">StudySpace</h1>
-                </div>
-                
-                <div className="p-5 flex-1 space-y-2 overflow-y-auto scrollbar-hide">
-                  <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-2">Dashboard</p>
-                  <SidebarItem iconClass="fas fa-chart-bar" label="Analytics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} theme={theme} />
-                  <SidebarItem iconClass="fas fa-layer-group" label="Flashcards" active={activeTab === 'flashcards'} onClick={() => setActiveTab('flashcards')} theme={theme} />
-                  
-                  <p className="px-4 text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4 mt-8">Study Tools</p>
-                  <SidebarItem iconClass="fas fa-video" label="Lectures" active={activeTab === 'lectures'} onClick={() => setActiveTab('lectures')} theme={theme} />
-                  <SidebarItem iconClass="fas fa-list" label="Task Flow" active={activeTab === 'tasks'} onClick={() => setActiveTab('tasks')} theme={theme} />
-                  <SidebarItem iconClass="far fa-clock" label="Timer" active={activeTab === 'pomodoro'} onClick={() => setActiveTab('pomodoro')} theme={theme} />
-                  <SidebarItem iconClass="fas fa-headphones" label="Audio Mixer" active={activeTab === 'audio'} onClick={() => setActiveTab('audio')} theme={theme} />
-                </div>
-
-                <div className={`p-5 border-t ${isDarkMode ? shade.border : 'border-slate-100'}`}>
-                  <button onClick={() => setActiveTab('settings')} className={`flex items-center space-x-3 w-full px-4 py-3 rounded-2xl transition-all ${activeTab === 'settings' ? `${theme.bgLight} ${theme.bgDark} ${theme.text}` : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5'}`}>
-                    <i className="fas fa-cog text-xl"></i>
-                    <span className="font-medium text-sm">Settings</span>
-                  </button>
-                </div>
-              </aside>
-
-              {/* MAIN CONTENT AREA */}
-              <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
-                
-                {/* TOP HEADER */}
-                <header className={`h-20 flex items-center justify-between px-6 md:px-10 backdrop-blur-xl border-b z-10 transition-colors duration-300 ${isDarkMode ? `${shade.panel}/80 ${shade.border}` : 'bg-white/70 border-transparent'}`}>
-                  <div className="flex items-center md:hidden">
-                     <div className={`w-8 h-8 ${theme.primary} rounded-lg flex items-center justify-center mr-3`}>
-                      <i className="fas fa-book-open text-white text-xl"></i>
-                    </div>
-                  </div>
-                  <div className="hidden md:flex items-center text-sm text-slate-500 dark:text-slate-400 font-medium">
-                     <span>Workspace</span><i className="fas fa-chevron-right text-sm mx-2 opacity-40"></i>
-                     <span className="capitalize text-slate-800 dark:text-slate-200">{activeTab}</span>
-                  </div>
-                  <div className="flex items-center space-x-5">
-                    <button onClick={() => setActiveTab('settings')} className="p-2.5 rounded-full md:hidden text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5 transition-colors focus:outline-none">
-                       <i className="fas fa-cog text-xl"></i>
-                    </button>
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${theme.bgLight} ${theme.text} ${theme.bgDark} border ${theme.border} ${theme.borderDark}`}>
-                      {userData?.profile?.name?.[0] || 'U'}
-                    </div>
-                  </div>
-                </header>
-
-                <div className="flex-1 overflow-y-auto p-5 md:p-10 relative">
-                   {renderContent()}
-                </div>
-
-                {/* MOBILE BOTTOM NAVIGATION */}
-                <nav className={`md:hidden border-t p-2 flex justify-around overflow-x-auto transition-colors duration-300 scrollbar-hide ${isDarkMode ? `${shade.panel} ${shade.border}` : 'bg-white border-slate-200'}`}>
-                  {[
-                    { id: 'lectures', iconClass: 'fas fa-video', label: 'Lectures' },
-                    { id: 'flashcards', iconClass: 'fas fa-layer-group', label: 'Cards' },
-                    { id: 'tasks', iconClass: 'fas fa-list', label: 'Tasks' },
-                    { id: 'pomodoro', iconClass: 'far fa-clock', label: 'Timer' },
-                    { id: 'audio', iconClass: 'fas fa-headphones', label: 'Audio' },
-                  ].map((item) => (
-                    <button key={item.id} onClick={() => setActiveTab(item.id)} className={`flex flex-col items-center p-2 rounded-xl min-w-[64px] flex-shrink-0 transition-colors ${activeTab === item.id ? theme.text : 'text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
-                      <i className={`${item.iconClass} text-xl mb-1`}></i>
-                      <span className="text-[10px] font-semibold">{item.label}</span>
-                    </button>
-                  ))}
-                </nav>
-              </main>
-            </div>
-          );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
     </script>
 </body>
 </html>
