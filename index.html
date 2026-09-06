@@ -15,7 +15,1406 @@
             --highlight: #ebf8ff; 
             --highlight-text: #2563eb; /* Ocean Blue Default Accent */
             --text-color: #1a202c; 
-            --text-muted: #64748b;
+            --text-muted: #64748b;<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Study Dashboard</title>
+    <style>
+        /* =========================================================
+           1. CSS VARIABLES & THEMES (Professional Dark Modes)
+           ========================================================= */
+        :root { 
+            --primary-bg: #f4f6f8; 
+            --sidebar-bg: #ffffff; 
+            --sidebar-text: #2d3748; 
+            --highlight: #ebf8ff; 
+            --highlight-text: #3182ce; 
+            --text-color: #1a202c; 
+            --text-muted: #718096;
+            --header-bg: #ffffff; 
+            --reader-bg: #edf2f7; 
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --folder-bg: #f7fafc; 
+            --success: #48bb78;
+            --danger: #ef4444;
+        }
+
+        body.theme-amoled {
+            --primary-bg: #000000; 
+            --sidebar-bg: #0d0d0f; 
+            --sidebar-text: #f8fafc; 
+            --highlight: #1e3a8a; 
+            --highlight-text: #38bdf8; 
+            --text-color: #f8fafc; 
+            --text-muted: #94a3b8;
+            --header-bg: #0d0d0f; 
+            --reader-bg: #000000; 
+            --border-color: #27272a;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.9); 
+            --folder-bg: #18181b;
+            --success: #22c55e;
+        }
+
+        body.theme-charcoal {
+            --primary-bg: #121212; 
+            --sidebar-bg: #1e1e24; 
+            --sidebar-text: #f4f4f5; 
+            --highlight: #3f3f46; 
+            --highlight-text: #38bdf8; 
+            --text-color: #f4f4f5; 
+            --text-muted: #a1a1aa;
+            --header-bg: #1e1e24; 
+            --reader-bg: #121212; 
+            --border-color: #3f3f46;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6); 
+            --folder-bg: #27272a;
+            --success: #10b981;
+        }
+
+        body.theme-slate {
+            --primary-bg: #0f172a; 
+            --sidebar-bg: #1e293b; 
+            --sidebar-text: #f1f5f9; 
+            --highlight: #3b82f6; 
+            --highlight-text: #60a5fa; 
+            --text-color: #f1f5f9; 
+            --text-muted: #94a3b8;
+            --header-bg: #1e293b; 
+            --reader-bg: #0f172a; 
+            --border-color: #475569;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4); 
+            --folder-bg: #334155;
+            --success: #34d399;
+        }
+
+        body.theme-light {
+            /* Fallbacks to root defaults */
+        }
+
+        body.font-small { font-size: 13px; }
+        body.font-medium { font-size: 15px; }
+        body.font-large { font-size: 17px; }
+
+        /* =========================================================
+           2. GLOBAL STYLES & LAYOUT
+           ========================================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { display: flex; height: 100vh; background-color: var(--primary-bg); color: var(--text-color); transition: background-color 0.3s, color 0.3s; overflow: hidden; width: 100vw; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+
+        /* SIDEBAR */
+        .sidebar { width: 440px; min-width: 320px; max-width: 440px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; box-shadow: 4px 0 15px rgba(0,0,0,0.02); transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; height: 100vh; }
+        .sidebar.collapsed { margin-left: -440px; }
+        .sidebar-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background-color: var(--sidebar-bg); }
+        .sidebar-header h2 { font-size: 1.3em; font-weight: 700; letter-spacing: -0.02em;}
+        
+        .header-controls-group { display: flex; align-items: center; gap: 8px; }
+        .icon-btn-header { background: transparent; border: 1px solid transparent; font-size: 1.2em; cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s; color: var(--text-color); display: flex; align-items: center; justify-content: center;}
+        .icon-btn-header:hover { background: var(--highlight); color: var(--highlight-text); border-color: var(--border-color); transform: scale(1.05);}
+
+        /* POMODORO WIDGET (Overhauled) */
+        .pomodoro-container { padding: 24px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 16px; }
+        .pomodoro-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(145deg, var(--folder-bg), var(--sidebar-bg)); border: 2px solid var(--border-color); padding: 24px; border-radius: 16px; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.1); transition: all 0.4s ease; gap: 16px; position: relative; overflow: hidden; }
+        .pomodoro-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--highlight-text); transition: background 0.3s; }
+        .pomodoro-card.running { border-color: var(--highlight-text); box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); transform: translateY(-2px); animation: pulseGlow 3s infinite;}
+        .pomo-left { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%;}
+        .pomo-icon { font-size: 2.5em; line-height: 1; margin-bottom: 5px;}
+        .pomo-info { display: flex; flex-direction: column; align-items: center; }
+        .pomo-status { font-size: 0.9em; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+        .pomodoro-card.running .pomo-status { color: var(--highlight-text); }
+        .pomodoro-display { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 4em; font-weight: 800; color: var(--text-color); letter-spacing: -0.03em; line-height: 1; margin-top: 8px;}
+        .pomo-controls { display: flex; gap: 20px; align-items: center; width: 100%; justify-content: center; margin-top: 10px;}
+        .pomo-btn { background: var(--highlight); border: 1px solid var(--border-color); font-size: 1.4em; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; color: var(--text-color); font-weight:600; box-shadow: var(--card-shadow); cursor: pointer; }
+        .pomo-btn:hover { background: var(--text-color); color: var(--primary-bg); border-color: var(--text-color); transform: scale(1.05); }
+
+        /* MODULE SELECTOR */
+        .mode-selector { display: flex; flex-wrap: wrap; gap: 6px; padding: 20px 20px 10px; background-color: var(--sidebar-bg); border-bottom: 1px solid transparent;}
+        .mode-btn { flex: 1; min-width: 80px; padding: 10px 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.95em; text-align: center; transition: 0.2s; cursor: pointer; }
+        .mode-btn:hover { color: var(--text-color); background: var(--folder-bg); }
+        .mode-btn.active { background-color: var(--highlight-text); color: white; border-color: var(--highlight-text); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+
+        /* SEARCH & FOLDER TREE */
+        .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: var(--sidebar-bg); display: flex; flex-direction: column; gap: 10px; }
+        .search-row { display: flex; gap: 6px; align-items: center; width: 100%; }
+        .search-input { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.9em; transition: 0.2s;}
+        .search-input:focus { border-color: var(--highlight-text); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1); }
+        
+        .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; background-color: var(--sidebar-bg); }
+        details { margin-bottom: 6px; }
+        summary { padding: 10px 14px; cursor: pointer; font-weight: 600; border-radius: 8px; display: flex; align-items: center; background-color: transparent; user-select: none; font-size: 0.9em; color: var(--text-color); border: 1px solid transparent; transition: 0.2s; }
+        summary:hover { background-color: var(--folder-bg); border-color: var(--border-color); }
+        summary::marker, summary::-webkit-details-marker { display: none; }
+        summary::before { content: "📁"; margin-right: 10px; font-size: 1.1em; opacity: 0.8; }
+        details[open] > summary::before { content: "📂"; opacity: 1; }
+        .folder-contents { padding-left: 12px; margin-top: 6px; border-left: 1px solid var(--border-color); margin-left: 14px; }
+
+        .book-item { padding: 10px 14px; margin: 4px 0; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 0.88em; color: var(--text-muted); border: 1px solid transparent; background: transparent; gap: 8px; transition: 0.2s;}
+        .book-item:hover { background-color: var(--folder-bg); color: var(--text-color); border-color: var(--border-color); }
+        .book-item.active { background-color: var(--highlight-text); color: white; font-weight: 600; border-color: var(--highlight-text); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .book-item-content { display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; }
+        .book-item-content::before { content: "📄"; margin-right: 8px; opacity: 0.7; flex-shrink: 0; }
+        .book-item.active .book-item-content::before { opacity: 1; }
+        
+        /* MAIN WORKSPACE */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: var(--reader-bg); width: 100%; position: relative; overflow: hidden; height: 100vh; }
+        .reader-header { padding: 16px 24px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .reader-header-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; flex-grow: 1; }
+        .title-row { display: flex; align-items: center; gap: 8px; }
+        .title-row h2 { font-size: 1.25em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -0.01em;}
+        .breadcrumb { color: var(--text-muted); font-size: 0.85em; font-family: ui-monospace, monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .playlist-select { margin-top: 6px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); font-weight: 600; font-size: 0.9em; width: 100%; max-width: 450px; outline: none; cursor:pointer;}
+
+        .header-actions { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+        .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-muted); font-size: 1em; font-weight: 600; cursor: pointer; padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .icon-btn:hover { background: var(--highlight); color: var(--text-color); border-color: var(--border-color); }
+        .primary-btn { background-color: var(--text-color); color: var(--primary-bg); font-weight: 600; font-size: 0.95em; padding: 10px 20px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .primary-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 12px -2px rgba(0,0,0,0.15); }
+
+        .reader-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 16px; height: calc(100vh - 80px); position: relative; gap: 12px; }
+        .reader-container.split-active { flex-direction: row; }
+        .reader-container.split-active #viewer-wrapper, .reader-container.split-active #viewer-wrapper-split, .reader-container.split-active #omr-panel { height: 100%; width: 50%; }
+
+        #viewer-wrapper, #viewer-wrapper-split { width: 100%; height: 100%; border-radius: 12px; overflow: hidden; display: none; background-color: #000; border: 1px solid var(--border-color); position: relative; box-shadow: var(--card-shadow);}
+        
+        .placeholder-container { background-color: var(--sidebar-bg); padding: 48px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid var(--border-color); max-width: 500px; text-align: center; }
+        
+        /* SPLIT SCREEN RESIZER */
+        .resizer { width: 12px; cursor: col-resize; background: transparent; position: relative; z-index: 10; display: none; justify-content:center; align-items:center;}
+        .resizer::after { content: ''; width: 4px; height: 30px; background: var(--border-color); border-radius: 2px; transition: 0.2s; }
+        .resizer:hover::after, .resizer.dragging::after { background: var(--highlight-text); height: 50px;}
+
+        /* UTILITIES WORKSPACE (Analytics, Timetable, Syllabus) */
+        #utilities-workspace { display:none; width:100%; height:100%; background:var(--reader-bg); flex-direction:column; overflow-y:auto; padding: 32px 48px; }
+        .utility-menu-btn { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 18px 24px; border-radius: 10px; font-size: 1.05em; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 16px; box-shadow: var(--card-shadow); margin-bottom: 12px;}
+        .utility-menu-btn:hover { border-color: var(--text-muted); transform: translateY(-2px); box-shadow: 0 8px 15px -3px rgba(0,0,0,0.1); }
+        .util-workspace-inner { display: flex; flex-direction: column; align-items: center; padding: 0; width: 100%; max-width: 1000px; margin: 0 auto;}
+        
+        /* Analytics */
+        .util-dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; width: 100%; margin-bottom: 30px; }
+        .stat-card { background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 32px; text-align: center; box-shadow: var(--card-shadow); flex: 1; }
+        .stat-value { font-size: 3em; font-weight: 800; margin-bottom: 12px; color: var(--highlight-text); }
+        .stat-label { font-size: 0.9em; opacity: 0.8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;}
+        
+        /* Timetable */
+        .tt-layout { display: flex; flex-direction: column; gap: 20px; width: 100%; height: calc(100vh - 160px);}
+        .tt-daily { display: flex; flex-direction: column; background: var(--sidebar-bg); border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: var(--card-shadow); height: 100%;}
+        .tt-add-task-form { display: flex; gap: 12px; align-items: center; background: var(--folder-bg); padding: 20px; border-bottom: 1px solid var(--border-color); flex-shrink:0;}
+        .tt-time-input, .tt-task-input { background: var(--primary-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 12px 16px; border-radius: 8px; outline: none; font-size: 0.95em; transition: 0.2s;}
+        .tt-task-input { flex-grow: 1; }
+        .tt-time-input:focus, .tt-task-input:focus { border-color: var(--highlight-text); }
+        .tt-tasks-container { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 24px; flex-grow: 1;}
+        .tt-task-item { display: flex; align-items: center; justify-content: space-between; background: var(--primary-bg); padding: 18px 24px; border-radius: 10px; border: 1px solid var(--border-color); transition: 0.2s; }
+        .tt-task-item:hover { border-color: var(--text-muted); box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
+        .tt-task-time { font-family: monospace; font-size: 0.95em; font-weight: bold; color: var(--highlight-text); background: var(--folder-bg); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-right: 16px;}
+
+        /* Syllabus */
+        .syl-tabs { display: flex; gap: 12px; margin-bottom: 24px; width: 100%; justify-content: center;}
+        .syl-tab { padding: 12px 24px; font-size: 1.05em; font-weight: bold; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; text-align:center;}
+        .syl-tab.active { background: var(--highlight-text); color: white; border-color: var(--highlight-text); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);}
+        .syl-subject { background: var(--sidebar-bg); border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 16px; width:100%; box-shadow: var(--card-shadow);}
+        .syl-subject summary { padding: 20px 24px; font-size: 1.15em; font-weight: bold; background: var(--folder-bg); cursor: pointer; color: var(--text-color); list-style: none; border-radius: 12px; transition: 0.2s;}
+        .syl-subject[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid var(--border-color); }
+        .syl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 24px; }
+        .syl-item { display: flex; justify-content: space-between; align-items: center; background: var(--primary-bg); padding: 16px 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .syl-item-title { font-weight: 600; font-size: 0.95em; }
+        .syl-btn { font-size: 0.85em; padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; font-weight: 600; transition: filter 0.2s; width:120px; text-align:center;}
+        .overall-progress-bar { width: 100%; height: 12px; background: var(--border-color); border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+        .overall-progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
+
+        /* OMR Panel */
+        .omr-panel { display: flex; flex-direction: column; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: var(--card-shadow); }
+        .omr-header { padding: 16px 24px; background: var(--folder-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .omr-timer { font-family: monospace; font-size: 1.3em; font-weight: bold; color: var(--danger); background: var(--primary-bg); padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .omr-questions-container { flex-grow: 1; overflow-y: auto; padding: 16px; }
+        .omr-row { display: flex; align-items: center; gap: 16px; padding: 12px; border-bottom: 1px solid var(--border-color); }
+        .omr-num { width: 36px; font-weight: bold; font-size: 0.95em; color: var(--text-muted); text-align: right;}
+        .omr-options { display: flex; gap: 12px; flex-grow: 1; }
+        .omr-circle { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s; color: var(--text-color); background: var(--primary-bg);}
+        .omr-circle.selected { background: var(--highlight-text); color: white; border-color: var(--highlight-text); }
+        .omr-footer { padding: 20px; border-top: 1px solid var(--border-color); background: var(--folder-bg); }
+
+        /* MODALS */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; backdrop-filter: blur(6px); justify-content: center; align-items: center; }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out;}
+        .modal-box { background: var(--sidebar-bg); border: 1px solid var(--border-color); width: 460px; max-width: 90%; border-radius: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 1.1em; background: var(--folder-bg);}
+        .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; max-height: 70vh; overflow-y: auto; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background: var(--folder-bg); }
+        .setting-group { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; color: var(--text-color); }
+        .setting-group select, .setting-group input[type="text"] { padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: 0.2s;}
+        .setting-group select:focus, .setting-group input:focus { border-color: var(--highlight-text); }
+
+        /* QUICK NOTES DRAWER */
+        .notes-panel { position: absolute; top: 0; right: -400px; width: 380px; height: 100%; background: var(--sidebar-bg); border-left: 1px solid var(--border-color); box-shadow: -10px 0 30px rgba(0,0,0,0.2); transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; z-index: 150; }
+        .notes-panel.open { right: 0; }
+        .notes-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; background: var(--folder-bg);}
+        .notes-area { flex-grow: 1; border: none; padding: 24px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
+
+        /* LOCAL COPILOT CHAT */
+        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--text-color); color: var(--primary-bg); border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.5em; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .chat-fab:hover { transform: scale(1.05); }
+        .chat-window { position: fixed; bottom: 100px; right: 24px; width: 380px; height: 500px; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
+        .chat-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .chat-header { background: var(--folder-bg); padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 700; display: flex; justify-content: space-between; align-items: center; font-size: 1.05em;}
+        .chat-body { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 0.95em; line-height: 1.5; word-wrap: break-word; }
+        .bot-msg { background: var(--folder-bg); border: 1px solid var(--border-color); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .user-msg { background: var(--text-color); color: var(--primary-bg); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-footer { padding: 16px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--folder-bg); }
+        .chat-footer input { flex-grow: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--primary-bg); color: var(--text-color); outline: none; font-size: 0.95em; }
+        .chat-footer button { background: var(--text-color); color: var(--primary-bg); border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+    </style>
+</head>
+<body class="theme-amoled font-medium">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>📚 Study Dashboard</h2>
+            <div class="header-controls-group">
+                <button class="icon-btn-header" id="music-open-btn" title="Ambient Audio">🎵</button>
+                <button class="icon-btn-header" id="pomo-open-settings" title="Settings">⚙️</button>
+                <button id="theme-toggle" class="icon-btn-header" title="Toggle Theme">🌙</button>
+            </div>
+        </div>
+
+        <!-- POMODORO WIDGET -->
+        <div class="pomodoro-container" id="pomo-container">
+            <div class="pomodoro-card" id="pomo-card">
+                <div class="pomo-left">
+                    <span class="pomo-icon" id="pomo-logo-icon">🍅</span>
+                    <div class="pomo-info">
+                        <span class="pomo-status" id="pomo-status-text">Deep Focus</span>
+                        <span class="pomodoro-display" id="pomo-time">25:00</span>
+                    </div>
+                </div>
+                <div class="pomo-controls">
+                    <button class="pomo-btn" id="pomo-toggle" title="Start/Pause">▶</button>
+                    <button class="pomo-btn" id="pomo-reset" title="Reset">↻</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE SELECTOR -->
+        <div class="mode-selector" id="dynamic-mode-selector">
+            <button class="mode-btn active" data-target="LECTURES">Lectures</button>
+            <button class="mode-btn" data-target="FILES">Files</button>
+            <button class="mode-btn" data-target="SUPPORT">Support</button>
+            <button class="mode-btn" data-target="UTILITIES">Utilities</button>
+        </div>
+
+        <!-- LIBRARY VIEW -->
+        <div id="library-sidebar-view" style="display:flex; flex-direction:column; flex-grow:1; overflow:hidden;">
+            <div class="search-container">
+                <div class="search-row">
+                    <input type="text" id="search-bar" class="search-input" placeholder="Search resources...">
+                </div>
+            </div>
+            <div class="book-list" id="book-list"></div>
+        </div>
+
+        <!-- UTILITIES VIEW -->
+        <div id="utilities-sidebar-view" style="display:none; padding: 24px; flex-direction:column; gap:16px; overflow-y:auto; background: var(--sidebar-bg);">
+            <button class="utility-menu-btn" data-util="analytics">📊 Analytics Dashboard</button>
+            <button class="utility-menu-btn" data-util="timetable">📅 Timeline Timetable</button>
+            <button class="utility-menu-btn" data-util="syllabus">📑 Deep Syllabus Tracker</button>
+            <button class="utility-menu-btn" data-util="simulator" style="border-color: var(--highlight-text);">⏱️ OMR Simulator</button>
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="main-content">
+        <div class="reader-header">
+            <div class="reader-header-info">
+                <div class="title-row">
+                    <h2 id="current-book-title">Welcome to Study Dashboard</h2>
+                </div>
+                <div id="current-book-breadcrumb" class="breadcrumb">Select a module from the sidebar to begin.</div>
+                <select id="playlist-dropdown" class="playlist-select" style="display:none;"></select>
+            </div>
+            
+            <div class="header-actions">
+                <button id="split-screen-btn" class="icon-btn" title="Split Screen" style="display:none;">🔲</button>
+                <button id="notes-toggle-btn" class="icon-btn" title="Quick Notes">📝</button>
+                <button id="fullscreen-btn" class="primary-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+        
+        <div class="reader-container" id="reader-container-main">
+            <!-- PLACEHOLDER -->
+            <div class="placeholder-container" id="placeholder-box">
+                <h2 style="font-size: 2.2em; margin-bottom: 16px; letter-spacing: -0.02em;">Ready to lock in?</h2>
+                <p style="opacity: 0.7; line-height: 1.6; font-size: 1.1em;">Select a lecture, open a file, or launch a utility to start your study session.</p>
+            </div>
+            
+            <!-- Viewer 1 (Main) -->
+            <div id="viewer-wrapper">
+                <iframe id="book-frame" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
+            </div>
+
+            <div id="split-resizer" class="resizer"></div>
+            
+            <!-- Viewer 2 (Split) -->
+            <div id="viewer-wrapper-split">
+                <iframe id="book-frame-split" src="" style="width:100%; height:100%; border:none;" allowfullscreen allow="fullscreen; autoplay; encrypted-media"></iframe>
+            </div>
+
+            <!-- OMR SIMULATOR NATIVE PANEL -->
+            <div id="omr-panel" class="omr-panel" style="display:none; width:100%; height:100%;">
+                <div class="omr-header">
+                    <h3 style="font-size: 1.3em;">Exam Environment</h3>
+                    <div id="omr-timer" class="omr-timer">03:00:00</div>
+                </div>
+                <div id="omr-questions-container" class="omr-questions-container"></div>
+                <div class="omr-footer">
+                    <button id="omr-submit-btn" class="primary-btn" style="width:100%; justify-content:center; padding: 16px; font-size: 1.15em;">Submit & Score</button>
+                </div>
+            </div>
+
+            <!-- UTILITIES WORKSPACE -->
+            <div id="utilities-workspace"></div>
+        </div>
+
+        <!-- QUICK NOTES DRAWER -->
+        <div id="notes-panel" class="notes-panel">
+            <div class="notes-header">
+                <span id="notes-title-label">📝 Context Notes</span>
+                <button class="icon-btn" id="close-notes-btn">✖</button>
+            </div>
+            <textarea id="notes-area" class="notes-area" placeholder="Notes automatically save to the currently open file..."></textarea>
+        </div>
+        
+        <!-- LOCAL COPILOT CHAT -->
+        <button class="chat-fab" id="chat-fab-btn" title="Search Copilot">🔍</button>
+        <div class="chat-window" id="chat-window">
+            <div class="chat-header">
+                <span>🧭 Local Search Copilot</span>
+                <button class="icon-btn" id="chat-close-btn" style="padding: 6px;">✖</button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="chat-msg bot-msg">
+                    👋 <strong>Hello!</strong> Need to find something quickly? Type a topic like "Kinematics", "Organic", or "Maths" and I'll pull the best resources for you instantly.
+                </div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chat-input" placeholder="Search any topic...">
+                <button id="chat-send-btn">Go</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO MODAL -->
+    <div class="modal-overlay" id="music-modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>🎵 Focus Audio</span>
+                <button class="icon-btn" id="music-close-modal" style="padding: 6px;">✖</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Audio Source / Generator:</label>
+                    <select id="music-preset-select">
+                        <option value="ambient-rain">🌧️ Synth Rain</option>
+                        <option value="ambient-brown">🌊 Synth Brown Noise (Deep Focus)</option>
+                        <option value="ambient-white">📻 Synth White Noise</option>
+                        <option value="spotify-lofi">Spotify: Lofi Beats</option>
+                        <option value="yt-lofi">YouTube: Lofi Girl Live</option>
+                    </select>
+                </div>
+                <div id="ambient-controls-box">
+                    <button class="primary-btn" id="ambient-play-toggle" style="width: 100%; justify-content: center; padding: 14px; margin-top: 8px;">▶ Start Ambient Generator</button>
+                </div>
+                <div id="music-iframe-container" style="display:none; border-radius:12px; overflow:hidden; margin-top:12px; border: 1px solid var(--border-color);">
+                    <iframe id="music-frame" src="" width="100%" height="152" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settings-modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>⚙️ System Preferences</span>
+                <button class="icon-btn" id="settings-close-modal" style="padding: 6px;">✖</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label>Focus Duration (mins)</label>
+                    <select id="setting-focus-time">
+                        <option value="15">15 Minutes</option>
+                        <option value="25" selected>25 Minutes</option>
+                        <option value="45">45 Minutes (Deep Work)</option>
+                        <option value="60">60 Minutes</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Pomodoro Icon</label>
+                    <select id="setting-icon">
+                        <option value="🍅" selected>🍅 Tomato</option>
+                        <option value="⚡">⚡ Lightning</option>
+                        <option value="🧠">🧠 Brain</option>
+                        <option value="🔥">🔥 Fire</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Theme Shade</label>
+                    <select id="setting-theme">
+                        <option value="theme-light">Light Mode</option>
+                        <option value="theme-slate" selected>Slate Dark</option>
+                        <option value="theme-charcoal">Charcoal Dark</option>
+                        <option value="theme-amoled">AMOLED Pitch Black</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Accent Color</label>
+                    <select id="setting-accent">
+                        <option value="#3182ce" selected>Ocean Blue</option>
+                        <option value="#8b5cf6">Amethyst Purple</option>
+                        <option value="#10b981">Emerald Green</option>
+                        <option value="#f43f5e">Rose Red</option>
+                        <option value="#f59e0b">Amber Yellow</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="primary-btn" id="save-settings-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // ==========================================
+            // 1. DATA INJECTION & PARSING (Fixed)
+            // ==========================================
+            const lectureVideos = [
+                {
+                    "title": "Physics One-Shots (PW)",
+                    "folders": ["LECTURES", "Physics", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Basic Maths & Vectors", "url": "https://www.youtube.com/embed/RAwcPN79g0Q" },
+                        { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" },
+                        { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" },
+                        { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" },
+                        { "title": "COM & Collision", "url": "https://www.youtube.com/embed/Rh95KkMwklU" },
+                        { "title": "Rotational Motion", "url": "https://www.youtube.com/embed/vmaKeSkjtGo" },
+                        { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" },
+                        { "title": "Solids & Elasticity", "url": "https://www.youtube.com/embed/1xPm3vIRIGI" },
+                        { "title": "Fluid Mechanics", "url": "https://www.youtube.com/embed/griSf2U_Zlk" },
+                        { "title": "SHM", "url": "https://www.youtube.com/embed/myNQbAYzD5A" },
+                        { "title": "Wave Motion", "url": "https://www.youtube.com/embed/PAlXOkn_Pa8" },
+                        { "title": "Thermal Properties", "url": "https://www.youtube.com/embed/1nTFrbJ8Jhg" },
+                        { "title": "Thermodynamics & KTG", "url": "https://www.youtube.com/embed/Ch9jLsgYIuM" },
+                        { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" },
+                        { "title": "Capacitors", "url": "https://www.youtube.com/embed/FImh-a0673s" },
+                        { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" },
+                        { "title": "Magnetism & Moving Charges", "url": "https://www.youtube.com/embed/3h3OexznsA0" },
+                        { "title": "Electromagnetic Induction", "url": "https://www.youtube.com/embed/ebOF14qP21k" },
+                        { "title": "AC Circuits", "url": "https://www.youtube.com/embed/gziRcxMiO_Q" },
+                        { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" },
+                        { "title": "Ray Optics", "url": "https://www.youtube.com/embed/AfPD-sHayb0" },
+                        { "title": "Semiconductors", "url": "https://www.youtube.com/embed/5h5ANJnVe08" },
+                        { "title": "Communication Systems", "url": "https://www.youtube.com/embed/fBqJdix2NjE" },
+                        { "title": "Modern Physics", "url": "https://www.youtube.com/embed/G58QS4soCuQ" },
+                        { "title": "Atoms", "url": "https://www.youtube.com/embed/AqjrqRyot6w" },
+                        { "title": "Nuclei", "url": "https://www.youtube.com/embed/XJZ1PdXyJU4" },
+                        { "title": "Dual Nature", "url": "https://www.youtube.com/embed/wE0xrUuJLnk" }
+                    ]
+                },
+                {
+                    "title": "Physical Chemistry (PW)",
+                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" },
+                        { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" },
+                        { "title": "States of Matter", "url": "https://www.youtube.com/embed/8oypjDXAXZc" },
+                        { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" },
+                        { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" },
+                        { "title": "Ionic Equilibrium", "url": "https://www.youtube.com/embed/BceSksiNLD4" },
+                        { "title": "Redox Reactions", "url": "https://www.youtube.com/embed/1W-UvePUAKo" },
+                        { "title": "Chemical Kinetics", "url": "https://www.youtube.com/embed/kwPNxC9AgZA" },
+                        { "title": "Solutions", "url": "https://www.youtube.com/embed/7OkNy8vhDaw" }
+                    ]
+                },
+                {
+                    "title": "Inorganic Chemistry (PW)",
+                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Periodic Table", "url": "https://www.youtube.com/embed/nLE7_YBFQNQ" },
+                        { "title": "Chemical Bonding", "url": "https://www.youtube.com/embed/kS8s_WX0IlY" },
+                        { "title": "Coordination Compounds", "url": "https://www.youtube.com/embed/5myJzBeN514" },
+                        { "title": "P-Block Elements", "url": "https://www.youtube.com/embed/b0k5LOk_uPk" },
+                        { "title": "D & F-Block Elements", "url": "https://www.youtube.com/embed/SjILQ6cX_Vo" },
+                        { "title": "Salt Analysis", "url": "https://www.youtube.com/embed/8rRnn4ECwXI" }
+                    ]
+                },
+                {
+                    "title": "Organic Chemistry (PW)",
+                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "IUPAC Nomenclature", "url": "https://www.youtube.com/embed/A2QTsYu3fWo" },
+                        { "title": "GOC", "url": "https://www.youtube.com/embed/FFCT-lh86tA" },
+                        { "title": "Isomerism", "url": "https://www.youtube.com/embed/UOzWO2-Z9So" },
+                        { "title": "Hydrocarbons", "url": "https://www.youtube.com/embed/02CBTEOMMsA" },
+                        { "title": "Haloalkanes & Haloarenes", "url": "https://www.youtube.com/embed/7iJFvPI8vMM" },
+                        { "title": "Alcohols, Phenols & Ethers", "url": "https://www.youtube.com/embed/IDo8B0c5Xis" },
+                        { "title": "Aldehydes, Ketones & Acids", "url": "https://www.youtube.com/embed/oR19BqbPBu4" },
+                        { "title": "Amines", "url": "https://www.youtube.com/embed/SKHrfD34Kkc" },
+                        { "title": "Biomolecules", "url": "https://www.youtube.com/embed/LcVNwEWJtyI" }
+                    ]
+                },
+                {
+                    "title": "Mathematics (PW)",
+                    "folders": ["LECTURES", "Maths", "Physics Wallah"],
+                    "playlist": [
+                        { "title": "Basic Maths", "url": "https://www.youtube.com/embed/Z5uGIO_11vM" },
+                        { "title": "Determinants", "url": "https://www.youtube.com/embed/uhq_WUNlvh8" },
+                        { "title": "Trigonometric Ratios & Identities", "url": "https://www.youtube.com/embed/DitLpxy6V48" },
+                        { "title": "Vectors", "url": "https://www.youtube.com/embed/FsTlbTQyuJ0" },
+                        { "title": "Quadratic Equations", "url": "https://www.youtube.com/embed/iLIPlvjDkPU" },
+                        { "title": "Matrices", "url": "https://www.youtube.com/embed/2YFQIFQmPmw" },
+                        { "title": "Sets", "url": "https://www.youtube.com/embed/SOXQuRrgJHo" },
+                        { "title": "3D Geometry", "url": "https://www.youtube.com/embed/t_RMMkiYj4g" },
+                        { "title": "Sequence & Series", "url": "https://www.youtube.com/embed/CVG9PcraP1k" },
+                        { "title": "Relations & Functions", "url": "https://www.youtube.com/embed/Qs0wRt70mC4" },
+                        { "title": "Inverse Trigonometric Functions", "url": "https://www.youtube.com/embed/rdWRwY2kEXI" },
+                        { "title": "Permutation & Combination", "url": "https://www.youtube.com/embed/rPFlUfjcakw" },
+                        { "title": "Binomial Theorem", "url": "https://www.youtube.com/embed/QMWDHOcXEQI" },
+                        { "title": "Method of Differentiation", "url": "https://www.youtube.com/embed/3JMzZR2TvhA" },
+                        { "title": "Straight Lines", "url": "https://www.youtube.com/embed/pufR8xp-CQA" },
+                        { "title": "Indefinite Integration", "url": "https://www.youtube.com/embed/7dVDuyI_8FA" },
+                        { "title": "Circles", "url": "https://www.youtube.com/embed/qcpj3jjgr6o" },
+                        { "title": "Parabola", "url": "https://www.youtube.com/embed/Nv9s38ZGPes" },
+                        { "title": "Definite Integration", "url": "https://www.youtube.com/embed/UwRAUIeoCtI" },
+                        { "title": "Differential Equation", "url": "https://www.youtube.com/embed/H1FKKjz8hsw" },
+                        { "title": "Hyperbola", "url": "https://www.youtube.com/embed/zITyahKONeg" },
+                        { "title": "Application of Integrals", "url": "https://www.youtube.com/embed/x0vMQRKTmQ0" },
+                        { "title": "Ellipse", "url": "https://www.youtube.com/embed/ZdCd1G0NDUI" },
+                        { "title": "Complex Number", "url": "https://www.youtube.com/embed/Q-AlaLN72w0" },
+                        { "title": "Limits", "url": "https://www.youtube.com/embed/JnER25G1V7o" },
+                        { "title": "Statistics", "url": "https://www.youtube.com/embed/mWa7eSpT6kg" },
+                        { "title": "Probability", "url": "https://www.youtube.com/embed/3OFuYbk-BV4" },
+                        { "title": "Continuity & Differentiability", "url": "https://www.youtube.com/embed/hsedtF2azNQ" },
+                        { "title": "Application of Derivatives", "url": "https://www.youtube.com/embed/jOVcucQLv38" }
+                    ]
+                },
+                {
+                    "title": "JEE Maths Playlist 1 - Neha Ma'am",
+                    "folders": ["LECTURES", "Maths", "Neha Agrawal"],
+                    "playlist": [
+                        { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" },
+                        { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" },
+                        { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
+                        { "title": "Complex Numbers 3.0", "url": "https://www.youtube.com/embed/XVZ20FDLorE" },
+                        { "title": "Quadratic Equations 3.0", "url": "https://www.youtube.com/embed/MnUt4uRiUv8" },
+                        { "title": "Binomial Theorem 3.0", "url": "https://www.youtube.com/embed/kTrZgk8ht6s" },
+                        { "title": "Functions 3.0", "url": "https://www.youtube.com/embed/qMZbl49B2gk" },
+                        { "title": "Limits, Continuity & Derivatives 3.0", "url": "https://www.youtube.com/embed/1Px2H-ZNAXc" },
+                        { "title": "Application of Derivatives 3.0", "url": "https://www.youtube.com/embed/FjePwtMW_jA" },
+                        { "title": "Indefinite Integration 3.0", "url": "https://www.youtube.com/embed/aBuT_NpL4kM" },
+                        { "title": "Definite Integration 3.0", "url": "https://www.youtube.com/embed/bpeEpWjvG50" },
+                        { "title": "Differential Equations 3.0", "url": "https://www.youtube.com/embed/PbeylmdToTs" },
+                        { "title": "Sets & Relations 3.0", "url": "https://www.youtube.com/embed/BbDh_D9NOAc" },
+                        { "title": "Permutations & Combinations 3.0", "url": "https://www.youtube.com/embed/dZleU5ZUDAo" },
+                        { "title": "Probability 3.0", "url": "https://www.youtube.com/embed/N1gW3lZx_4I" },
+                        { "title": "Straight Lines 3.0", "url": "https://www.youtube.com/embed/RHk11VC256Y" },
+                        { "title": "Circles 3.0", "url": "https://www.youtube.com/embed/Se39Hv2_FzM" },
+                        { "title": "Conic Sections One Shot", "url": "https://www.youtube.com/embed/ze6pUWYfAvY" },
+                        { "title": "Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/EO_6mXn9szs" },
+                        { "title": "Statistics 3.0", "url": "https://www.youtube.com/embed/WFY1D61ZOV0" },
+                        { "title": "Trigonometry & Inverse Trigonometry 3.0", "url": "https://www.youtube.com/embed/IQeeRDA6T94" },
+                        { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" }
+                    ]
+                },
+                {
+                    "title": "Eduniti Physics Sure Shot (Mohit Sir)",
+                    "folders": ["LECTURES", "Physics", "Eduniti"],
+                    "playlist": [
+                        { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
+                        { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
+                        { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
+                        { "title": "Mechanics P1", "url": "https://www.youtube.com/embed/3vkFbQxEYqE" },
+                        { "title": "Mechanics P2", "url": "https://www.youtube.com/embed/JJMhkssd4GQ" },
+                        { "title": "Mechanics P3", "url": "https://www.youtube.com/embed/Qbb6H6MhmRc" },
+                        { "title": "Pulley Block Cases", "url": "https://www.youtube.com/embed/t_2p18RSLXQ" },
+                        { "title": "VCM Sure Shot", "url": "https://www.youtube.com/embed/EwOMzB63gBI" },
+                        { "title": "Gravitation", "url": "https://www.youtube.com/embed/xF9ysyykedw" },
+                        { "title": "Rotation P1", "url": "https://www.youtube.com/embed/Q8Rujg2Mkio" },
+                        { "title": "SHM", "url": "https://www.youtube.com/embed/t7-G5GEfQXI" },
+                        { "title": "Thermodynamics Graphs", "url": "https://www.youtube.com/embed/IySVKH_OttE" },
+                        { "title": "Cylinder Piston", "url": "https://www.youtube.com/embed/0Ro_F6Af0Zg" },
+                        { "title": "Fluids P1", "url": "https://www.youtube.com/embed/gwC-whA3M3g" },
+                        { "title": "Fluids P2", "url": "https://www.youtube.com/embed/LIp4AZu3P0g" },
+                        { "title": "Wave Motion", "url": "https://www.youtube.com/embed/4ioZfE3kGMg" },
+                        { "title": "Electrostatics P1", "url": "https://www.youtube.com/embed/gf75PPW10oI" },
+                        { "title": "Electrostatics P2", "url": "https://www.youtube.com/embed/MqeFMKAf5x8" },
+                        { "title": "Electric Dipoles", "url": "https://www.youtube.com/embed/NKO1Szf4otc" },
+                        { "title": "Capacitors", "url": "https://www.youtube.com/embed/qx-CMGn2ud4" },
+                        { "title": "Circuits", "url": "https://www.youtube.com/embed/ie81MM1V4mE" },
+                        { "title": "Electrodynamics P1", "url": "https://www.youtube.com/embed/lllAWLu5mso" },
+                        { "title": "Electrodynamics P2", "url": "https://www.youtube.com/embed/1RdDchv2j_o" },
+                        { "title": "Physics Concepts Marathon", "url": "https://www.youtube.com/embed/2qGiA1vKwjg" },
+                        { "title": "Charge in Magnetic/Electric Field", "url": "https://www.youtube.com/embed/YmQvWuXsNhs" },
+                        { "title": "Magnetic Effect P1", "url": "https://www.youtube.com/embed/XBMDnZPLd90" },
+                        { "title": "Cavity Problem", "url": "https://www.youtube.com/embed/JcEaz2o0sL4" },
+                        { "title": "MEC Rank Decider", "url": "https://www.youtube.com/embed/2fhxJ9ukudY" },
+                        { "title": "Alternating Current", "url": "https://www.youtube.com/embed/H_9Pl8HeZ-o" },
+                        { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" },
+                        { "title": "Ray Optics Reflection/Refraction", "url": "https://www.youtube.com/embed/3Wmsf3lI73Y" },
+                        { "title": "Image Velocity", "url": "https://www.youtube.com/embed/X1_c_4JaNwU" },
+                        { "title": "Fish Bird Problem", "url": "https://www.youtube.com/embed/UTUyY5a9G3Y" },
+                        { "title": "Ray Optics Sure Shot", "url": "https://www.youtube.com/embed/FXJO4GYTmXI" },
+                        { "title": "Binding Energy", "url": "https://www.youtube.com/embed/5Tb_8wHchbU" },
+                        { "title": "Modern Physics", "url": "https://www.youtube.com/embed/MWJdpWvwhwc" },
+                        { "title": "Energy Conservation Cases", "url": "https://www.youtube.com/embed/_xOTxiWGGpI" },
+                        { "title": "Assertion Reason P1", "url": "https://www.youtube.com/embed/jka_UoZPqHs" },
+                        { "title": "Assertion Reason P2", "url": "https://www.youtube.com/embed/lauuB4VKWw4" },
+                        { "title": "Mixed Concepts P1", "url": "https://www.youtube.com/embed/vHIhXfilkpg" },
+                        { "title": "Mixed Concepts P2", "url": "https://www.youtube.com/embed/sdnEI-mpV4Y" },
+                        { "title": "Competency Based Questions", "url": "https://www.youtube.com/embed/U7xuWZaYJ0M" }
+                    ]
+                }
+            ];
+
+            const rawBooks = [
+                { "title": "PW Old Test Series", "folders": ["IIT-JEE", "COACHINGS", "PW"], "url": "https://drive.google.com/file/d/1Emnjudx3tfSJct8--uQ2z26TZj86H7oJ/preview" },
+                { "title": "PW NSEP", "folders": ["IIT-JEE", "COACHINGS", "PW"], "url": "https://drive.google.com/file/d/17FzVNq7ElEJX8ew_Irk4fEv4av-in3m2/preview" },
+                { "title": "Physics ARCHIVE - JEE (Main)", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/1tA2TE6nY8pEqxymkj734VSv-dcn7tev1/preview" },
+                { "title": "Physics Archive - JEE (Main) Solutions", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/1BUioz6yZGETzjsLuR4XKlKDO40bERoc_/preview" },
+                { "title": "Mathematics ARCHIVE - JEE (Main)", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/1fyN6TqNl54WI1XZkFHiG34Q7HqNOPHrB/preview" },
+                { "title": "Mathematics Archive - JEE (Main) Solutions", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/1zGri0N_oUEbrm3qWvB0ik_6YUAaHUfjt/preview" },
+                { "title": "Chemistry ARCHIVE - JEE (Main)", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/1nsO5H549jvYWkeyYWcEeegSqJeo8QfRA/preview" },
+                { "title": "Chemistry Archive - JEE (Main) Solutions", "folders": ["IIT-JEE", "COACHINGS", "AAKASH Archives"], "url": "https://drive.google.com/file/d/19o6UQZCp7FMyQmyg8IXLb2iJjVTk5oU-/preview" },
+                { "title": "R S Aggarwal Senior Secondary School", "folders": ["IIT-JEE", "SUBJECTS", "Maths Special"], "url": "https://drive.google.com/file/d/1roqhcr9mEw2tthlhfZ28uBtbAQeDOCJa/preview" },
+                { "title": "Black Book Algebra (Vikas Gupta)", "folders": ["IIT-JEE", "SUBJECTS", "Maths Special"], "url": "https://drive.google.com/file/d/14HukOgsh19UCXfpHXVWA1a7yPurM8rRl/preview" },
+                { "title": "VK Jaiswal Inorganic Chemistry", "folders": ["IIT-JEE", "SUBJECTS", "Inorganic Chemistry Special Books"], "url": "https://drive.google.com/file/d/14EVwhdkYYjFDfNiSbh3pWNN_wSF5DFUF/preview" },
+                { "title": "Inorganic Chemistry V Joshi Cengage", "folders": ["IIT-JEE", "SUBJECTS", "Inorganic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1ViSbCC3isEKL3_0_p_PxPvKTI8F1ql2k/preview" },
+                { "title": "SOLUTIONS OF HIMANSHU PANDEY", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1cj7cIJaixw7mKwWQog8-H4WM-onicEqG/preview" },
+                { "title": "Solomon's", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1hii-MGmLGPfE1990P6xQ2l56MbjSah-B/preview" },
+                { "title": "Paula Yurkanis Bruice Organic Chemistry", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1q4o5H1pwVAvNfdC7tG_PYSYPEgD0jz9b/preview" },
+                { "title": "organic chemistry Peter Sykes", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1PjWDWfqgEAM1a8UE12AwZspAnUPyusp2/preview" },
+                { "title": "Morrison & Boyd - Organic Chemistry", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1D5_Ah31gmm72wlN_y3U3RNr8rHil_jyz/preview" },
+                { "title": "Himanshu Pandey Organic", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1e6M1o-aL3_ljsS_-ez4yGOtaYoSczRUo/preview" },
+                { "title": "francis a carey Organic Chemistry", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1rKh__FNDRyVxPesr7TYAswazlEK-2LXJ/preview" },
+                { "title": "Black Book (Ashish Mishra)", "folders": ["IIT-JEE", "SUBJECTS", "Organic Chemistry Special Books"], "url": "https://drive.google.com/file/d/1WhdfQp2HibUelWv0IPBz6lkeEN0QM3eE/preview" },
+                { "title": "Physical Chemistry (P Bahadur)", "folders": ["IIT-JEE", "SUBJECTS", "Physical Chenistry Special Books"], "url": "https://drive.google.com/file/d/1KRwuBmQUI-2sBqtjdAFVcTZmFhEOJY1Q/preview" },
+                { "title": "Physical Chemistry - Narendra Avasthi", "folders": ["IIT-JEE", "SUBJECTS", "Physical Chenistry Special Books"], "url": "https://drive.google.com/file/d/1UdvBPQyfuyqNAw3lUnIj4_yxTRF33H8y/preview" },
+                { "title": "Narendra Awasti Physical Chemistry", "folders": ["IIT-JEE", "SUBJECTS", "Physical Chenistry Special Books"], "url": "https://drive.google.com/file/d/12ZA84qXWPZM6Mh4eBxIoprhNXBgmV42v/preview" },
+                { "title": "Olympiad Arvind Tiwari", "folders": ["IIT-JEE", "SUBJECTS", "Physics Specials"], "url": "https://drive.google.com/file/d/1ZPdcFAif6rlZhuU4Ei9_6zt1uTPcmYGy/preview" },
+                { "title": "DC Pandey Arihant", "folders": ["IIT-JEE", "SUBJECTS", "Physics Specials"], "url": "https://drive.google.com/file/d/1FHuoAZrC36sUKKAy3PuHZaEeo_fknDbx/preview" },
+                { "title": "Physics ARS Class 12", "folders": ["IIT-JEE", "EXTRAS", "Flashcards"], "url": "https://drive.google.com/file/d/17BOjGk1HO_KZdGKgjItlTag18Wens8vS/preview" },
+                { "title": "Physics ARS Class 11", "folders": ["IIT-JEE", "EXTRAS", "Flashcards"], "url": "https://drive.google.com/file/d/1eNXeL3ohXrm0XTGgX3kdZ3RT7h2BO08P/preview" },
+                { "title": "Chemistry ARS Class 12", "folders": ["IIT-JEE", "EXTRAS", "Flashcards"], "url": "https://drive.google.com/file/d/10j6hRd8tt5za9bDqUBkR0Q9U4NIAp91v/preview" },
+                { "title": "Chemistry ARS Class 11", "folders": ["IIT-JEE", "EXTRAS", "Flashcards"], "url": "https://drive.google.com/file/d/1qytl9OdIW30ijDavvvfSaHZdb9_N_npp/preview" },
+                { "title": "Mathematics flashcards", "folders": ["IIT-JEE", "EXTRAS", "Flashcards"], "url": "https://drive.google.com/file/d/1dsp04rVqxjgFsUnXHTOttmUVPSYgvfXE/preview" },
+                { "title": "JEE physics formula booklet", "folders": ["IIT-JEE", "EXTRAS", "Formula BOOKLET"], "url": "https://drive.google.com/file/d/1-DkwbSvzoYBKtXvx0IUMfYyzur9XcoOv/preview" },
+                { "title": "JEE maths formula booklet", "folders": ["IIT-JEE", "EXTRAS", "Formula BOOKLET"], "url": "https://drive.google.com/file/d/1BvvhnHsZ_L-vCKBxVXE1V77ZmGf-Zcfx/preview" },
+                { "title": "JEE chemistry formula booklet", "folders": ["IIT-JEE", "EXTRAS", "Formula BOOKLET"], "url": "https://drive.google.com/file/d/1Fp3O8J-Oy82ZBLkkl3cHQtryWx_lGjm-/preview" },
+                { "title": "PHYSICS CONCEPT MAP CLASS 11 AND 12", "folders": ["IIT-JEE", "EXTRAS", "Concept Maps"], "url": "https://drive.google.com/file/d/15XEURyXYGyUZz8n3BuJ5tYlf2ELzoWhN/preview" },
+                { "title": "Maths", "folders": ["IIT-JEE", "EXTRAS", "Concept Maps"], "url": "https://drive.google.com/file/d/1s31K47z09kgoV9i6wRB1EMsrk5L5r9kJ/preview" },
+                { "title": "CHEMISTRY CONCEPT MAP", "folders": ["IIT-JEE", "EXTRAS", "Concept Maps"], "url": "https://drive.google.com/file/d/1FCQot9abtW3KHHXPXt1NKper9xmSQ_IJ/preview" },
+                { "title": "Physical Chemhack", "folders": ["IIT-JEE", "EXTRAS", "Hack Books"], "url": "https://drive.google.com/file/d/1GLBEHS_DRrWU6g-BBWjCdaUZtoxxvrlo/preview" },
+                { "title": "Organic Chemhack", "folders": ["IIT-JEE", "EXTRAS", "Hack Books"], "url": "https://drive.google.com/file/d/1qsfoK7ythXDqGEorVHwRUbksblQcaGK7/preview" },
+                { "title": "Inorganic Chemhack", "folders": ["IIT-JEE", "EXTRAS", "Hack Books"], "url": "https://drive.google.com/file/d/1ngAepRgoe4coWeyVrWIPvYXkAs2a5Q37/preview" },
+                { "title": "WEP", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1xULnniKoj59JwLEi8AXJv4n51UiACQiS/preview" },
+                { "title": "wave optics", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1AgKut73Qr_Du05cELF2hGcl8x8NORcjD/preview" },
+                { "title": "WAVE MOTION", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1eG_N2BL6hjIC3OynNeZi5ZcotCPm3uJ_/preview" },
+                { "title": "Ray Optics", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1ZT2CcRbV4mEbkN1bPxKFgU1l9RrD5nMK/preview" },
+                { "title": "SHM", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/11o5EqW3f92OecPIfc0E1tF4G83uFcCHE/preview" },
+                { "title": "thermal physics", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1T-W2u2GcdqdQh6PSb25QEMTv-daahqIb/preview" },
+                { "title": "semiconductor", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1p_sPdnFMSbiskCEW173UfbPUv1kTporN/preview" },
+                { "title": "Physics Module 4 solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1A3I8A7r3ckWxEw075RWTa0qyb0mK30nM/preview" },
+                { "title": "rotational motion", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/136jvz4DUPwgFqVVoUbCL5yUVKoDMG_tS/preview" },
+                { "title": "Physics Module 2 Solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/198VWd_BR43sRxYq27am8gVdeDHbepYHj/preview" },
+                { "title": "Physics Module 1 Solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1q0fUx3x2k6xNS-6XHmHYWorrG3eT-jsZ/preview" },
+                { "title": "Physics Module 5 Solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1Ff63q0W-8a5lgMDdaEX5FmYmV1gESgig/preview" },
+                { "title": "NLM", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/12rGR_t0rbAalfcvS1liHgCg6ZzFtMads/preview" },
+                { "title": "modern physics 2", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1etQgEfaN6scWlBWbQZUVEbs4MEyZ5Mm1/preview" },
+                { "title": "modern physics 3", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1w_FE2VeGKv6QJJzvFlaZAvjdQvA8kOVp/preview" },
+                { "title": "Magnetism Module", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1Pr7AiY_flRQmZaOSaWWzsowJjF1fxENM/preview" },
+                { "title": "Physical World Unit Dimensions Error", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1h-yY0G0jYXm5hzF0ZEgEqL_WfOyHzrXv/preview" },
+                { "title": "modern physics 1", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1r9t3BAWQukY9-5hWNXh-qr2uQP1jF1sU/preview" },
+                { "title": "kinematics", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1bvIu_ADongu9euU_IG8gmI7gJRlbwTQL/preview" },
+                { "title": "EMI", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1OaJElTRy0gWn3dy9UZWsH-ima3ILqEwE/preview" },
+                { "title": "gravitation", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1JT3wytjJjJBZGd7EV7emA563Csu0GDXz/preview" },
+                { "title": "electrostatics", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/17-pl-QrrvuyCpF2QvbNfjdEV32sTYub1/preview" },
+                { "title": "current electricity", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1nxzaSZaLEzj22bJ3bgJqPONYEbf2_EmF/preview" },
+                { "title": "com collision", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1HbRjHRtmO5NmvOwYlqjbFwUbexvxa6AO/preview" },
+                { "title": "Circular motion", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1I7p3siljsC5rOZA7yeNK7Q1cNbbqszqE/preview" },
+                { "title": "capacitor", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1S4CT-NdklfwBsOPdfSCfYJmOczVA6U0Z/preview" },
+                { "title": "basic math", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1odngS2g1Owh-K0JqTyI1Z_GayO8dBRCq/preview" },
+                { "title": "Alternating current", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1kT2AWWti5Gg2_AwZz5KvLJCCBqKwUTye/preview" },
+                { "title": "ALLEN PHYSICS RACE SOLUTIONS-2021", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/178xaPf58qPmEyPLq401YQX2muFGklp9G/preview" },
+                { "title": "ALLEN PHYSICS RACE 2021", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1G_Ol5DxwFLjcBgAsxU9AavQf74_wRRcm/preview" },
+                { "title": "Physics Module 6 Solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1EgwquKwScWV7UskP7SWkPTOM5z35ynHz/preview" },
+                { "title": "Physics Module 03 Solution", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/19TI7oxTCgwqEjctBywBLCVPcBYPzVwOp/preview" },
+                { "title": "EM WAVES", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Physics Module"], "url": "https://drive.google.com/file/d/1SsTDpQ5XAPvW6UkFlN6UDgw2c1zO7Qte/preview" },
+                { "title": "oxygen containing compounds module", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1E08lLzQq16n7u8kUghrnv0EUbBV-901O/preview" },
+                { "title": "oxygen containing compound exercise", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1TkKZUc_5iOJJtQg4c2rBEYCaXb2IEMSo/preview" },
+                { "title": "Nitrogen containig compounds module", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/11RdlkiRWSbrd-exLIWdWYaJxbRmplffN/preview" },
+                { "title": "halogen derivatives module", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1yK5ykhwt5yYS9U_AMvhNNxJ9fJJVZmeX/preview" },
+                { "title": "Nitrogen containig compounds exercise", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1-VktD_epsEUVOaRTKlOlhk3vsvGAd3xL/preview" },
+                { "title": "06 chemistry hint & solutions", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1n1dqXLyZyDGuZfuYjDKq451IcWsRFxTz/preview" },
+                { "title": "halogen derivatives ex", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1ZygWleoYeh6xfgznRt2YQRdgBHWqiORe/preview" },
+                { "title": "Biomolecule Polymer Chemistry In Daily life", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/17SviClhxcg6V3lX7aKvEdN-UOcAyYgK2/preview" },
+                { "title": "ALLEN ORGANIC CHEMISTRY RACE-2021", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Organic Chemistry"], "url": "https://drive.google.com/file/d/1x3dlpe66E7bW3Ze7I5f2JUlnQSxWotxc/preview" },
+                { "title": "SOLUTIONS THEORY", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/19s4NDQ5cg09E5iBdvTHQtBNIym6bBcrV/preview" },
+                { "title": "mole Concept", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/1P-G2HqL-dx6UyVWMZ6S-PxPxW0s_1Scp/preview" },
+                { "title": "chemical kinetics ", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/1vEQozwasZlUqtlI0VhYkWfp14WuPvleH/preview" },
+                { "title": "SOLUTIONS EXERCISE", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/1-HSJqJQ4oeUoSxkXQZwzmNVU_YZ3fYUd/preview" },
+                { "title": "ALLEN PHYSICAL CHEMISTRY RACE-2021", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/1vkNxHFSzTyVKz2Ko7FiOumLuDWN1vXww/preview" },
+                { "title": "ALLEN PHYSICAL CHEMISTRY RACE SOLUTIONS-2021", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Physical Chemistry"], "url": "https://drive.google.com/file/d/1bpgLHm7Rznwnht9cISyLZLTgAY_id76-/preview" },
+                { "title": "metallurgy module,", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Inorganic Chemistry Module"], "url": "https://drive.google.com/file/d/1V8ID273jxAb5Al1C_ze2Sr2yjugJIjxe/preview" },
+                { "title": "D and F block", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Inorganic Chemistry Module"], "url": "https://drive.google.com/file/d/1813hvw5_Ng6tKdcR-3RZ0qdeOTj8zW5W/preview" },
+                { "title": "metallurgy exercise", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Inorganic Chemistry Module"], "url": "https://drive.google.com/file/d/1EUqegjHOCBM3FG3CSRDK42UTCpA7awRa/preview" },
+                { "title": "05 chemistry hint & solutions", "folders": ["IIT-JEE", "COACHINGS", "ALLEN", "Allen Chemistry", "Allen", "Inorganic Chemistry Module"], "url": "https://drive.google.com/file/d/1d7QskOcxCUCoz7V1QpnWEwuTJXGFADfM/preview" }
+            ].filter(b => !b.folders.some(f => typeof f === 'string' && f.toUpperCase().includes('NUCLEUS')));
+
+            const masterLibrary = [...lectureVideos];
+
+            rawBooks.forEach(b => {
+                if (b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS')) {
+                    b.folders[0] = "FILES";
+                    masterLibrary.push(b);
+                } else if (b.folders.includes('EXTRAS')) {
+                    let newFolders = ["SUPPORT"];
+                    if (b.folders.length > 2) newFolders.push(...b.folders.slice(2));
+                    else newFolders.push("Misc");
+                    b.folders = newFolders;
+                    masterLibrary.push(b);
+                }
+            });
+
+            let activeModule = 'LECTURES';
+            let studyStats = JSON.parse(localStorage.getItem('study_stats_clean')) || {};
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (!studyStats[todayStr]) studyStats[todayStr] = 0;
+
+            // ==========================================
+            // 2. POMODORO SYSTEM & PREFERENCES
+            // ==========================================
+            let pomoSettings = JSON.parse(localStorage.getItem('pomo_settings_clean')) || { focusTime: 25, theme: 'theme-slate', accent: '#3182ce', icon: '🍅' };
+            document.body.className = `${pomoSettings.theme} font-medium`;
+            document.documentElement.style.setProperty('--highlight-text', pomoSettings.accent);
+            document.getElementById('pomo-logo-icon').textContent = pomoSettings.icon;
+            
+            let pomoSeconds = pomoSettings.focusTime * 60;
+            let pomoInterval = null;
+            let isPomoRunning = false;
+
+            const pomoDisplay = document.getElementById('pomo-time');
+            const pomoToggle = document.getElementById('pomo-toggle');
+            const pomoReset = document.getElementById('pomo-reset');
+            const pomoCard = document.getElementById('pomo-card');
+
+            function updatePomoDisplay() {
+                let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+                let s = String(pomoSeconds % 60).padStart(2, '0');
+                pomoDisplay.textContent = `${m}:${s}`;
+            }
+
+            pomoToggle.addEventListener('click', () => {
+                if (isPomoRunning) {
+                    clearInterval(pomoInterval);
+                    isPomoRunning = false;
+                    pomoToggle.textContent = '▶';
+                    pomoCard.classList.remove('running');
+                } else {
+                    isPomoRunning = true;
+                    pomoToggle.textContent = '⏸';
+                    pomoCard.classList.add('running');
+                    pomoInterval = setInterval(() => {
+                        if (pomoSeconds > 0) {
+                            pomoSeconds--;
+                            updatePomoDisplay();
+                        } else {
+                            clearInterval(pomoInterval);
+                            isPomoRunning = false;
+                            pomoToggle.textContent = '▶';
+                            pomoCard.classList.remove('running');
+                            studyStats[todayStr]++;
+                            localStorage.setItem('study_stats_clean', JSON.stringify(studyStats));
+                            alert("Session Complete! Great focus.");
+                            pomoSeconds = pomoSettings.focusTime * 60;
+                            updatePomoDisplay();
+                        }
+                    }, 1000);
+                }
+            });
+
+            pomoReset.addEventListener('click', () => {
+                clearInterval(pomoInterval);
+                isPomoRunning = false;
+                pomoSeconds = pomoSettings.focusTime * 60;
+                pomoToggle.textContent = '▶';
+                pomoCard.classList.remove('running');
+                updatePomoDisplay();
+            });
+            updatePomoDisplay();
+
+            // Modal Controls
+            const settingsModal = document.getElementById('settings-modal-overlay');
+            document.getElementById('pomo-open-settings').onclick = () => {
+                document.getElementById('setting-focus-time').value = pomoSettings.focusTime;
+                document.getElementById('setting-theme').value = pomoSettings.theme;
+                document.getElementById('setting-accent').value = pomoSettings.accent || '#3182ce';
+                document.getElementById('setting-icon').value = pomoSettings.icon || '🍅';
+                settingsModal.classList.add('open');
+            };
+            document.getElementById('settings-close-modal').onclick = () => settingsModal.classList.remove('open');
+            
+            document.getElementById('save-settings-btn').onclick = () => {
+                pomoSettings.focusTime = parseInt(document.getElementById('setting-focus-time').value);
+                pomoSettings.theme = document.getElementById('setting-theme').value;
+                pomoSettings.accent = document.getElementById('setting-accent').value;
+                pomoSettings.icon = document.getElementById('setting-icon').value;
+                
+                localStorage.setItem('pomo_settings_clean', JSON.stringify(pomoSettings));
+                document.body.className = `${pomoSettings.theme} font-medium`;
+                document.documentElement.style.setProperty('--highlight-text', pomoSettings.accent);
+                document.getElementById('pomo-logo-icon').textContent = pomoSettings.icon;
+                
+                settingsModal.classList.remove('open');
+                
+                if(!isPomoRunning) {
+                    pomoSeconds = pomoSettings.focusTime * 60;
+                    updatePomoDisplay();
+                }
+            };
+            
+            document.getElementById('theme-toggle').onclick = () => {
+                pomoSettings.theme = pomoSettings.theme === 'theme-light' ? 'theme-slate' : 'theme-light';
+                document.body.className = `${pomoSettings.theme} font-medium`;
+                document.getElementById('setting-theme').value = pomoSettings.theme;
+                localStorage.setItem('pomo_settings_clean', JSON.stringify(pomoSettings));
+            };
+
+            // ==========================================
+            // 3. RENDERING & UI NAVIGATION
+            // ==========================================
+            const bookList = document.getElementById('book-list');
+            const searchBar = document.getElementById('search-bar');
+            
+            function renderLibrary(query = '') {
+                bookList.innerHTML = '';
+                let filtered = masterLibrary.filter(b => b.folders && b.folders[0] === activeModule);
+                
+                if (query) {
+                    filtered = filtered.filter(b => {
+                        const text = (b.title + " " + b.folders.join(" ")).toLowerCase();
+                        return text.includes(query.toLowerCase());
+                    });
+                }
+
+                if(filtered.length === 0) {
+                    bookList.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.7;">No items found.</div>`;
+                    return;
+                }
+
+                const tree = {};
+                filtered.forEach(b => {
+                    const l1 = b.folders[1] || 'General';
+                    const l2 = b.folders[2] || 'Various';
+                    if (!tree[l1]) tree[l1] = {};
+                    if (!tree[l1][l2]) tree[l1][l2] = [];
+                    tree[l1][l2].push(b);
+                });
+
+                Object.keys(tree).sort().forEach(l1 => {
+                    let details1 = document.createElement('details');
+                    details1.open = query.length > 0 || activeModule === 'SUPPORT';
+                    details1.innerHTML = `<summary>${l1}</summary><div class="folder-contents"></div>`;
+                    let content1 = details1.querySelector('.folder-contents');
+
+                    Object.keys(tree[l1]).sort().forEach(l2 => {
+                        let details2 = document.createElement('details');
+                        details2.open = query.length > 0;
+                        details2.innerHTML = `<summary>${l2}</summary><div class="folder-contents"></div>`;
+                        let content2 = details2.querySelector('.folder-contents');
+
+                        tree[l1][l2].forEach(book => {
+                            let item = document.createElement('div');
+                            item.className = 'book-item';
+                            item.innerHTML = `<div class="book-item-content">${book.title}</div>`;
+                            item.addEventListener('click', () => loadResource(book, item));
+                            if (activeModule === 'SUPPORT') content1.appendChild(item); // Flatten support a bit
+                            else content2.appendChild(item);
+                        });
+                        if (activeModule !== 'SUPPORT') content1.appendChild(details2);
+                    });
+                    bookList.appendChild(details1);
+                });
+            }
+
+            searchBar.addEventListener('input', (e) => renderLibrary(e.target.value));
+
+            function loadResource(book, el) {
+                document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
+                if (el) el.classList.add('active');
+
+                document.getElementById('placeholder-box').style.display = 'none';
+                document.getElementById('utilities-workspace').style.display = 'none';
+                document.getElementById('omr-panel').style.display = 'none';
+                document.getElementById('viewer-wrapper').style.display = 'block';
+                document.getElementById('split-screen-btn').style.display = 'flex';
+                
+                document.getElementById('current-book-title').textContent = book.title;
+                document.getElementById('current-book-breadcrumb').textContent = book.folders.join(" > ");
+                
+                const dropdown = document.getElementById('playlist-dropdown');
+                const frame = document.getElementById('book-frame');
+                const splitFrame = document.getElementById('book-frame-split');
+                
+                if (book.playlist && book.playlist.length > 0) {
+                    dropdown.style.display = 'block';
+                    dropdown.innerHTML = '';
+                    book.playlist.forEach((vid) => {
+                        let opt = document.createElement('option');
+                        opt.value = vid.url;
+                        opt.textContent = vid.title;
+                        dropdown.appendChild(opt);
+                    });
+                    dropdown.onchange = (e) => { 
+                        frame.src = e.target.value; 
+                        if(isSplitActive && splitFrame) splitFrame.src = e.target.value;
+                    };
+                    frame.src = book.playlist[0].url;
+                    if(isSplitActive && splitFrame) splitFrame.src = book.playlist[0].url;
+                } else {
+                    dropdown.style.display = 'none';
+                    frame.src = book.url;
+                    if(isSplitActive && splitFrame) splitFrame.src = book.url;
+                }
+
+                // Context Notes
+                const notesArea = document.getElementById('notes-area');
+                notesArea.value = localStorage.getItem('notes_' + book.title) || '';
+                notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
+            }
+
+            // Split Screen Logic
+            let isSplitActive = false;
+            document.getElementById('split-screen-btn').onclick = () => {
+                isSplitActive = !isSplitActive;
+                const main = document.getElementById('reader-container-main');
+                const v1 = document.getElementById('viewer-wrapper');
+                const v2 = document.getElementById('viewer-wrapper-split');
+                const res = document.getElementById('split-resizer');
+                
+                if(isSplitActive) {
+                    main.classList.add('split-active');
+                    v2.style.display = 'block';
+                    res.style.display = 'flex';
+                    document.getElementById('book-frame-split').src = document.getElementById('book-frame').src;
+                    v1.style.width = '50%'; v2.style.width = '50%';
+                } else {
+                    main.classList.remove('split-active');
+                    v2.style.display = 'none';
+                    res.style.display = 'none';
+                    v1.style.width = '100%';
+                }
+            };
+
+            // Resizer Drag Logic
+            const resizer = document.getElementById('split-resizer');
+            let isResizing = false;
+            resizer.onmousedown = () => { isResizing = true; resizer.classList.add('dragging'); document.body.style.cursor='col-resize'; };
+            document.onmousemove = (e) => {
+                if(!isResizing) return;
+                const main = document.getElementById('reader-container-main');
+                const rect = main.getBoundingClientRect();
+                let pct = ((e.clientX - rect.left) / rect.width) * 100;
+                if(pct>20 && pct<80) {
+                    document.getElementById('viewer-wrapper').style.width = `${pct}%`;
+                    document.getElementById('viewer-wrapper-split').style.width = `${100-pct}%`;
+                }
+            };
+            document.onmouseup = () => { if(isResizing) { isResizing = false; resizer.classList.remove('dragging'); document.body.style.cursor='default'; }};
+
+            // Fullscreen
+            document.getElementById('fullscreen-btn').onclick = () => {
+                if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+                else if (document.exitFullscreen) document.exitFullscreen();
+            };
+
+            // Navigation Toggle
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    activeModule = e.target.getAttribute('data-target');
+                    
+                    if(activeModule === 'UTILITIES') {
+                        document.getElementById('library-sidebar-view').style.display = 'none';
+                        document.getElementById('utilities-sidebar-view').style.display = 'flex';
+                    } else {
+                        document.getElementById('utilities-sidebar-view').style.display = 'none';
+                        document.getElementById('library-sidebar-view').style.display = 'flex';
+                        renderLibrary();
+                    }
+                });
+            });
+
+            // ==========================================
+            // 4. UTILITIES WORKSPACE
+            // ==========================================
+            document.querySelectorAll('.utility-menu-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.getAttribute('data-util');
+                    document.getElementById('placeholder-box').style.display = 'none';
+                    document.getElementById('viewer-wrapper').style.display = 'none';
+                    document.getElementById('viewer-wrapper-split').style.display = 'none';
+                    document.getElementById('split-resizer').style.display = 'none';
+                    document.getElementById('split-screen-btn').style.display = 'none';
+                    document.getElementById('playlist-dropdown').style.display = 'none';
+                    document.getElementById('omr-panel').style.display = 'none';
+                    document.getElementById('reader-container-main').classList.remove('split-active');
+                    
+                    const workspace = document.getElementById('utilities-workspace');
+                    
+                    if (type === 'simulator') {
+                        workspace.style.display = 'none';
+                        document.getElementById('omr-panel').style.display = 'flex';
+                        document.getElementById('current-book-title').textContent = "OMR Simulator";
+                        document.getElementById('current-book-breadcrumb').textContent = "Exam Environment";
+                        initOMR();
+                        return;
+                    }
+
+                    workspace.style.display = 'flex';
+                    document.getElementById('current-book-title').textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                    document.getElementById('current-book-breadcrumb').textContent = "Utilities > " + type;
+
+                    if (type === 'analytics') {
+                        let total = 0, streak = 0, d = new Date();
+                        for(let k in studyStats) total += studyStats[k];
+                        while(studyStats[d.toISOString().split('T')[0]] > 0) {
+                            streak++; d.setDate(d.getDate()-1);
+                        }
+                        workspace.innerHTML = `
+                            <div class="util-workspace-inner">
+                                <h2 style="font-size:2.5em; margin-bottom:40px; font-weight:800;">Analytics Dashboard</h2>
+                                <div class="util-dashboard-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-value">${total}</div>
+                                        <div class="stat-label">Total Focus Sessions</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value" style="color:var(--danger);">${streak}</div>
+                                        <div class="stat-label">Current Day Streak</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value">${((total * pomoSettings.focusTime) / 60).toFixed(1)}</div>
+                                        <div class="stat-label">Hours Studied</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (type === 'timetable') {
+                        workspace.innerHTML = `
+                            <div class="util-workspace-inner" style="padding:0;">
+                                <h2 style="font-size:2em; font-weight:800; text-align:center; margin-bottom:24px;">Timeline Timetable</h2>
+                                <div class="tt-layout">
+                                    <div class="tt-daily">
+                                        <div class="tt-add-task-form">
+                                            <input type="time" id="tt-start" class="tt-time-input">
+                                            <input type="text" id="tt-task" class="tt-task-input" placeholder="Plan a topic or mock test...">
+                                            <button class="primary-btn" id="tt-add-btn">Add Event</button>
+                                        </div>
+                                        <div class="tt-tasks-container" id="tt-tasks-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        let tasks = JSON.parse(localStorage.getItem('timetable_tasks_clean')) || [];
+                        const renderTasks = () => {
+                            const list = document.getElementById('tt-tasks-list');
+                            list.innerHTML = '';
+                            tasks.sort((a,b)=>a.time.localeCompare(b.time)).forEach((t, i) => {
+                                list.innerHTML += `
+                                    <div class="tt-task-item" style="${t.done ? 'opacity:0.5; background:var(--folder-bg);':''}">
+                                        <div style="display:flex; align-items:center; gap:12px; width:100%;">
+                                            <input type="checkbox" style="width:20px; height:20px; accent-color:var(--success); cursor:pointer;" ${t.done?'checked':''} onchange="window.toggleTask(${i})">
+                                            <span class="tt-task-time">${t.time}</span>
+                                            <span style="flex-grow:1; font-weight:600; font-size:1.05em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
+                                            <button onclick="window.delTask(${i})" style="background:none; border:none; color:var(--danger); font-size:1.4em; cursor:pointer;">✖</button>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        };
+                        window.toggleTask = (i) => { tasks[i].done = !tasks[i].done; localStorage.setItem('timetable_tasks_clean', JSON.stringify(tasks)); renderTasks(); };
+                        window.delTask = (i) => { tasks.splice(i, 1); localStorage.setItem('timetable_tasks_clean', JSON.stringify(tasks)); renderTasks(); };
+                        
+                        document.getElementById('tt-add-btn').onclick = () => {
+                            let tm = document.getElementById('tt-start').value || "12:00";
+                            let txt = document.getElementById('tt-task').value.trim();
+                            if(txt) { tasks.push({time:tm, text:txt, done:false}); localStorage.setItem('timetable_tasks_clean', JSON.stringify(tasks)); renderTasks(); }
+                        };
+                        renderTasks();
+                    } else if (type === 'syllabus') {
+                        const deepSyllabus = {
+                            "Class12": {
+                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductor"],
+                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols Ethers", "Aldehydes Ketones Carboxylic Acids", "Amines", "Biomolecules"],
+                                "Maths": ["Relations and Functions", "Inverse Trigonometric", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of the Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
+                            },
+                            "JEEMains": {
+                                "Physics": ["Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Solids and Liquids", "Thermodynamics", "KTG", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Optics", "Dual Nature", "Atoms and Nuclei", "Electronic Devices"],
+                                "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Classification of Elements", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "GOC", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules"],
+                                "Maths": ["Sets Relations Functions", "Complex Numbers", "Matrices & Determinants", "Permutations & Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics & Probability", "Trigonometry"]
+                            }
+                        };
+                        const states = [
+                            { text: '⚪ Unstudied', color: 'var(--text-color)', bg: 'transparent', b: 'var(--border-color)' },
+                            { text: '🟡 Theory', color: '#000', bg: '#fde047', b: 'transparent' },
+                            { text: '🔵 PYQs', color: '#fff', bg: '#3b82f6', b: 'transparent' },
+                            { text: '🟢 Mastered', color: '#fff', bg: '#22c55e', b: 'transparent' }
+                        ];
+
+                        let sylData = JSON.parse(localStorage.getItem('study_syllabus_deep')) || {};
+
+                        workspace.innerHTML = `
+                            <div class="util-workspace-inner" style="padding:0;">
+                                <h2 style="font-size:2em; font-weight:800; text-align:center; margin-bottom:20px;">Deep Syllabus Tracker</h2>
+                                <div class="syl-tabs">
+                                    <button class="syl-tab active" data-target="Class12">Class 12 Boards</button>
+                                    <button class="syl-tab" data-target="JEEMains">JEE Mains / Adv</button>
+                                </div>
+                                <div class="overall-progress-bar"><div class="overall-progress-fill" id="syllabus-progress"></div></div>
+                                <p style="margin-bottom:24px; font-weight:bold; opacity:0.8; text-align:center; font-size:1.1em;" id="syllabus-progress-text">0% Completed</p>
+                                <div id="syl-content-area" style="width:100%;"></div>
+                            </div>
+                        `;
+
+                        const contentArea = document.getElementById('syl-content-area');
+
+                        function updateSylProgress() {
+                            let total = 0; let score = 0;
+                            for(let page in deepSyllabus) {
+                                for(let subj in deepSyllabus[page]) {
+                                    deepSyllabus[page][subj].forEach(chap => {
+                                        let dbKey = `${page}_${subj}_${chap}`;
+                                        total += 3;
+                                        score += (sylData[dbKey] || 0);
+                                    });
+                                }
+                            }
+                            let pct = total === 0 ? 0 : Math.round((score/total)*100);
+                            const pBar = document.getElementById('syllabus-progress');
+                            const pText = document.getElementById('syllabus-progress-text');
+                            if (pBar) pBar.style.width = `${pct}%`;
+                            if (pText) pText.innerText = `Overall Readiness: ${pct}%`;
+                        }
+
+                        function renderSyllabusPage(pageKey) {
+                            contentArea.innerHTML = '';
+                            const pageData = deepSyllabus[pageKey];
+                            
+                            for(let subj in pageData) {
+                                let detail = document.createElement('details');
+                                detail.className = 'syl-subject';
+                                detail.open = true;
+                                detail.innerHTML = `<summary>${subj} <span style="font-size:0.8em; opacity:0.8; font-weight:normal;">(${pageData[subj].length} Chapters)</span></summary> <div class="syl-grid" id="grid-${subj}"></div>`;
+                                contentArea.appendChild(detail);
+
+                                const grid = detail.querySelector(`#grid-${subj}`);
+                                pageData[subj].forEach(chap => {
+                                    let dbKey = `${pageKey}_${subj}_${chap}`;
+                                    let stIdx = sylData[dbKey] || 0;
+                                    
+                                    let item = document.createElement('div');
+                                    item.className = 'syl-item';
+                                    item.innerHTML = `
+                                        <div class="syl-item-title">${chap}</div>
+                                        <button class="syl-btn" style="background:${states[stIdx].bg}; color:${states[stIdx].color}; border-color:${states[stIdx].b}">${states[stIdx].text}</button>
+                                    `;
+
+                                    let btn = item.querySelector('.syl-btn');
+                                    btn.addEventListener('click', () => {
+                                        stIdx = (stIdx + 1) % 4;
+                                        sylData[dbKey] = stIdx;
+                                        localStorage.setItem('study_syllabus_deep', JSON.stringify(sylData));
+                                        btn.innerText = states[stIdx].text;
+                                        btn.style.background = states[stIdx].bg;
+                                        btn.style.color = states[stIdx].color;
+                                        btn.style.borderColor = states[stIdx].b;
+                                        updateSylProgress();
+                                    });
+                                    grid.appendChild(item);
+                                });
+                            }
+                        }
+
+                        document.querySelectorAll('.syl-tab').forEach(tab => {
+                            tab.addEventListener('click', (e) => {
+                                document.querySelectorAll('.syl-tab').forEach(t => t.classList.remove('active'));
+                                e.target.classList.add('active');
+                                renderSyllabusPage(e.target.getAttribute('data-target'));
+                            });
+                        });
+
+                        renderSyllabusPage('Class12');
+                        updateSylProgress();
+                    }
+                });
+            });
+
+            // OMR Logic
+            function initOMR() {
+                const container = document.getElementById('omr-questions-container');
+                container.innerHTML = '';
+                for (let i = 1; i <= 75; i++) {
+                    container.innerHTML += `
+                        <div class="omr-row">
+                            <div class="omr-num">${i}.</div>
+                            <div class="omr-options">
+                                <div class="omr-circle" onclick="this.parentNode.querySelectorAll('.omr-circle').forEach(c=>c.classList.remove('selected')); this.classList.add('selected');">A</div>
+                                <div class="omr-circle" onclick="this.parentNode.querySelectorAll('.omr-circle').forEach(c=>c.classList.remove('selected')); this.classList.add('selected');">B</div>
+                                <div class="omr-circle" onclick="this.parentNode.querySelectorAll('.omr-circle').forEach(c=>c.classList.remove('selected')); this.classList.add('selected');">C</div>
+                                <div class="omr-circle" onclick="this.parentNode.querySelectorAll('.omr-circle').forEach(c=>c.classList.remove('selected')); this.classList.add('selected');">D</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                let examTime = 10800; // 3 hrs
+                let timerInt = setInterval(() => {
+                    examTime--;
+                    let h = String(Math.floor(examTime/3600)).padStart(2,'0');
+                    let m = String(Math.floor((examTime%3600)/60)).padStart(2,'0');
+                    let s = String(examTime%60).padStart(2,'0');
+                    document.getElementById('omr-timer').textContent = `${h}:${m}:${s}`;
+                    if(examTime<=0) clearInterval(timerInt);
+                }, 1000);
+
+                document.getElementById('omr-submit-btn').onclick = () => {
+                    clearInterval(timerInt);
+                    let ans = document.querySelectorAll('.omr-circle.selected').length;
+                    alert(`Exam Submitted!\nAttempted: ${ans}/75\nEstimated Score assuming 80% accuracy: ${Math.floor(ans*4*0.8)}`);
+                    document.getElementById('omr-panel').style.display = 'none';
+                    document.getElementById('placeholder-box').style.display = 'block';
+                };
+            }
+
+            // ==========================================
+            // 5. AUDIO & COPILOT
+            // ==========================================
+            let audioCtx = null, ambientNode = null, isAmbientPlaying = false;
+            function getAudioContext() {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                return audioCtx;
+            }
+            const playToggle = document.getElementById('ambient-play-toggle');
+            playToggle.addEventListener('click', () => {
+                const type = document.getElementById('music-preset-select').value;
+                if (isAmbientPlaying && ambientNode) {
+                    try { ambientNode.source.stop(); ambientNode.source.disconnect(); } catch(e){}
+                    isAmbientPlaying = false;
+                    playToggle.textContent = "▶ Start Ambient Generator";
+                } else {
+                    const ctx = getAudioContext();
+                    const bufSize = 2 * ctx.sampleRate, noiseBuf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                    const output = noiseBuf.getChannelData(0);
+                    let lastOut = 0;
+                    for (let i = 0; i < bufSize; i++) {
+                        let white = Math.random() * 2 - 1;
+                        if(type==='ambient-white') output[i] = white*0.1;
+                        else { lastOut = (lastOut + (0.02 * white)) / 1.02; output[i] = lastOut * 1.5; }
+                    }
+                    ambientNode = { source: ctx.createBufferSource() };
+                    ambientNode.source.buffer = noiseBuf; ambientNode.source.loop = true;
+                    ambientNode.source.connect(ctx.destination); ambientNode.source.start(0);
+                    isAmbientPlaying = true;
+                    playToggle.textContent = "⏹ Stop Ambient Generator";
+                }
+            });
+
+            document.getElementById('music-preset-select').addEventListener('change', (e) => {
+                const val = e.target.value;
+                if(isAmbientPlaying && ambientNode) { try { ambientNode.source.stop(); }catch(e){} isAmbientPlaying=false; playToggle.textContent="▶ Start Ambient Generator"; }
+                if (val.startsWith('ambient-')) {
+                    document.getElementById('ambient-controls-box').style.display = 'block';
+                    document.getElementById('music-iframe-container').style.display = 'none';
+                    document.getElementById('music-frame').src = '';
+                } else {
+                    document.getElementById('ambient-controls-box').style.display = 'none';
+                    document.getElementById('music-iframe-container').style.display = 'block';
+                    document.getElementById('music-frame').src = val === 'spotify-lofi' ? 'https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?theme=0' : 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=0';
+                }
+            });
+
+            // Modals
+            document.getElementById('music-open-btn').onclick = () => document.getElementById('music-modal-overlay').classList.add('open');
+            document.getElementById('music-close-modal').onclick = () => document.getElementById('music-modal-overlay').classList.remove('open');
+            const notesPanel = document.getElementById('notes-panel');
+            document.getElementById('notes-toggle-btn').onclick = () => notesPanel.classList.add('open');
+            document.getElementById('close-notes-btn').onclick = () => notesPanel.classList.remove('open');
+
+            // Copilot Chat
+            const chatFab = document.getElementById('chat-fab-btn'), chatWin = document.getElementById('chat-window'), chatInp = document.getElementById('chat-input'), chatBody = document.getElementById('chat-body');
+            chatFab.onclick = () => chatWin.classList.add('open');
+            document.getElementById('chat-close-btn').onclick = () => chatWin.classList.remove('open');
+            
+            document.getElementById('chat-send-btn').onclick = () => {
+                let q = chatInp.value.trim().toLowerCase();
+                if(!q) return;
+                chatBody.innerHTML += `<div class="chat-msg user-msg">${q}</div>`;
+                chatInp.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+                
+                setTimeout(() => {
+                    let matches = [];
+                    masterLibrary.forEach((b, index) => {
+                        if (b.title && b.title.toLowerCase().includes(q)) {
+                            matches.push(`<button onclick="window.playSearchedVideo('${b.url || (b.playlist?.[0]?.url) || ''}')" style="background:var(--highlight); color:var(--highlight-text); border:1px solid var(--border-color); padding:6px 10px; border-radius:6px; margin-top:6px; width:100%; text-align:left; cursor:pointer;">📄 ${b.title}</button>`);
+                        }
+                    });
+                    let reply = matches.length > 0 ? `Found these in your library:<br>${matches.slice(0,3).join('')}` : "No matching resources found.";
+                    chatBody.innerHTML += `<div class="chat-msg bot-msg">${reply}</div>`;
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 400);
+            };
+
+            window.playSearchedVideo = (url) => {
+                if(!url) return;
+                document.getElementById('placeholder-box').style.display = 'none';
+                document.getElementById('utilities-workspace').style.display = 'none';
+                document.getElementById('omr-panel').style.display = 'none';
+                document.getElementById('viewer-wrapper').style.display = 'block';
+                document.getElementById('book-frame').src = url;
+                document.getElementById('chat-window').classList.remove('open');
+            };
+
+            chatInp.addEventListener('keypress', (e) => { if(e.key === 'Enter') document.getElementById('chat-send-btn').click(); });
+
+            // Keyboard Shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.getElementById('music-modal-overlay').classList.remove('open');
+                    document.getElementById('settings-modal-overlay').classList.remove('open');
+                    notesPanel.classList.remove('open');
+                    chatWin.classList.remove('open');
+                }
+            });
+
+            // Init default
+            renderLibrary();
+        });
+    </script>
+</body>
+</html>
             --header-bg: #ffffff; 
             --reader-bg: #edf2f7; 
             --border-color: #e2e8f0;
