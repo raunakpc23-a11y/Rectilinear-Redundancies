@@ -194,13 +194,11 @@
         .chat-footer { padding: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--sidebar-bg);}
         .chat-footer input { flex-grow: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.9em; }
 
-        #omr-panel { background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); display: none; flex-direction: column; overflow: hidden; }
-        .omr-header { padding: 16px 20px; background: var(--folder-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
-        .omr-questions { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .omr-row { display: flex; align-items: center; gap: 16px; padding: 8px; border-bottom: 1px dashed var(--border-color); }
-        .omr-circle { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-weight: bold; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
-        .omr-circle.selected { background: var(--accent-color); color: white; border-color: var(--accent-color); }
-        
+        .syl-tab-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .syl-tab { flex: 1; padding: 12px; font-size: 1em; font-weight: bold; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; color: var(--text-muted); transition: 0.2s; text-align:center; }
+        .syl-tab:hover { border-color: var(--text-muted); color: var(--text-color); }
+        .syl-tab.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 12px var(--accent-glow); }
+
         .tt-layout { display: flex; flex-direction: column; gap: 16px; height: 100%; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%;}
         .tt-form { display: flex; gap: 12px; background: var(--sidebar-bg); padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
         .tt-form input { flex-grow: 1; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; }
@@ -250,7 +248,6 @@
             <button class="mod-tab" data-tab="FILES">Files</button>
             <button class="mod-tab" data-tab="SUPPORT">Support</button>
             <button class="mod-tab" data-tab="UTILITIES">Utilities</button>
-            <button class="mod-tab" data-tab="SIMULATOR">Simulator</button>
         </div>
 
         <div id="sidebar-list-view" style="display:flex; flex-direction:column; flex-grow:1; overflow:hidden;">
@@ -276,7 +273,6 @@
                 <select id="playlist-select" class="playlist-select" style="display:none;"></select>
             </div>
             <div class="header-actions">
-                <button id="exam-start-btn" class="primary-btn" style="display:none; background:var(--danger);">⏱️ Start Exam</button>
                 <button id="split-btn" class="icon-btn" title="Split Screen">🔲</button>
                 <button id="notes-btn" class="icon-btn" title="Notes Drawer">📝</button>
                 <button id="fs-btn" class="icon-btn" title="Fullscreen">⛶</button>
@@ -292,17 +288,6 @@
             <div class="viewer-box" id="viewer-1"><iframe id="frame-1"></iframe></div>
             <div class="split-resizer" id="resizer"></div>
             <div class="viewer-box" id="viewer-2"><iframe id="frame-2"></iframe></div>
-            
-            <div id="omr-panel" style="width:100%; height:100%;">
-                <div class="omr-header">
-                    <span>Virtual OMR Sheet</span>
-                    <span id="omr-timer" style="font-family:monospace; font-size:1.2em; color:var(--danger);">03:00:00</span>
-                </div>
-                <div class="omr-questions" id="omr-questions"></div>
-                <div style="padding:16px; border-top:1px solid var(--border-color); background:var(--folder-bg);">
-                    <button class="primary-btn" id="omr-submit" style="width:100%; justify-content:center;">Submit Exam</button>
-                </div>
-            </div>
             
             <div id="util-panel" style="display:none; width:100%; height:100%; background:var(--reader-bg); overflow-y:auto;"></div>
         </div>
@@ -529,8 +514,6 @@
 
                 document.getElementById('placeholder-box').style.display = 'none';
                 document.getElementById('util-panel').style.display = 'none';
-                document.getElementById('omr-panel').style.display = 'none';
-                document.getElementById('exam-start-btn').style.display = 'none';
                 
                 document.getElementById('viewer-1').style.display = 'block';
                 document.getElementById('split-btn').style.display = 'flex';
@@ -574,20 +557,6 @@
                     
                     if(activeModule === 'UTILITIES') {
                         lv.style.display = 'none'; uv.style.display = 'flex';
-                    } else if(activeModule === 'SIMULATOR') {
-                        lv.style.display = 'none'; uv.style.display = 'none';
-                        document.getElementById('viewer-1').style.display = 'none';
-                        document.getElementById('viewer-2').style.display = 'none';
-                        document.getElementById('resizer').style.display = 'none';
-                        document.getElementById('util-panel').style.display = 'none';
-                        document.getElementById('placeholder-box').style.display = 'none';
-                        document.getElementById('exam-start-btn').style.display = 'flex';
-                        document.getElementById('split-btn').style.display = 'none';
-                        document.getElementById('playlist-select').style.display = 'none';
-                        document.getElementById('omr-panel').style.display = 'flex';
-                        document.getElementById('current-title').textContent = "Exam Simulator";
-                        document.getElementById('current-path').textContent = "Simulator > Virtual OMR";
-                        renderOMR();
                     } else {
                         lv.style.display = 'flex'; uv.style.display = 'none';
                         renderLibrary();
@@ -600,7 +569,6 @@
                 document.getElementById('viewer-1').style.display = 'none';
                 document.getElementById('viewer-2').style.display = 'none';
                 document.getElementById('resizer').style.display = 'none';
-                document.getElementById('omr-panel').style.display = 'none';
                 document.getElementById('split-btn').style.display = 'none';
                 document.getElementById('playlist-select').style.display = 'none';
                 
@@ -658,57 +626,107 @@
                     };
                     renderTT();
                 } else if(type === 'syllabus') {
-                    const sylStructure = {
-                        "Class 12 Boards": { "Physics": ["Electric Charges", "Electrostatic Potential", "Current Electricity", "Magnetism", "EMI & AC", "Optics", "Modern Physics"] },
-                        "JEE Mains": { "Physics": ["Kinematics", "Laws of Motion", "Work Power Energy", "Rotational Motion", "Gravitation", "Thermodynamics", "Electromagnetism", "Optics"] }
+                    const deepSyllabus = {
+                        "Class12": {
+                            "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics and Optical Instruments", "Wave Optics", "Dual Nature of Radiation and Matter", "Atoms", "Nuclei", "Semiconductor Electronics"],
+                            "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols and Ethers", "Aldehydes Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
+                            "Maths": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of the Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
+                        },
+                        "JEEMains": {
+                            "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects of Current and Magnetism", "Electromagnetic Induction and Alternating Currents", "Electromagnetic Waves", "Optics", "Dual Nature of Matter and Radiation", "Atoms and Nuclei", "Electronic Devices", "Experimental Skills"],
+                            "Chemistry": ["Some Basic Concepts in Chemistry", "Atomic Structure", "Chemical Bonding and Molecular Structure", "Chemical Thermodynamics", "Solutions", "Equilibrium", "Redox Reactions and Electrochemistry", "Chemical Kinetics", "Classification of Elements and Periodicity", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "Purification and Characterisation of Organic Compounds", "Some Basic Principles of Organic Chemistry", "Hydrocarbons", "Organic Compounds Containing Halogens", "Organic Compounds Containing Oxygen", "Organic Compounds Containing Nitrogen", "Biomolecules", "Principles Related to Practical Chemistry"],
+                            "Maths": ["Sets Relations and Functions", "Complex Numbers and Quadratic Equations", "Matrices and Determinants", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity and Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "Three Dimensional Geometry", "Vector Algebra", "Statistics and Probability", "Trigonometry"]
+                        },
+                        "JEEAdv": {
+                            "Physics": ["General Physics", "Kinematics", "Laws of Motion", "Work Power & Energy", "Center of Mass & Collision", "Rotational Dynamics", "Gravitation", "Properties of Matter & Fluid Mechanics", "Thermal Physics & Thermodynamics", "Electrostatics", "Current Electricity", "Magnetic Effects of Current", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Matter", "Atoms & Nuclei", "Semiconductors"],
+                            "Chemistry": ["Basic Concepts of Chemistry", "Atomic Structure", "Chemical Bonding", "Gaseous & Liquid States", "Chemical Thermodynamics", "Chemical Equilibrium", "Ionic Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Classification of Elements", "Hydrogen & s-Block", "p-Block Elements", "d & f-Block Elements", "Coordination Compounds", "Isolation of Metals", "Qualitative Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Alkyl & Aryl Halides", "Alcohols, Phenols & Ethers", "Aldehydes & Ketones", "Carboxylic Acids & Derivatives", "Amines", "Biomolecules & Polymers", "Practical Organic Chemistry (POC)"],
+                            "Maths": ["Sets, Relations & Functions", "Algebra of Complex Numbers", "Quadratic Equations", "Sequence & Series", "Logarithms", "Permutations & Combinations", "Binomial Theorem", "Matrices & Determinants", "Probability", "Trigonometric Functions & Equations", "Inverse Trigonometric Functions", "Properties of Triangles", "2D Geometry: Lines & Circles", "Conic Sections: Parabola", "Conic Sections: Ellipse & Hyperbola", "3D Geometry", "Limits & Continuity", "Differentiability & MOD", "Application of Derivatives", "Indefinite Integration", "Definite Integration", "Application of Integrals (Area)", "Differential Equations", "Vector Algebra"]
+                        }
                     };
+
                     let st = JSON.parse(localStorage.getItem('syl_tracker_v3')) || {};
-                    let html = `<div class="syl-tracker"><h2 style="font-size:1.8em; margin-bottom:10px;">Deep Syllabus Tracker</h2>`;
-                    
-                    let total=0, done=0;
-                    Object.keys(sylStructure).forEach(lvl => {
-                        html += `<div class="syl-subject-card"><summary>${lvl}</summary>`;
-                        Object.keys(sylStructure[lvl]).forEach(subj => {
-                            sylStructure[lvl][subj].forEach(chap => {
+                    const states = [
+                        { t: 'Unstudied', c: 'var(--text-color)', b: 'transparent' },
+                        { t: 'Theory', c: '#000', b: '#fde047' },
+                        { t: 'PYQs', c: '#fff', b: '#3b82f6' },
+                        { t: 'Mastered', c: '#fff', b: '#22c55e' }
+                    ];
+
+                    up.innerHTML = `
+                        <div class="syl-tracker">
+                            <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">Deep Syllabus Tracker</h2>
+                            <div class="syl-tab-container" id="syl-tabs">
+                                <button class="syl-tab active" data-target="Class12">Class 12 Boards</button>
+                                <button class="syl-tab" data-target="JEEMains">JEE Mains</button>
+                                <button class="syl-tab" data-target="JEEAdv">JEE Advanced</button>
+                            </div>
+                            <div class="syl-progress-bar"><div class="syl-progress-fill" id="syl-prog-fill"></div></div>
+                            <p style="text-align:center; font-weight:bold; margin-bottom:20px; margin-top:8px;" id="syl-prog-text">Overall Readiness: 0%</p>
+                            <div id="syl-content" style="display:flex; flex-direction:column; gap:16px;"></div>
+                        </div>
+                    `;
+
+                    window._updateSylProgress = () => {
+                        let total = 0, done = 0;
+                        for(let lvl in deepSyllabus) {
+                            for(let subj in deepSyllabus[lvl]) {
+                                deepSyllabus[lvl][subj].forEach(chap => {
+                                    total++;
+                                    let val = st[`${lvl}_${subj}_${chap}`] || 0;
+                                    if(val === 3) done++;
+                                    else if(val > 0) done += (val * 0.25);
+                                });
+                            }
+                        }
+                        let pct = Math.round((done/total)*100) || 0;
+                        document.getElementById('syl-prog-fill').style.width = `${pct}%`;
+                        document.getElementById('syl-prog-text').innerText = `Overall Mastery: ${pct}%`;
+                    };
+
+                    window._renderSylContent = (lvl) => {
+                        const container = document.getElementById('syl-content');
+                        container.innerHTML = '';
+                        Object.keys(deepSyllabus[lvl]).forEach(subj => {
+                            let detail = document.createElement('details');
+                            detail.className = 'syl-subject-card';
+                            detail.open = true;
+                            detail.innerHTML = `<summary>${subj}</summary>`;
+                            let grid = document.createElement('div');
+                            grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))'; grid.style.gap = '12px'; grid.style.padding = '16px';
+                            
+                            deepSyllabus[lvl][subj].forEach(chap => {
                                 let key = `${lvl}_${subj}_${chap}`;
                                 let state = st[key] || 0;
-                                let sData = [{t:"Unstudied", c:"var(--text-color)", b:"transparent"}, {t:"Theory", c:"#000", b:"#fde047"}, {t:"PYQs", c:"#fff", b:"#3b82f6"}, {t:"Mastered", c:"#fff", b:"#22c55e"}];
-                                total++; if(state===3) done++;
-                                html += `<div class="syl-chap-row"><span>${chap}</span><button class="syl-btn" onclick="nextSyl('${key}')" style="background:${sData[state].b}; color:${sData[state].c};">${sData[state].t}</button></div>`;
+                                grid.innerHTML += `
+                                    <div class="syl-chap-row" style="background:var(--folder-bg); border-radius:var(--radius-md); padding:10px 14px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                                        <span style="font-size:0.85em; font-weight:600; line-height:1.3; margin-right:10px;">${chap}</span>
+                                        <button class="syl-btn" onclick="window._nextSyl('${key}', '${lvl}')" style="background:${states[state].b}; color:${states[state].c}; border:1px solid ${state===0?'var(--border-color)':'transparent'};">${states[state].t}</button>
+                                    </div>
+                                `;
                             });
+                            detail.appendChild(grid);
+                            container.appendChild(detail);
                         });
-                        html += `</div>`;
-                    });
-                    
-                    let pct = Math.round((done/total)*100)||0;
-                    up.innerHTML = `<div class="syl-tracker"><div class="syl-progress-bar"><div class="syl-progress-fill" style="width:${pct}%;"></div></div><p style="text-align:center; font-weight:bold; margin-bottom:20px;">Overall Mastery: ${pct}%</p>${html}</div>`;
-                    
-                    window.nextSyl = (key) => { st[key] = ((st[key]||0)+1)%4; localStorage.setItem('syl_tracker_v3', JSON.stringify(st)); _openUtility('syllabus'); };
-                }
-            };
+                        window._updateSylProgress();
+                    };
 
-            function renderOMR() {
-                const omr = document.getElementById('omr-questions');
-                omr.innerHTML = '';
-                for(let i=1; i<=75; i++) {
-                    omr.innerHTML += `<div class="omr-row"><span style="width:40px; font-weight:bold;">Q${i}.</span><div class="omr-circle">A</div><div class="omr-circle">B</div><div class="omr-circle">C</div><div class="omr-circle">D</div></div>`;
+                    window._nextSyl = (key, lvl) => {
+                        st[key] = ((st[key]||0)+1)%4;
+                        localStorage.setItem('syl_tracker_v3', JSON.stringify(st));
+                        window._renderSylContent(lvl);
+                    };
+
+                    document.querySelectorAll('#syl-tabs .syl-tab').forEach(tab => {
+                        tab.onclick = (e) => {
+                            document.querySelectorAll('#syl-tabs .syl-tab').forEach(t => t.classList.remove('active'));
+                            e.target.classList.add('active');
+                            window._renderSylContent(e.target.getAttribute('data-target'));
+                        };
+                    });
+
+                    window._renderSylContent('Class12');
                 }
-                document.querySelectorAll('.omr-circle').forEach(c => c.onclick = (e) => {
-                    Array.from(e.target.parentNode.children).forEach(s => s.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                });
-            }
-            let examTmr;
-            document.getElementById('exam-start-btn').onclick = () => {
-                let sec = 10800;
-                document.getElementById('exam-start-btn').style.display = 'none';
-                clearInterval(examTmr);
-                examTmr = setInterval(() => {
-                    if(sec<=0) { clearInterval(examTmr); document.getElementById('omr-submit').click(); }
-                    else { sec--; let h = String(Math.floor(sec/3600)).padStart(2,'0'); let m = String(Math.floor((sec%3600)/60)).padStart(2,'0'); document.getElementById('omr-timer').textContent = `${h}:${m}`; }
-                }, 1000);
             };
-            document.getElementById('omr-submit').onclick = () => { clearInterval(examTmr); alert("Exam Submitted!"); document.getElementById('exam-start-btn').style.display = 'flex'; };
 
             document.getElementById('sidebar-toggle').onclick = () => document.getElementById('sidebar').classList.toggle('collapsed');
             document.getElementById('fs-btn').onclick = () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
