@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Dashboard Pro</title>
     <style>
+        /* =========================================================
+           1. CSS VARIABLES & THEMES 
+           ========================================================= */
         :root { 
             --primary-bg: #f8fafc; --sidebar-bg: #ffffff; --sidebar-text: #334155; 
             --text-color: #0f172a; --text-muted: #64748b; --header-bg: #ffffff; 
@@ -14,21 +17,43 @@
             --radius-md: 8px; --radius-lg: 16px; --accent-color: #3b82f6; 
             --accent-glow: rgba(59, 130, 246, 0.4);
         }
-        body.theme-amoled { --primary-bg:#000; --sidebar-bg:#09090b; --sidebar-text:#f8fafc; --text-color:#f8fafc; --text-muted:#a1a1aa; --header-bg:#09090b; --reader-bg:#000; --border-color:#27272a; --card-shadow:0 10px 25px -5px rgba(0,0,0,0.8); --folder-bg:#18181b; }
-        body.theme-charcoal { --primary-bg:#121212; --sidebar-bg:#1e1e24; --sidebar-text:#f4f4f5; --text-color:#f4f4f5; --text-muted:#a1a1aa; --header-bg:#1e1e24; --reader-bg:#121212; --border-color:#3f3f46; --card-shadow:0 8px 20px rgba(0,0,0,0.4); --folder-bg:#27272a; }
-        body.theme-slate { --primary-bg:#0f172a; --sidebar-bg:#1e293b; --sidebar-text:#f1f5f9; --text-color:#f1f5f9; --text-muted:#94a3b8; --header-bg:#1e293b; --reader-bg:#0f172a; --border-color:#334155; --card-shadow:0 8px 20px rgba(0,0,0,0.4); --folder-bg:#334155; }
+
+        body.theme-amoled {
+            --primary-bg: #000000; --sidebar-bg: #09090b; --sidebar-text: #f8fafc; 
+            --text-color: #f8fafc; --text-muted: #a1a1aa; --header-bg: #09090b; 
+            --reader-bg: #000000; --border-color: #27272a;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8); --folder-bg: #18181b;
+        }
+
+        body.theme-charcoal {
+            --primary-bg: #121212; --sidebar-bg: #1e1e24; --sidebar-text: #f4f4f5; 
+            --text-color: #f4f4f5; --text-muted: #a1a1aa; --header-bg: #1e1e24; 
+            --reader-bg: #121212; --border-color: #3f3f46;
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); --folder-bg: #27272a;
+        }
+
+        body.theme-slate {
+            --primary-bg: #0f172a; --sidebar-bg: #1e293b; --sidebar-text: #f1f5f9; 
+            --text-color: #f1f5f9; --text-muted: #94a3b8; --header-bg: #1e293b; 
+            --reader-bg: #0f172a; --border-color: #334155;
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); --folder-bg: #334155;
+        }
+
         body.font-small { font-size: 13px; } body.font-medium { font-size: 15px; } body.font-large { font-size: 17px; }
 
+        /* =========================================================
+           2. GLOBAL STYLES & LAYOUT
+           ========================================================= */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
         body { display: flex; height: 100vh; overflow: hidden; width: 100vw; color: var(--text-color); }
         
-        #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; overflow: hidden; pointer-events: none;}
+        #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; pointer-events: none;}
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
         .bg-forest { background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1920'); opacity: 0.15; }
         .bg-cafe { background-image: url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920'); opacity: 0.15; }
-        
+
         /* Animated Backgrounds */
         .bg-gradient { background: linear-gradient(-45deg, var(--sidebar-bg), var(--folder-bg), var(--accent-glow), var(--sidebar-bg)); background-size: 400% 400%; animation: gradientFlow 15s ease infinite; opacity: 0.4; }
         @keyframes gradientFlow { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
@@ -49,6 +74,7 @@
         @keyframes rainFall { from { transform: translateY(0); } to { transform: translateY(50%); } }
 
         .app-container { display: flex; width: 100%; height: 100%; background: transparent; backdrop-filter: blur(8px); }
+
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
@@ -57,7 +83,10 @@
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 15px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
 
-        .sidebar { width: 380px; min-width: 320px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; }
+        /* =========================================================
+           3. SIDEBAR & POMODORO
+           ========================================================= */
+        .sidebar { width: 380px; min-width: 320px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; transition: margin-left 0.3s ease; }
         body.theme-amoled .sidebar { background-color: rgba(9, 9, 11, 0.92); }
         body.theme-charcoal .sidebar { background-color: rgba(30, 30, 36, 0.92); }
         body.theme-slate .sidebar { background-color: rgba(30, 41, 59, 0.92); }
@@ -68,7 +97,7 @@
         .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 8px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        .pomo-container { padding: 24px 20px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 20px;}
+        .pomo-container { padding: 24px 20px; border-bottom: 1px solid var(--border-color); }
         .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--border-color); transition: 0.3s; }
         .pomo-card.running { border-color: var(--accent-color); animation: pulseGlow 2s infinite; transform: translateY(-2px); }
@@ -105,11 +134,13 @@
         .todo-item .todo-del { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.1em; opacity: 0.5; }
         .todo-item .todo-del:hover { opacity: 1; }
 
+        /* MODULE TABS */
         .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 20px 8px; }
         .mod-tab { flex: 1; padding: 10px 4px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.85em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
         .mod-tab:hover { color: var(--text-color); background: var(--folder-bg); border-color: var(--border-color); }
         .mod-tab.active { background-color: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 12px var(--accent-glow); }
 
+        /* LIST & SEARCH VIEWS */
         .sidebar-view { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .sidebar-view.active { display: flex; }
         .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: transparent; }
@@ -130,7 +161,10 @@
         .book-item.active { background-color: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 600; }
         .book-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
 
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: rgba(var(--reader-bg-rgb, 241, 245, 249), 0.8); position: relative; overflow: hidden; }
+        /* =========================================================
+           4. MAIN CONTENT & WORKSPACE
+           ========================================================= */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: rgba(var(--reader-bg-rgb, 241, 245, 249), 0.8); position: relative; overflow: hidden; transition: 0.3s; }
         body.theme-amoled .main-content { background-color: rgba(0, 0, 0, 0.8); }
         body.theme-charcoal .main-content { background-color: rgba(18, 18, 18, 0.8); }
         body.theme-slate .main-content { background-color: rgba(15, 23, 42, 0.8); }
@@ -159,7 +193,7 @@
         .placeholder-box { margin: auto; background: var(--sidebar-bg); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); text-align: center; max-width: 400px; }
         .placeholder-box h3 { font-size: 1.5em; margin-bottom: 12px; }
         .placeholder-box p { color: var(--text-muted); font-size: 1em; line-height: 1.5; }
-        
+
         /* ZEN MODE OVERRIDES */
         body.zen-active .sidebar { display: none !important; }
         body.zen-active .reader-header { display: none !important; }
@@ -167,6 +201,9 @@
         body.zen-active .viewer-box { border-radius: 0; border: none; }
         body.zen-active #exit-zen-btn { display: flex !important; }
 
+        /* =========================================================
+           5. UTILITIES & MODULES
+           ========================================================= */
         #util-panel { display:none; width:100%; height:100%; background:var(--reader-bg); overflow-y:auto; border-radius:var(--radius-lg); border:1px solid var(--border-color);}
         
         .util-menu { padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y:auto; }
@@ -176,14 +213,13 @@
         .util-card-btn .info h3 { font-size: 1.1em; margin-bottom: 4px;}
         .util-card-btn .info p { color: var(--text-muted); font-size: 0.85em;}
 
+        /* Analytics */
         .util-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px;}
         .stat-box { background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--card-shadow);}
         .stat-box h3 { font-size: 2.5em; color: var(--accent-color); margin-bottom: 8px;}
         .stat-box p { color: var(--text-muted); font-size: 0.9em; font-weight: 600; text-transform: uppercase;}
-        
-        .log-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border-color); font-size:0.9em; }
-        .log-item:last-child { border:none; }
 
+        /* Timetable */
         .tt-layout { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto; width: 100%; padding:20px;}
         .tt-form { display: flex; gap: 12px; background: var(--sidebar-bg); padding: 16px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
         .tt-form input { flex-grow: 1; padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size:1em;}
@@ -193,6 +229,7 @@
         .tt-time { font-family: monospace; font-weight: bold; color: var(--accent-color); background: var(--folder-bg); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); }
         .tt-check { width: 20px; height: 20px; accent-color: var(--success); cursor:pointer;}
 
+        /* Syllabus */
         .syl-tracker { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px;}
         .syl-progress-bar { width: 100%; height: 12px; background: var(--border-color); border-radius: 6px; overflow: hidden; }
         .syl-progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
@@ -203,6 +240,7 @@
         .syl-chap-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
         .syl-btn { font-size: 0.85em; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 120px; text-align: center; border: 1px solid transparent; transition: 0.2s;}
 
+        /* Flashcards */
         .fc-container { padding: 40px; display:flex; flex-direction:column; align-items:center; height:100%; }
         .fc-card { width: 100%; max-width: 650px; height: 350px; perspective: 1000px; cursor: pointer; margin-bottom: 40px;}
         .fc-inner { width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; position: relative; }
@@ -210,11 +248,15 @@
         .fc-front { background: var(--sidebar-bg); border: 2px solid var(--border-color); font-size: 1.5em; color: var(--text-color); }
         .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
+        /* Audio Module */
         .audio-container { padding: 20px; display:flex; flex-direction:column; gap:20px; }
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
         .audio-setting select:focus { border-color: var(--accent-color); }
 
+        /* =========================================================
+           6. MODALS, CHAT & TOAST
+           ========================================================= */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; backdrop-filter: blur(4px); justify-content: center; align-items: center; }
         .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
         .modal-content { background: var(--sidebar-bg); border: 1px solid var(--border-color); width: 480px; max-width: 90%; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; }
@@ -298,12 +340,12 @@
                     </select>
                     <div class="pomo-controls">
                         <button class="pomo-btn-sec" id="pomo-reset">Reset</button>
-                        <button class="pomo-btn-main" id="pomo-toggle">▶ Start</button>
+                        <button class="pomo-btn-main" id="pomo-toggle">▶ Start Focus</button>
                     </div>
                 </div>
-                
+
                 <!-- NEW: Feature 2 - Quick Persistent Todo List -->
-                <div class="quick-todos">
+                <div class="quick-todos" style="margin-top: 20px;">
                     <div class="todo-header-sm"><span>Quick Tasks</span><span id="qtodo-count">0/0</span></div>
                     <ul id="qtodo-list" style="list-style:none; display:flex; flex-direction:column; gap:6px; max-height:120px; overflow-y:auto; margin-bottom:10px;"></ul>
                     <input type="text" id="qtodo-input" placeholder="+ Add task & press Enter" class="pomo-subject-select">
@@ -511,7 +553,7 @@
                 };
 
                 // ==========================================
-                // 1. EMBEDDED DATA (NATIVE ARRAYS) - STRICTLY PRESERVED
+                // 1. EMBEDDED DATA (NATIVE ARRAYS)
                 // ==========================================
                 const rawLectures = [
                   {
@@ -1129,11 +1171,20 @@
                 ];
 
                 const safeFiles = rawFiles.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10')));
-                window.libraryData = { LECTURES: rawLectures, FILES: safeFiles.filter(b => b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS') || b.folders.includes('PUBLICATIONS') || b.folders.includes('NCERT')), SUPPORT: safeFiles.filter(b => b.folders.includes('EXTRAS') || b.folders.includes('MATHANGO')) };
+
+                window.libraryData = {
+                    LECTURES: rawLectures,
+                    FILES: safeFiles.filter(b => b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS') || b.folders.includes('PUBLICATIONS') || b.folders.includes('NCERT')),
+                    SUPPORT: safeFiles.filter(b => b.folders.includes('EXTRAS') || b.folders.includes('MATHANGO'))
+                };
+
                 let activeModule = 'LECTURES';
                 let masterList = [];
                 for(let k in window.libraryData) masterList.push(...window.libraryData[k]);
 
+                // ==========================================
+                // 2. SETTINGS & THEMING
+                // ==========================================
                 let studyStats = JSON.parse(localStorage.getItem('study_stats_pro')) || {};
                 const todayStr = new Date().toISOString().split('T')[0];
                 if (!studyStats[todayStr]) studyStats[todayStr] = 0;
@@ -1149,12 +1200,18 @@
                         const rgb = parseInt(c.slice(1,3),16)+','+parseInt(c.slice(3,5),16)+','+parseInt(c.slice(5,7),16);
                         document.documentElement.style.setProperty('--accent-glow', `rgba(${rgb}, 0.4)`);
                     } catch(e) {}
-                    const iEl = document.getElementById('pomo-icon-display'); if (iEl) iEl.textContent = pomoSettings.icon;
-                    const bgEl = document.getElementById('ambient-bg'); if (bgEl) bgEl.className = pomoSettings.bg || 'bg-none';
+                    
+                    const iEl = document.getElementById('pomo-icon-display');
+                    if (iEl) iEl.textContent = pomoSettings.icon;
+                    
+                    const bgEl = document.getElementById('ambient-bg');
+                    if (bgEl) bgEl.className = pomoSettings.bg || 'bg-none';
                 }
                 applySettings();
 
-                /* Quick Todos Feature */
+                /* ==========================================
+                 * Quick Todos Feature
+                 * ========================================== */
                 let qTodos = JSON.parse(localStorage.getItem('q_todos_pro')) || [];
                 function renderQTodos() {
                     const list = document.getElementById('qtodo-list');
@@ -1186,41 +1243,72 @@
                 });
                 renderQTodos();
 
+                // ==========================================
+                // 3. POMODORO TIMER & INTERACTIVE PLANT
+                // ==========================================
                 let pomoSeconds = pomoSettings.focusTime * 60;
                 let pomoInterval = null;
                 let isPomoRunning = false;
-                const pomoQuotes = ["You're doing great!", "Focus is your superpower.", "One concept at a time.", "Growth happens in the struggle.", "Planting seeds for the future!", "No distractions.", "Deep breath. Next problem."];
+
+                const pomoQuotes = [
+                    "You're doing great!", "Focus is your superpower.", "One concept at a time.", 
+                    "Growth happens in the struggle.", "Planting seeds for the future!", "No distractions.",
+                    "Deep breath. Next problem."
+                ];
 
                 function updatePomoDisplay() {
-                    let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0'); let s = String(pomoSeconds % 60).padStart(2, '0');
-                    const dEl = document.getElementById('pomo-time'); if(dEl) dEl.textContent = `${m}:${s}`;
-                    let total = pomoSettings.focusTime * 60; let pct = ((total - pomoSeconds) / total) * 100;
-                    const prog = document.getElementById('pomo-progress-fill'); if(prog) prog.style.width = `${pct}%`;
-                    let icon = '🌱'; if (pct > 25) icon = '🌿'; if (pct > 60) icon = '🪴'; if (pct > 90) icon = '🌳'; 
-                    const stage = document.getElementById('pomo-plant-stage'); if(stage) stage.textContent = icon;
+                    let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+                    let s = String(pomoSeconds % 60).padStart(2, '0');
+                    const dEl = document.getElementById('pomo-time');
+                    if(dEl) dEl.textContent = `${m}:${s}`;
+
+                    let total = pomoSettings.focusTime * 60;
+                    let pct = ((total - pomoSeconds) / total) * 100;
+                    const prog = document.getElementById('pomo-progress-fill');
+                    if(prog) prog.style.width = `${pct}%`;
+                    
+                    let icon = '🌱'; 
+                    if (pct > 25) icon = '🌿'; 
+                    if (pct > 60) icon = '🪴'; 
+                    if (pct > 90) icon = '🌳'; 
+                    const stage = document.getElementById('pomo-plant-stage');
+                    if(stage) stage.textContent = icon;
+
                     if (isPomoRunning && pomoSeconds % 30 === 0) {
-                        const quoteEl = document.getElementById('pomo-quote'); if(quoteEl) quoteEl.textContent = pomoQuotes[Math.floor(Math.random() * pomoQuotes.length)];
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = pomoQuotes[Math.floor(Math.random() * pomoQuotes.length)];
                     }
                 }
 
                 document.getElementById('pomo-toggle')?.addEventListener('click', (e) => {
                     const card = document.getElementById('pomo-card');
                     if (isPomoRunning) {
-                        clearInterval(pomoInterval); isPomoRunning = false; e.target.innerHTML = '▶ Resume';
-                        card?.classList.remove('running'); document.getElementById('pomo-quote').textContent = "Paused. Ready when you are.";
+                        clearInterval(pomoInterval);
+                        isPomoRunning = false;
+                        e.target.innerHTML = '▶ Resume Focus';
+                        card?.classList.remove('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Paused. Ready when you are.";
                     } else {
-                        isPomoRunning = true; e.target.innerHTML = '⏸ Pause'; card?.classList.add('running');
-                        document.getElementById('pomo-quote').textContent = "Let's lock in!";
+                        isPomoRunning = true;
+                        e.target.innerHTML = '⏸ Pause Focus';
+                        card?.classList.add('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Let's lock in!";
                         
                         pomoInterval = setInterval(() => {
                             if (pomoSeconds > 0) {
-                                pomoSeconds--; updatePomoDisplay();
+                                pomoSeconds--;
+                                updatePomoDisplay();
                             } else {
-                                clearInterval(pomoInterval); isPomoRunning = false;
-                                e.target.innerHTML = '▶ Start'; card?.classList.remove('running');
+                                clearInterval(pomoInterval);
+                                isPomoRunning = false;
+                                e.target.innerHTML = '▶ Start Focus';
+                                card?.classList.remove('running');
                                 
                                 studyStats[todayStr]++;
-                                let currentSubject = document.getElementById('pomo-subject')?.value || 'General';
+                                let subjEl = document.getElementById('pomo-subject');
+                                let currentSubject = subjEl ? subjEl.value : 'General';
                                 studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
                                 localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
                                 
@@ -1234,29 +1322,49 @@
                                     goalInput.value = '';
                                 }
 
-                                document.getElementById('pomo-quote').textContent = "Session complete! You grew a tree!";
+                                if(quoteEl) quoteEl.textContent = "Session complete! You grew a tree!";
                                 window.showToast("Focus Session Complete! Great job.");
-                                pomoSeconds = pomoSettings.focusTime * 60; updatePomoDisplay();
+                                pomoSeconds = pomoSettings.focusTime * 60;
+                                updatePomoDisplay();
                             }
                         }, 1000);
                     }
                 });
 
                 document.getElementById('pomo-reset')?.addEventListener('click', () => {
-                    clearInterval(pomoInterval); isPomoRunning = false; pomoSeconds = pomoSettings.focusTime * 60;
-                    document.getElementById('pomo-toggle').innerHTML = '▶ Start'; document.getElementById('pomo-card')?.classList.remove('running');
-                    document.getElementById('pomo-quote').textContent = "Timer reset. Ready!"; updatePomoDisplay();
+                    clearInterval(pomoInterval);
+                    isPomoRunning = false;
+                    pomoSeconds = pomoSettings.focusTime * 60;
+                    const btn = document.getElementById('pomo-toggle');
+                    if(btn) btn.innerHTML = '▶ Start Focus';
+                    document.getElementById('pomo-card')?.classList.remove('running');
+                    const quoteEl = document.getElementById('pomo-quote');
+                    if(quoteEl) quoteEl.textContent = "Timer reset. Ready!";
+                    updatePomoDisplay();
                 });
                 updatePomoDisplay();
 
+                // ==========================================
+                // 4. RECURSIVE FOLDER TREE RENDERER
+                // ==========================================
                 function buildTree(books) {
                     const root = { _files: [] };
                     books.forEach(b => {
-                        let current = root; let paths = [...(b.folders||[])];
+                        let current = root;
+                        let paths = [...(b.folders||[])];
+                        
+                        // Strict Truncation Rules
                         if (activeModule === 'LECTURES' && paths[0] === 'LECTURES') paths.shift();
                         if (activeModule === 'FILES' && paths[0] === 'IIT-JEE') paths.shift();
-                        if (activeModule === 'SUPPORT') { if (paths[0] === 'IIT-JEE') paths.shift(); if (paths[0] === 'EXTRAS') paths.shift(); }
-                        paths.forEach(folder => { if (!current[folder]) current[folder] = { _files: [] }; current = current[folder]; });
+                        if (activeModule === 'SUPPORT') {
+                            if (paths[0] === 'IIT-JEE') paths.shift();
+                            if (paths[0] === 'EXTRAS') paths.shift(); 
+                        }
+
+                        paths.forEach(folder => {
+                            if (!current[folder]) current[folder] = { _files: [] };
+                            current = current[folder];
+                        });
                         current._files.push(b);
                     });
                     return root;
@@ -1266,14 +1374,18 @@
                     const container = document.createElement('div');
                     Object.keys(node).sort().forEach(key => {
                         if (key === '_files') return;
-                        let d = document.createElement('details'); d.open = isOpen;
+                        let d = document.createElement('details');
+                        d.open = isOpen;
                         d.innerHTML = `<summary>${key}</summary><div class="folder-contents"></div>`;
-                        d.querySelector('.folder-contents').appendChild(createDOMTree(node[key], isOpen)); container.appendChild(d);
+                        d.querySelector('.folder-contents').appendChild(createDOMTree(node[key], isOpen));
+                        container.appendChild(d);
                     });
                     if (node._files && node._files.length > 0) {
                         node._files.forEach(book => {
-                            let item = document.createElement('div'); item.className = 'book-item';
-                            item.innerHTML = `<span>${book.title}</span>`; item.onclick = () => loadResource(book, item);
+                            let item = document.createElement('div');
+                            item.className = 'book-item';
+                            item.innerHTML = `<span>${book.title}</span>`;
+                            item.onclick = () => loadResource(book, item);
                             container.appendChild(item);
                         });
                     }
@@ -1281,29 +1393,54 @@
                 }
 
                 function renderLibrary(query = '') {
-                    const list = document.getElementById('book-list'); if(!list) return; list.innerHTML = '';
-                    const data = window.libraryData[activeModule]; if (!data) return;
+                    const list = document.getElementById('book-list');
+                    if(!list) return;
+                    list.innerHTML = '';
+                    const data = window.libraryData[activeModule];
+                    if (!data) return;
+
                     let filtered = data.filter(b => (b.title + " " + (b.folders||[]).join(" ")).toLowerCase().includes(query.toLowerCase()));
                     if(filtered.length === 0) { list.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.6;">No resources found.</div>`; return; }
-                    list.appendChild(createDOMTree(buildTree(filtered), query.length > 0));
+
+                    const tree = buildTree(filtered);
+                    list.appendChild(createDOMTree(tree, query.length > 0));
                 }
+
                 document.getElementById('search-bar')?.addEventListener('input', (e) => renderLibrary(e.target.value));
 
                 function loadResource(book, el) {
-                    document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active')); if (el) el.classList.add('active');
-                    document.getElementById('placeholder-box').style.display = 'none'; document.getElementById('util-panel').style.display = 'none';
-                    document.getElementById('viewer-1').style.display = 'block'; document.getElementById('split-btn').style.display = 'flex';
-                    document.getElementById('current-title').textContent = book.title; document.getElementById('current-path').textContent = (book.folders||[]).join(" > ");
+                    document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
+                    if (el) el.classList.add('active');
+
+                    document.getElementById('placeholder-box').style.display = 'none';
+                    document.getElementById('util-panel').style.display = 'none';
                     
-                    const dropdown = document.getElementById('playlist-select'); const frame1 = document.getElementById('frame-1'); const frame2 = document.getElementById('frame-2');
+                    document.getElementById('viewer-1').style.display = 'block';
+                    document.getElementById('split-btn').style.display = 'flex';
+                    
+                    document.getElementById('current-title').textContent = book.title;
+                    document.getElementById('current-path').textContent = (book.folders||[]).join(" > ");
+                    
+                    const dropdown = document.getElementById('playlist-select');
+                    const frame1 = document.getElementById('frame-1');
+                    const frame2 = document.getElementById('frame-2');
+                    
                     if (book.playlist && book.playlist.length > 0) {
-                        dropdown.style.display = 'block'; dropdown.innerHTML = '';
-                        book.playlist.forEach((vid) => { let opt = document.createElement('option'); opt.value = vid.url; opt.textContent = vid.title; dropdown.appendChild(opt); });
+                        dropdown.style.display = 'block';
+                        dropdown.innerHTML = '';
+                        book.playlist.forEach((vid) => {
+                            let opt = document.createElement('option');
+                            opt.value = vid.url;
+                            opt.textContent = vid.title;
+                            dropdown.appendChild(opt);
+                        });
                         dropdown.onchange = (e) => { frame1.src = e.target.value; frame2.src = e.target.value; };
                         frame1.src = book.playlist[0].url; frame2.src = book.playlist[0].url;
                     } else {
-                        dropdown.style.display = 'none'; frame1.src = book.url || ''; frame2.src = book.url || '';
+                        dropdown.style.display = 'none';
+                        frame1.src = book.url || ''; frame2.src = book.url || '';
                     }
+
                     const notesArea = document.getElementById('notes-area');
                     if(notesArea) {
                         notesArea.value = localStorage.getItem('notes_' + book.title) || '';
@@ -1311,28 +1448,47 @@
                     }
                 }
 
+                // ==========================================
+                // 5. TABS & UTILITIES (Event Delegation)
+                // ==========================================
                 document.getElementById('module-tabs')?.addEventListener('click', (e) => {
                     if(e.target.classList.contains('mod-tab')) {
-                        document.querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active')); e.target.classList.add('active');
+                        document.querySelectorAll('.mod-tab').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
                         activeModule = e.target.getAttribute('data-tab');
+                        
                         document.querySelectorAll('.sidebar-view').forEach(v => v.classList.remove('active'));
-                        if(activeModule === 'UTILITIES') { document.getElementById('view-utilities')?.classList.add('active'); } 
-                        else if (activeModule === 'AUDIO') { document.getElementById('view-audio')?.classList.add('active'); } 
-                        else { document.getElementById('view-library')?.classList.add('active'); renderLibrary(); }
+                        
+                        if(activeModule === 'UTILITIES') {
+                            document.getElementById('view-utilities')?.classList.add('active');
+                        } else if (activeModule === 'AUDIO') {
+                            document.getElementById('view-audio')?.classList.add('active');
+                        } else {
+                            document.getElementById('view-library')?.classList.add('active');
+                            renderLibrary();
+                        }
                     }
                 });
 
                 document.getElementById('view-utilities')?.addEventListener('click', (e) => {
                     const btn = e.target.closest('.util-card-btn');
-                    if(btn) openUtility(btn.getAttribute('data-util'));
+                    if(btn) {
+                        const type = btn.getAttribute('data-util');
+                        openUtility(type);
+                    }
                 });
 
                 function openUtility(type) {
-                    document.getElementById('placeholder-box').style.display = 'none'; document.getElementById('viewer-1').style.display = 'none';
-                    document.getElementById('viewer-2').style.display = 'none'; document.getElementById('resizer').style.display = 'none';
-                    document.getElementById('split-btn').style.display = 'none'; document.getElementById('playlist-select').style.display = 'none';
+                    document.getElementById('placeholder-box').style.display = 'none';
+                    document.getElementById('viewer-1').style.display = 'none';
+                    document.getElementById('viewer-2').style.display = 'none';
+                    document.getElementById('resizer').style.display = 'none';
+                    document.getElementById('split-btn').style.display = 'none';
+                    document.getElementById('playlist-select').style.display = 'none';
                     
-                    const up = document.getElementById('util-panel'); up.style.display = 'block';
+                    const up = document.getElementById('util-panel');
+                    up.style.display = 'block';
+                    
                     document.getElementById('current-title').textContent = type.charAt(0).toUpperCase() + type.slice(1);
                     document.getElementById('current-path').textContent = "Utilities > " + type;
 
@@ -1345,19 +1501,18 @@
                         let maxHours = Math.max(0.1, subData['Physics'], subData['Chemistry'], subData['Maths'], subData['General']);
                         let chartHtml = '';
                         ['Physics', 'Chemistry', 'Maths', 'General'].forEach(s => {
-                            let h = subData[s] || 0; let pct = (h / maxHours) * 100;
+                            let h = subData[s] || 0;
+                            let pct = (h / maxHours) * 100;
                             chartHtml += `
                                 <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
                                     <div style="height:140px; width:45px; background:var(--folder-bg); border-radius:8px; display:flex; align-items:flex-end; border:1px solid var(--border-color); overflow:hidden;">
                                         <div style="width:100%; height:${pct}%; background:var(--accent-color); transition:height 1s ease-out;"></div>
                                     </div>
-                                    <span style="font-size:0.85em; font-weight:bold; color:var(--text-muted);">${s}</span><span style="font-size:0.8em; font-family:monospace;">${h.toFixed(1)}h</span>
-                                </div>`;
+                                    <span style="font-size:0.85em; font-weight:bold; color:var(--text-muted);">${s}</span>
+                                    <span style="font-size:0.8em; font-family:monospace;">${h.toFixed(1)}h</span>
+                                </div>
+                            `;
                         });
-
-                        // Feature 3 Extension: Show Logs
-                        let logs = JSON.parse(localStorage.getItem('pomo_logs_pro')) || [];
-                        let logsHtml = logs.length > 0 ? logs.map(l => `<div class="log-item"><span style="color:var(--text-muted); font-family:monospace;">${l.date} - ${l.time}m</span><span style="color:var(--accent-color); font-weight:bold;">${l.subj}</span><span style="flex-grow:1; text-align:right;">${l.goal}</span></div>`).join('') : '<div style="text-align:center; padding:20px; color:var(--text-muted);">No goals recorded yet.</div>';
 
                         up.innerHTML = `
                             <div class="util-workspace-inner" style="padding:30px; max-width:1000px; margin:0 auto;">
@@ -1373,44 +1528,85 @@
                                 </div>
                                 <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Recent Achievements</h3>
                                 <div style="background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); padding:10px; box-shadow:var(--card-shadow); max-height:250px; overflow-y:auto;">
-                                    ${logsHtml}
+                                    ${(() => {
+                                        let logs = JSON.parse(localStorage.getItem('pomo_logs_pro')) || [];
+                                        return logs.length > 0 ? logs.map(l => `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border-color); font-size:0.9em;"><span style="color:var(--text-muted); font-family:monospace;">${l.date} - ${l.time}m</span><span style="color:var(--accent-color); font-weight:bold;">${l.subj}</span><span style="flex-grow:1; text-align:right;">${l.goal}</span></div>`).join('') : '<div style="text-align:center; padding:20px; color:var(--text-muted);">No goals recorded yet.</div>';
+                                    })()}
                                 </div>
                             </div>`;
                     } else if(type === 'timetable') {
                         up.innerHTML = `
                             <div class="tt-layout">
                                 <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📅 Timeline</h2>
-                                <div class="tt-form"><input type="time" id="tt-start"><input type="text" id="tt-task" placeholder="Task description..."><button class="primary-btn" id="tt-add">Add Task</button></div>
+                                <div class="tt-form">
+                                    <input type="time" id="tt-start">
+                                    <input type="text" id="tt-task" placeholder="Task description...">
+                                    <button class="primary-btn" id="tt-add">Add Task</button>
+                                </div>
                                 <div class="tt-list" id="tt-list"></div>
                             </div>`;
+                        
                         window.ttTasks = JSON.parse(localStorage.getItem('timeline_tasks_pro')) || [];
                         window.renderTT = () => {
-                            const list = document.getElementById('tt-list'); if(!list) return;
+                            const list = document.getElementById('tt-list');
+                            if(!list) return;
                             list.innerHTML = window.ttTasks.sort((a,b)=>a.time.localeCompare(b.time)).map((t, i) => `
                                 <div class="tt-item ${t.done ? 'done':''}">
                                     <input type="checkbox" class="tt-check" data-index="${i}" ${t.done?'checked':''}>
-                                    <span class="tt-time">${t.time}</span><span style="flex-grow:1; font-weight:600; font-size:1.1em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
+                                    <span class="tt-time">${t.time}</span>
+                                    <span style="flex-grow:1; font-weight:600; font-size:1.1em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
                                     <button class="icon-btn tt-del" data-index="${i}" style="color:var(--danger);">✖</button>
                                 </div>`).join('');
                         };
+                        
                         document.getElementById('tt-add').onclick = () => {
-                            let tm = document.getElementById('tt-start').value || "12:00"; let txt = document.getElementById('tt-task').value.trim();
+                            let tm = document.getElementById('tt-start').value || "12:00";
+                            let txt = document.getElementById('tt-task').value.trim();
                             if(txt) { window.ttTasks.push({time:tm, text:txt, done:false}); localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); window.renderTT(); }
                         };
+
                         document.getElementById('tt-list').addEventListener('click', (e) => {
-                            if(e.target.classList.contains('tt-del')) { window.ttTasks.splice(e.target.getAttribute('data-index'), 1); localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); window.renderTT(); }
+                            if(e.target.classList.contains('tt-del')) {
+                                window.ttTasks.splice(e.target.getAttribute('data-index'), 1);
+                                localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks));
+                                window.renderTT();
+                            }
                         });
+
                         document.getElementById('tt-list').addEventListener('change', (e) => {
-                            if(e.target.classList.contains('tt-check')) { window.ttTasks[e.target.getAttribute('data-index')].done = e.target.checked; localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); window.renderTT(); }
+                            if(e.target.classList.contains('tt-check')) {
+                                let i = e.target.getAttribute('data-index');
+                                window.ttTasks[i].done = e.target.checked;
+                                localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks));
+                                window.renderTT();
+                            }
                         });
+                        
                         window.renderTT();
                     } else if(type === 'syllabus') {
                         const deepSyllabus = {
-                            "Class12": { "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"], "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block", "Coordination Compounds", "Haloalkanes", "Alcohols", "Aldehydes", "Amines", "Biomolecules"], "Maths": ["Relations and Functions", "Inverse Trigonometric", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Probability"] },
-                            "JEEMains": { "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy Power", "Rotational Motion", "Gravitation", "Solids and Liquids", "Thermodynamics", "KTG", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Optics", "Dual Nature", "Atoms and Nuclei", "Electronic Devices"], "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Periodic Table", "p-Block", "d- and f-Block", "Coordination Compounds", "GOC", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules"], "Maths": ["Sets Relations Functions", "Complex Numbers & Quadratics", "Matrices Determinants", "P&C", "Binomial Theorem", "Sequence & Series", "Limit Continuity Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics & Probability", "Trigonometry"] },
-                            "JEEAdv": { "Physics": ["General Physics", "Kinematics", "Newton's Laws", "Work Power Energy", "COM & Collision", "Rotational Dynamics", "Gravitation", "Fluid Mechanics", "Thermal Physics", "Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Ray & Wave Optics", "Modern Physics"], "Chemistry": ["Atomic Structure", "Gaseous State", "Thermodynamics", "Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Chemical Bonding", "Coordination Compounds", "Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Functional Groups", "Biomolecules"], "Maths": ["Algebra", "Matrices", "Probability", "Trigonometry", "Analytical Geometry", "Differential Calculus", "Integral Calculus", "Vectors"] }
+                            "Class12": {
+                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
+                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block", "Coordination Compounds", "Haloalkanes", "Alcohols", "Aldehydes", "Amines", "Biomolecules"],
+                                "Maths": ["Relations and Functions", "Inverse Trigonometric", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Probability"]
+                            },
+                            "JEEMains": {
+                                "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy Power", "Rotational Motion", "Gravitation", "Solids and Liquids", "Thermodynamics", "KTG", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Optics", "Dual Nature", "Atoms and Nuclei", "Electronic Devices"],
+                                "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Periodic Table", "p-Block", "d- and f-Block", "Coordination Compounds", "GOC", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules"],
+                                "Maths": ["Sets Relations Functions", "Complex Numbers & Quadratics", "Matrices Determinants", "P&C", "Binomial Theorem", "Sequence & Series", "Limit Continuity Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics & Probability", "Trigonometry"]
+                            },
+                            "JEEAdv": {
+                                "Physics": ["General Physics", "Kinematics", "Newton's Laws", "Work Power Energy", "COM & Collision", "Rotational Dynamics", "Gravitation", "Fluid Mechanics", "Thermal Physics", "Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Ray & Wave Optics", "Modern Physics"],
+                                "Chemistry": ["Atomic Structure", "Gaseous State", "Thermodynamics", "Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Chemical Bonding", "Coordination Compounds", "Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Functional Groups", "Biomolecules"],
+                                "Maths": ["Algebra", "Matrices", "Probability", "Trigonometry", "Analytical Geometry", "Differential Calculus", "Integral Calculus", "Vectors"]
+                            }
                         };
-                        window.sylStates = [{ t: '⚪ Unstudied', c: 'var(--text-color)', b: 'transparent' }, { t: '🟡 Theory', c: '#000', b: '#fde047' }, { t: '🔵 PYQs', c: '#fff', b: '#3b82f6' }, { t: '🟢 Mastered', c: '#fff', b: '#22c55e' }];
+                        window.sylStates = [
+                            { t: '⚪ Unstudied', c: 'var(--text-color)', b: 'transparent' },
+                            { t: '🟡 Theory', c: '#000', b: '#fde047' },
+                            { t: '🔵 PYQs', c: '#fff', b: '#3b82f6' },
+                            { t: '🟢 Mastered', c: '#fff', b: '#22c55e' }
+                        ];
                         window.sylData = JSON.parse(localStorage.getItem('syl_tracker_pro')) || {};
 
                         up.innerHTML = `
@@ -1426,115 +1622,193 @@
                             </div>`;
 
                         window._renderSylContent = (level) => {
-                            const container = document.getElementById('syl-content'); if(!container) return;
-                            let html = ''; let total=0, done=0;
+                            const container = document.getElementById('syl-content');
+                            if(!container) return;
+                            let html = '';
+                            let total=0, done=0;
                             const data = deepSyllabus[level];
                             Object.keys(data).forEach(subj => {
                                 html += `<details class="syl-subject-card" open><summary>${subj}</summary><div class="syl-grid">`;
                                 data[subj].forEach(chap => {
-                                    total++; let key = `${level}_${subj}_${chap}`; let st = window.sylData[key] || 0;
+                                    total++;
+                                    let key = `${level}_${subj}_${chap}`;
+                                    let st = window.sylData[key] || 0;
                                     if(st === 3) done++; else if (st>0) done += (st*0.25);
-                                    html += `<div class="syl-chap-row"><span style="font-size:0.9em; font-weight:600;">${chap}</span><button class="syl-btn" data-key="${key}" data-level="${level}" style="background:${window.sylStates[st].b}; color:${window.sylStates[st].c};">${window.sylStates[st].t}</button></div>`;
+                                    
+                                    html += `
+                                        <div class="syl-chap-row">
+                                            <span style="font-size:0.9em; font-weight:600;">${chap}</span>
+                                            <button class="syl-btn" data-key="${key}" data-level="${level}" style="background:${window.sylStates[st].b}; color:${window.sylStates[st].c};">${window.sylStates[st].t}</button>
+                                        </div>`;
                                 });
                                 html += `</div></details>`;
                             });
                             container.innerHTML = html;
-                            document.getElementById('syl-prog-fill').style.width = `${total===0?0:Math.round((done/total)*100)}%`;
+                            let pct = total===0?0:Math.round((done/total)*100);
+                            document.getElementById('syl-prog-fill').style.width = `${pct}%`;
                         };
 
                         document.getElementById('syl-content').addEventListener('click', (e) => {
                             if(e.target.classList.contains('syl-btn')) {
                                 let key = e.target.getAttribute('data-key');
+                                let level = e.target.getAttribute('data-level');
                                 window.sylData[key] = ((window.sylData[key]||0)+1)%4;
                                 localStorage.setItem('syl_tracker_pro', JSON.stringify(window.sylData));
-                                window._renderSylContent(e.target.getAttribute('data-level'));
+                                window._renderSylContent(level);
                             }
                         });
                         
-                        let currentSylTab = 'Class12'; window._renderSylContent(currentSylTab);
+                        let currentSylTab = 'Class12';
+                        window._renderSylContent(currentSylTab);
+
                         document.querySelectorAll('.syl-tab').forEach(tab => {
                             tab.onclick = (e) => {
-                                document.querySelectorAll('.syl-tab').forEach(t=>{ t.classList.remove('active'); t.style.background = 'transparent'; t.style.color = 'var(--text-muted)'; t.style.boxShadow = 'none'; });
-                                e.target.classList.add('active'); e.target.style.background = 'var(--sidebar-bg)'; e.target.style.color = 'var(--accent-color)'; e.target.style.boxShadow = 'var(--card-shadow)';
-                                currentSylTab = e.target.getAttribute('data-target'); window._renderSylContent(currentSylTab);
+                                document.querySelectorAll('.syl-tab').forEach(t=>{
+                                    t.classList.remove('active');
+                                    t.style.background = 'transparent';
+                                    t.style.color = 'var(--text-muted)';
+                                    t.style.boxShadow = 'none';
+                                });
+                                e.target.classList.add('active');
+                                e.target.style.background = 'var(--sidebar-bg)';
+                                e.target.style.color = 'var(--accent-color)';
+                                e.target.style.boxShadow = 'var(--card-shadow)';
+                                currentSylTab = e.target.getAttribute('data-target');
+                                window._renderSylContent(currentSylTab);
                             };
                         });
                     } else if(type === 'flashcards') {
-                        window.fcDeck = [ { q: "What is the formula for Capacitance of a parallel plate capacitor?", a: "C = (ε₀ * A) / d" }, { q: "State Gauss's Law in Electrostatics.", a: "Φ = q_enclosed / ε₀" }, { q: "Relation between Electric Field (E) and Potential (V)?", a: "E = -dV/dr" }, { q: "Define Raoult's Law.", a: "Partial vapour pressure is directly proportional to its mole fraction." }, { q: "General formula for Grignard Reagent?", a: "R-Mg-X" }, { q: "De Broglie wavelength formula?", a: "λ = h / p" }, { q: "Order of an SN2 reaction?", a: "Second order (bimolecular)" } ];
-                        window.fcCurrent = 0; window.fcFlipped = false;
+                        window.fcDeck = [
+                            { q: "What is the formula for Capacitance of a parallel plate capacitor?", a: "C = (ε₀ * A) / d" },
+                            { q: "State Gauss's Law in Electrostatics.", a: "Φ = q_enclosed / ε₀" },
+                            { q: "Relation between Electric Field (E) and Potential (V)?", a: "E = -dV/dr" },
+                            { q: "Define Raoult's Law.", a: "Partial vapour pressure is directly proportional to its mole fraction." },
+                            { q: "General formula for Grignard Reagent?", a: "R-Mg-X" },
+                            { q: "De Broglie wavelength formula?", a: "λ = h / p" },
+                            { q: "Order of an SN2 reaction?", a: "Second order (bimolecular)" }
+                        ];
+                        window.fcCurrent = 0;
+                        window.fcFlipped = false;
 
                         up.innerHTML = `
                             <div class="fc-container">
                                 <h2 style="font-size:2em; margin-bottom:10px;">📇 High-Yield Flashcards</h2>
                                 <p style="color:var(--text-muted); margin-bottom:30px;">Active Recall Testing</p>
-                                <div class="fc-card" id="fc-card"><div class="fc-inner" id="fc-inner"><div class="fc-front" id="fc-front">${window.fcDeck[0].q}</div><div class="fc-back" id="fc-back">${window.fcDeck[0].a}</div></div></div>
-                                <div style="display:flex; gap:20px;"><button class="pomo-btn-sec" id="fc-prev">◀ Prev</button><button class="primary-btn" id="fc-next">Next ▶</button></div>
+                                <div class="fc-card" id="fc-card">
+                                    <div class="fc-inner" id="fc-inner">
+                                        <div class="fc-front" id="fc-front">${window.fcDeck[0].q}</div>
+                                        <div class="fc-back" id="fc-back">${window.fcDeck[0].a}</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex; gap:20px;">
+                                    <button class="pomo-btn-sec" id="fc-prev">◀ Prev</button>
+                                    <button class="primary-btn" id="fc-next">Next ▶</button>
+                                </div>
                             </div>`;
 
                         window.updateFC = () => {
-                            document.getElementById('fc-front').innerText = window.fcDeck[window.fcCurrent].q; document.getElementById('fc-back').innerText = window.fcDeck[window.fcCurrent].a;
-                            if(window.fcFlipped) { document.getElementById('fc-inner').style.transform = 'rotateY(0deg)'; window.fcFlipped = false; }
+                            document.getElementById('fc-front').innerText = window.fcDeck[window.fcCurrent].q;
+                            document.getElementById('fc-back').innerText = window.fcDeck[window.fcCurrent].a;
+                            if(window.fcFlipped) {
+                                document.getElementById('fc-inner').style.transform = 'rotateY(0deg)';
+                                window.fcFlipped = false;
+                            }
                         };
 
-                        document.getElementById('fc-card').onclick = () => { window.fcFlipped = !window.fcFlipped; document.getElementById('fc-inner').style.transform = window.fcFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'; };
+                        document.getElementById('fc-card').onclick = () => {
+                            window.fcFlipped = !window.fcFlipped;
+                            document.getElementById('fc-inner').style.transform = window.fcFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+                        };
                         document.getElementById('fc-next').onclick = () => { window.fcCurrent = (window.fcCurrent+1)%window.fcDeck.length; window.updateFC(); };
                         document.getElementById('fc-prev').onclick = () => { window.fcCurrent = (window.fcCurrent-1+window.fcDeck.length)%window.fcDeck.length; window.updateFC(); };
                     }
                 }
 
-                let synthNode = null; let synthGain = null;
+                // ==========================================
+                // 6. AUDIO HUB (Stable, No overlapping)
+                // ==========================================
+                let synthNode = null;
+                let synthGain = null;
+
                 function stopAllAudio() {
                     if(synthNode) { try{synthNode.stop(); synthNode.disconnect();}catch(e){} synthNode=null; }
                     document.getElementById('audio-frame').src = '';
                 }
 
                 document.getElementById('audio-select')?.addEventListener('change', (e) => {
-                    const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(e.target.value);
+                    const val = e.target.value;
+                    const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(val);
                     document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
                     document.getElementById('audio-iframe-box').style.display = isSynth ? 'none' : 'block';
                     stopAllAudio();
-                    const toggleBtn = document.getElementById('audio-toggle'); if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
+                    const toggleBtn = document.getElementById('audio-toggle');
+                    if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
                 });
 
-                document.getElementById('audio-volume')?.addEventListener('input', (e) => { if(synthGain) synthGain.gain.value = parseFloat(e.target.value); });
+                document.getElementById('audio-volume')?.addEventListener('input', (e) => {
+                    if(synthGain) synthGain.gain.value = parseFloat(e.target.value);
+                });
 
                 document.getElementById('audio-toggle')?.addEventListener('click', (e) => {
                     const type = document.getElementById('audio-select').value;
                     const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(type);
-                    if(e.target.textContent.includes('Stop')) { stopAllAudio(); e.target.textContent = "▶ Start Audio"; return; }
+                    
+                    if(e.target.textContent.includes('Stop')) {
+                        stopAllAudio();
+                        e.target.textContent = "▶ Start Audio";
+                        return;
+                    }
+
                     e.target.textContent = "⏹ Stop Audio";
                     
                     if(isSynth) {
                         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                        synthGain = ctx.createGain(); synthGain.gain.value = parseFloat(document.getElementById('audio-volume').value); synthGain.connect(ctx.destination);
+                        synthGain = ctx.createGain();
+                        synthGain.gain.value = parseFloat(document.getElementById('audio-volume').value);
+                        synthGain.connect(ctx.destination);
                         
                         if(type === 'binaural') {
-                            const osc1 = ctx.createOscillator(); osc1.frequency.value = 200; const osc2 = ctx.createOscillator(); osc2.frequency.value = 240;
-                            const merger = ctx.createChannelMerger(2); osc1.connect(merger, 0, 0); osc2.connect(merger, 0, 1); merger.connect(synthGain);
-                            osc1.start(); osc2.start(); synthNode = { stop: ()=>{osc1.stop();osc2.stop();}, disconnect: ()=>merger.disconnect() };
+                            const osc1 = ctx.createOscillator(); osc1.frequency.value = 200;
+                            const osc2 = ctx.createOscillator(); osc2.frequency.value = 240;
+                            const merger = ctx.createChannelMerger(2);
+                            osc1.connect(merger, 0, 0); osc2.connect(merger, 0, 1);
+                            merger.connect(synthGain);
+                            osc1.start(); osc2.start();
+                            synthNode = { stop: ()=>{osc1.stop();osc2.stop();}, disconnect: ()=>merger.disconnect() };
                         } else {
-                            const bSize = 2 * ctx.sampleRate; const buff = ctx.createBuffer(1, bSize, ctx.sampleRate); const out = buff.getChannelData(0);
+                            const bSize = 2 * ctx.sampleRate;
+                            const buff = ctx.createBuffer(1, bSize, ctx.sampleRate);
+                            const out = buff.getChannelData(0);
                             let last=0, b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+                            
                             for(let i=0; i<bSize; i++) {
                                 let w = Math.random()*2-1;
                                 if(type==='white') { out[i] = w * 0.1; }
                                 else if(type==='brown') { last = (last + (0.02 * w)) / 1.02; out[i] = last * 1.5; }
                                 else if(type==='pink') {
-                                    b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759; b2 = 0.96900 * b2 + w * 0.1538520; b3 = 0.86650 * b3 + w * 0.3104856; b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
+                                    b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
+                                    b2 = 0.96900 * b2 + w * 0.1538520; b3 = 0.86650 * b3 + w * 0.3104856;
+                                    b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
                                     out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926;
                                 }
                             }
-                            const node = ctx.createBufferSource(); node.buffer = buff; node.loop = true; node.connect(synthGain); node.start(); synthNode = node;
+                            const node = ctx.createBufferSource(); node.buffer = buff; node.loop = true;
+                            node.connect(synthGain); node.start();
+                            synthNode = node;
                         }
                     } else {
                         document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
                     }
                 });
 
+                // ==========================================
+                // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
+                // ==========================================
                 document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-                    const sb = document.getElementById('sidebar'); sb.style.marginLeft = sb.style.marginLeft === '-380px' ? '0' : '-380px';
+                    const sb = document.getElementById('sidebar');
+                    sb.style.marginLeft = sb.style.marginLeft === '-380px' ? '0' : '-380px';
                 });
-
+                
                 // Feature 5: Invert Viewer Toggle
                 document.getElementById('invert-btn')?.addEventListener('click', () => {
                     document.getElementById('viewer-1')?.classList.toggle('inverted');
@@ -1576,37 +1850,57 @@
                 let isSplit = false;
                 document.getElementById('split-btn')?.addEventListener('click', () => {
                     isSplit = !isSplit;
-                    const main = document.getElementById('main-workspace'); const v1 = document.getElementById('viewer-1'); const v2 = document.getElementById('viewer-2'); const res = document.getElementById('resizer');
+                    const main = document.getElementById('main-workspace');
+                    const v1 = document.getElementById('viewer-1');
+                    const v2 = document.getElementById('viewer-2');
+                    const res = document.getElementById('resizer');
+                    
                     if(isSplit) {
-                        main.style.flexDirection = 'row'; v2.style.display = 'block'; res.style.display = 'flex'; v1.style.width = '50%'; v2.style.width = '50%';
+                        main.style.flexDirection = 'row';
+                        v2.style.display = 'block'; res.style.display = 'flex';
+                        v1.style.width = '50%'; v2.style.width = '50%';
                         document.getElementById('frame-2').src = document.getElementById('frame-1').src;
                     } else {
-                        v2.style.display = 'none'; res.style.display = 'none'; v1.style.width = '100%';
+                        v2.style.display = 'none'; res.style.display = 'none';
+                        v1.style.width = '100%';
                     }
                 });
 
                 let isRes = false;
-                document.getElementById('resizer')?.addEventListener('mousedown', () => { isRes=true; document.getElementById('resizer').classList.add('dragging'); document.body.style.cursor='col-resize'; document.querySelectorAll('iframe').forEach(i=>i.style.pointerEvents='none');});
+                document.getElementById('resizer')?.addEventListener('mousedown', () => { isRes=true; document.getElementById('resizer').classList.add('dragging'); document.body.style.cursor='col-resize'; });
                 document.addEventListener('mousemove', (e) => {
-                    if(!isRes) return; const rect = document.getElementById('main-workspace').getBoundingClientRect(); let pct = ((e.clientX - rect.left) / rect.width)*100;
-                    if(pct>20 && pct<80) { document.getElementById('viewer-1').style.width=`calc(${pct}% - 6px)`; document.getElementById('viewer-2').style.width=`calc(${100-pct}% - 6px)`; }
+                    if(!isRes) return;
+                    const rect = document.getElementById('main-workspace').getBoundingClientRect();
+                    let pct = ((e.clientX - rect.left) / rect.width)*100;
+                    if(pct>20 && pct<80) { document.getElementById('viewer-1').style.width=`${pct}%`; document.getElementById('viewer-2').style.width=`${100-pct}%`; }
                 });
-                document.addEventListener('mouseup', () => { if(isRes) { isRes=false; document.getElementById('resizer')?.classList.remove('dragging'); document.body.style.cursor='default'; document.querySelectorAll('iframe').forEach(i=>i.style.pointerEvents='auto'); }});
+                document.addEventListener('mouseup', () => { if(isRes) { isRes=false; document.getElementById('resizer')?.classList.remove('dragging'); document.body.style.cursor='default'; }});
 
                 document.getElementById('settings-btn')?.addEventListener('click', () => {
-                    document.getElementById('set-theme').value = pomoSettings.theme; document.getElementById('set-bg').value = pomoSettings.bg || 'bg-none';
-                    document.getElementById('set-focus').value = pomoSettings.focusTime; document.getElementById('set-icon').value = pomoSettings.icon;
+                    document.getElementById('set-theme').value = pomoSettings.theme;
+                    document.getElementById('set-bg').value = pomoSettings.bg || 'bg-none';
+                    document.getElementById('set-focus').value = pomoSettings.focusTime;
+                    document.getElementById('set-icon').value = pomoSettings.icon;
                     document.querySelectorAll('.color-dot').forEach(d => { d.classList.remove('active'); if(d.getAttribute('data-color') === pomoSettings.accent) d.classList.add('active'); });
                     document.getElementById('settings-modal')?.classList.add('open');
                 });
+                
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
-                document.querySelectorAll('.color-dot').forEach(d => d.addEventListener('click', (e) => { document.querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active')); e.target.classList.add('active'); }));
+                
+                document.querySelectorAll('.color-dot').forEach(d => d.addEventListener('click', (e) => { 
+                    document.querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active')); e.target.classList.add('active'); 
+                }));
 
                 document.getElementById('save-settings')?.addEventListener('click', () => {
-                    pomoSettings.theme = document.getElementById('set-theme').value; pomoSettings.bg = document.getElementById('set-bg').value;
-                    pomoSettings.focusTime = parseInt(document.getElementById('set-focus').value); pomoSettings.icon = document.getElementById('set-icon').value;
-                    const activeDot = document.querySelector('.color-dot.active'); if(activeDot) pomoSettings.accent = activeDot.getAttribute('data-color');
-                    localStorage.setItem('pomo_settings_pro', JSON.stringify(pomoSettings)); applySettings();
+                    pomoSettings.theme = document.getElementById('set-theme').value;
+                    pomoSettings.bg = document.getElementById('set-bg').value;
+                    pomoSettings.focusTime = parseInt(document.getElementById('set-focus').value);
+                    pomoSettings.icon = document.getElementById('set-icon').value;
+                    const activeDot = document.querySelector('.color-dot.active');
+                    if(activeDot) pomoSettings.accent = activeDot.getAttribute('data-color');
+                    
+                    localStorage.setItem('pomo_settings_pro', JSON.stringify(pomoSettings));
+                    applySettings();
                     document.getElementById('settings-modal')?.classList.remove('open');
                     if(!isPomoRunning) { pomoSeconds = pomoSettings.focusTime*60; updatePomoDisplay(); }
                     window.showToast("Settings applied successfully!");
@@ -1614,20 +1908,42 @@
 
                 document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.add('open'));
                 document.getElementById('chat-close')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.remove('open'));
+                
                 document.getElementById('chat-send')?.addEventListener('click', () => {
-                    const inp = document.getElementById('chat-input'); const q = inp.value.trim().toLowerCase(); if(!q) return;
-                    const cb = document.getElementById('chat-body'); cb.innerHTML += `<div class="chat-msg user-msg">${q}</div>`; inp.value = '';
+                    const inp = document.getElementById('chat-input');
+                    const q = inp.value.trim().toLowerCase();
+                    if(!q) return;
+                    const cb = document.getElementById('chat-body');
+                    cb.innerHTML += `<div class="chat-msg user-msg">${q}</div>`;
+                    inp.value = '';
+                    
                     setTimeout(() => {
                         let matchesHtml = '';
-                        masterList.forEach((b, i) => { if(b.title && b.title.toLowerCase().includes(q)) { matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`; } });
+                        masterList.forEach((b, i) => {
+                            if(b.title && b.title.toLowerCase().includes(q)) {
+                                matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
+                            }
+                        });
                         if(matchesHtml === '') matchesHtml = "No local files found.";
-                        cb.innerHTML += `<div class="chat-msg bot-msg">${matchesHtml}</div>`; cb.scrollTop = cb.scrollHeight;
+                        cb.innerHTML += `<div class="chat-msg bot-msg">${matchesHtml}</div>`;
+                        cb.scrollTop = cb.scrollHeight;
                     }, 400);
                 });
-                document.getElementById('chat-body')?.addEventListener('click', (e) => { if(e.target.classList.contains('chat-match-btn')) { loadResource(masterList[e.target.getAttribute('data-index')], null); window.showToast("Resource Loaded!"); } });
 
+                document.getElementById('chat-body')?.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('chat-match-btn')) {
+                        const idx = e.target.getAttribute('data-index');
+                        loadResource(masterList[idx], null);
+                        window.showToast("Resource Loaded!");
+                    }
+                });
+
+                // INITIALIZE
                 renderLibrary();
-            } catch (err) { console.error("Critical Application Error:", err); }
+
+            } catch (err) {
+                console.error("Critical Application Error:", err);
+            }
         });
     </script>
 </body>
