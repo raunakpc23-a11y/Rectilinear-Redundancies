@@ -91,7 +91,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 15px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
 
         /* =========================================================
            3. SIDEBAR & POMODORO
@@ -115,7 +114,7 @@
         
         .pomo-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;}
         .pomo-avatar-section { display: flex; align-items: center; gap: 10px; }
-        .pomo-icon { font-size: 2.2em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
+        .pomo-icon { font-size: 2.2em; cursor: pointer; user-select: none; }
         .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.3;}
         
         .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
@@ -144,7 +143,7 @@
         .sidebar-view { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .sidebar-view.active { display: flex; }
         .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: transparent; }
-        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
+        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--accent-color); }
         
         .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; }
@@ -369,7 +368,7 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="5qap5aO4i9A">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
                                 <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
                                 <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
                                 <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
@@ -495,7 +494,7 @@
         </div>
     </div>
 
-    <!-- MAIN SCRIPT -->
+    <!-- MAIN SCRIPT (Native Objects & Event Delegation for 100% Stability) -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             try {
@@ -657,9 +656,6 @@
                   {"title":"Mathematics ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1fyN6TqNl54WI1XZkFHiG34Q7HqNOPHrB/preview"},
                   {"title":"Chemistry ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1nsO5H549jvYWkeyYWcEeegSqJeo8QfRA/preview"},
                   {"title":"PW Old Test Series","folders":["IIT-JEE","COACHINGS","PW"],"url":"https://drive.google.com/file/d/1Emnjudx3tfSJct8--uQ2z26TZj86H7oJ/preview"},
-                  {"title":"JEE 47 Years JEE Advanced Physics","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1Nyv7aLN-adqKzgy2hDsBBaeKL3c1qjX5/preview"},
-                  {"title":"JEE 47 Years JEE Advanced Mathematics","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1tTwjo7ypQPXOdDz40NZBhoboBz2V-kvP/preview"},
-                  {"title":"JEE 47 Years JEE Advanced Chemistry","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1o4tatzPu-6nu81RTSmuGPP88nhcThUGA/preview"},
                   {"title":"Allen Physics Module WEP","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1xULnniKoj59JwLEi8AXJv4n51UiACQiS/preview"},
                   {"title":"Allen Physics Module Wave Optics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1AgKut73Qr_Du05cELF2hGcl8x8NORcjD/preview"},
                   {"title":"Allen Physics Module Kinematics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1bvIu_ADongu9euU_IG8gmI7gJRlbwTQL/preview"},
@@ -670,12 +666,10 @@
                   {"title":"M.S. Chauhan Balaji (Organic)","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/115SVTrs9sXRaYRK6Rz7EEoKw5k7sPUZu/preview"},
                   {"title":"VK Jaiswal Inorganic Chemistry","folders":["IIT-JEE","SUBJECTS","Inorganic Chemistry Special Books"],"url":"https://drive.google.com/file/d/14EVwhdkYYjFDfNiSbh3pWNN_wSF5DFUF/preview"},
                   {"title":"Atkins’ Physical Chemistry","folders":["IIT-JEE","PUBLICATIONS","Peter Atkins"],"url":"https://drive.google.com/file/d/19hXU7_-5tREW2DZXby1i_P_NmJpoDoc4/preview"},
-                  {"title":"DC Pandey Mechanics Volume-1","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/1JQQoDETXifTl9ncORgpeb2Vnqf2GiVIn/preview"},
-                  {"title":"DC Pandey Waves And Thermodynamics","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/100JwDyaIhuEqSxTSr8K9Q4yG-QJ87Lln/preview"},
-                  {"title":"Concept of Physics HC Verma Vol 1","folders":["IIT-JEE","SUBJECTS","Physics Specials","HC Verma"],"url":"https://drive.google.com/file/d/1lfFiGEUvj2_EWi4L08z-Gnwumbs9r9Cf/preview"},
-                  {"title":"Concept of Physics HC Verma Vol 2","folders":["IIT-JEE","SUBJECTS","Physics Specials","HC Verma"],"url":"https://drive.google.com/file/d/15lg6DFtpExmilI8YXaXlUbdgCVRz7RkV/preview"},
-                  {"title":"Mechanics Physics Galaxy","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1hha9C9UpP2H76_VYW47xIFRT_PpysWnA/preview"},
-                  {"title":"Irodov Problems","folders":["IIT-JEE","SUBJECTS","Physics Specials","Irodov"],"url":"https://drive.google.com/file/d/1ZBLPSV2lvNyYEIsEdsS47uMWN4yZfzFR/preview"},
+                  {"title":"DC Pandey Mechanics Volume-1","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1JQQoDETXifTl9ncORgpeb2Vnqf2GiVIn/preview"},
+                  {"title":"Concept of Physics HC Verma Vol 1","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1lfFiGEUvj2_EWi4L08z-Gnwumbs9r9Cf/preview"},
+                  {"title":"Mechanics Physics Galaxy","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1hha9C9UpP2H76_VYW47xIFRT_PpysWnA/preview"},
+                  {"title":"Irodov Problems","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1ZBLPSV2lvNyYEIsEdsS47uMWN4yZfzFR/preview"},
                   {"title":"Physics ARS Class 12","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/17BOjGk1HO_KZdGKgjItlTag18Wens8vS/preview"},
                   {"title":"Chemistry ARS Class 12","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/10j6hRd8tt5za9bDqUBkR0Q9U4NIAp91v/preview"},
                   {"title":"JEE physics formula booklet","folders":["IIT-JEE","EXTRAS","Formula BOOKLET"],"url":"https://drive.google.com/file/d/1-DkwbSvzoYBKtXvx0IUMfYyzur9XcoOv/preview"},
@@ -685,7 +679,7 @@
                   {"title":"Vector Algebra PYQs","folders":["IIT-JEE","MATHANGO","Maths","PYQ Practice Sheet"],"url":"https://drive.google.com/file/d/16SMV2RATtOHdgjIztbZaHF7fMz_KP601/preview"},
                   {"title":"1. Geometrical Optics Part 1 Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Optics and Modern Physics"],"url":"https://drive.google.com/file/d/1fTPaLB8OpXfkSFsQSvjkUmSqleIAfsD3/preview"},
                   {"title":"1. System of Particles and Centre of Mass Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1zRAf1bp3X9K7TwJ2MdQbN3X0LrCPzvKO/preview"},
-                  {"title":"1. Thermometry, Thermal Expansion and Calorimetry Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Waves and Thermodynamics"],"url":"https://drive.google.com/file/d/1mG2hxyq-A4hT8FGrHCjcZNq_FwUwVJMO/preview"},
+                  {"title":"1. Thermometry, Thermal Expansion Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Waves and Thermodynamics"],"url":"https://drive.google.com/file/d/1mG2hxyq-A4hT8FGrHCjcZNq_FwUwVJMO/preview"},
                   {"title":"Physics Part 1 NCERT","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1j-X7p6B7DlIoAHgH_h1auQef6J0pmUn1/preview"},
                   {"title":"Maths Part 1 NCERT","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/12LGiB9vJ49IzKv9TkSTWQPxl0FzghY25/preview"}
                 ];
@@ -693,8 +687,9 @@
                 const cleanFiles = rawFiles.filter(b => {
                     if(!b || !b.folders) return false;
                     const pathStr = b.folders.join(" ").toUpperCase();
-                    // Completely drop Class 10
-                    return !pathStr.includes("CLASS 10");
+                    // Drop Class 10 and Nucleus completely
+                    if(pathStr.includes("CLASS 10") || pathStr.includes("NUCLEUS")) return false;
+                    return true;
                 });
 
                 window.libraryData = {
@@ -1200,7 +1195,7 @@
                 }
 
                 // ==========================================
-                // 6. AUDIO HUB (Fixed YouTube Embed Parameters)
+                // 6. AUDIO HUB (Stable, No overlapping)
                 // ==========================================
                 let synthNode = null;
                 let synthGain = null;
@@ -1272,13 +1267,12 @@
                             synthNode = node;
                         }
                     } else {
-                        // FIXED: Added &playlist=ID parameter which is strictly required by YouTube API for looping
                         document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
                     }
                 });
 
                 // ==========================================
-                // 7. HEADER, SPLIT, CHAT & MODALS
+                // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
                 // ==========================================
                 document.getElementById('sidebar-toggle')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('collapsed'));
                 
