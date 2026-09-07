@@ -91,6 +91,7 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 15px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
 
         /* =========================================================
            3. SIDEBAR & POMODORO
@@ -112,17 +113,26 @@
         .pomo-card.running { border-color: var(--accent-color); animation: pulseGlow 2s infinite; transform: translateY(-2px); }
         .pomo-card.running::before { background: var(--accent-color); }
         
-        .pomo-timer-row { display: flex; align-items: center; gap: 16px; }
-        .pomo-icon { font-size: 2.5em; }
-        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 4em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
+        .pomo-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;}
+        .pomo-avatar-section { display: flex; align-items: center; gap: 10px; }
+        .pomo-icon { font-size: 2.2em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
+        .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.3;}
         
+        .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
+        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 3.2em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
+        
+        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
+        .pomo-plant-icon { font-size: 1.3em; }
+        .pomo-progress-bar { flex-grow: 1; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
+        #pomo-progress-fill { height: 100%; width: 0%; background: var(--success); transition: width 1s linear; }
+
         .pomo-controls { display: flex; gap: 12px; width: 100%; justify-content: center; }
-        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 14px; border-radius: var(--radius-md); font-weight: 600; font-size: 1em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
+        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
         .pomo-btn-main:hover { filter: brightness(1.1); }
-        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 14px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: 0.2s; }
         .pomo-btn-sec:hover { background: var(--folder-bg); }
 
-        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.9em; font-weight: 600;}
+        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.9em; font-weight: 600;}
 
         /* MODULE TABS */
         .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 20px 8px; }
@@ -295,9 +305,18 @@
             <!-- POMODORO -->
             <div class="pomo-container">
                 <div class="pomo-card" id="pomo-card">
-                    <div class="pomo-timer-row">
-                        <span class="pomo-icon" id="pomo-icon-display">⚡</span>
-                        <div class="pomo-time" id="pomo-time">25:00</div>
+                    <div class="pomo-top-row">
+                        <div class="pomo-avatar-section">
+                            <span class="pomo-icon" id="pomo-icon-display">⚡</span>
+                            <div class="pomo-speech-bubble" id="pomo-quote">Ready to focus!</div>
+                        </div>
+                        <div class="pomo-timer-section">
+                            <div class="pomo-time" id="pomo-time">25:00</div>
+                        </div>
+                    </div>
+                    <div class="pomo-plant-section">
+                        <span class="pomo-plant-icon" id="pomo-plant-stage">🌱</span>
+                        <div class="pomo-progress-bar"><div id="pomo-progress-fill"></div></div>
                     </div>
                     <select id="pomo-subject" class="pomo-subject-select">
                         <option value="General">General Study</option>
@@ -350,7 +369,7 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="5qap5aO4i9A">🎧 Lofi Beats (Static Mix)</option>
                                 <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
                                 <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
                                 <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
@@ -731,17 +750,40 @@
                 applySettings();
 
                 // ==========================================
-                // 3. POMODORO TIMER
+                // 3. POMODORO TIMER & INTERACTIVE PLANT
                 // ==========================================
                 let pomoSeconds = pomoSettings.focusTime * 60;
                 let pomoInterval = null;
                 let isPomoRunning = false;
+
+                const pomoQuotes = [
+                    "You're doing great!", "Focus is your superpower.", "One concept at a time.", 
+                    "Growth happens in the struggle.", "Planting seeds for the future!", "No distractions.",
+                    "Deep breath. Next problem."
+                ];
 
                 function updatePomoDisplay() {
                     let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
                     let s = String(pomoSeconds % 60).padStart(2, '0');
                     const dEl = document.getElementById('pomo-time');
                     if(dEl) dEl.textContent = `${m}:${s}`;
+
+                    let total = pomoSettings.focusTime * 60;
+                    let pct = ((total - pomoSeconds) / total) * 100;
+                    const prog = document.getElementById('pomo-progress-fill');
+                    if(prog) prog.style.width = `${pct}%`;
+                    
+                    let icon = '🌱'; 
+                    if (pct > 25) icon = '🌿'; 
+                    if (pct > 60) icon = '🪴'; 
+                    if (pct > 90) icon = '🌳'; 
+                    const stage = document.getElementById('pomo-plant-stage');
+                    if(stage) stage.textContent = icon;
+
+                    if (isPomoRunning && pomoSeconds % 30 === 0) {
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = pomoQuotes[Math.floor(Math.random() * pomoQuotes.length)];
+                    }
                 }
 
                 document.getElementById('pomo-toggle')?.addEventListener('click', (e) => {
@@ -749,12 +791,17 @@
                     if (isPomoRunning) {
                         clearInterval(pomoInterval);
                         isPomoRunning = false;
-                        e.target.innerHTML = '▶ Start Focus';
+                        e.target.innerHTML = '▶ Resume Focus';
                         card?.classList.remove('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Paused. Ready when you are.";
                     } else {
                         isPomoRunning = true;
                         e.target.innerHTML = '⏸ Pause Focus';
                         card?.classList.add('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Let's lock in!";
+                        
                         pomoInterval = setInterval(() => {
                             if (pomoSeconds > 0) {
                                 pomoSeconds--;
@@ -771,6 +818,7 @@
                                 studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
                                 localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
                                 
+                                if(quoteEl) quoteEl.textContent = "Session complete! You grew a tree!";
                                 window.showToast("Focus Session Complete! Great job.");
                                 pomoSeconds = pomoSettings.focusTime * 60;
                                 updatePomoDisplay();
@@ -786,6 +834,8 @@
                     const btn = document.getElementById('pomo-toggle');
                     if(btn) btn.innerHTML = '▶ Start Focus';
                     document.getElementById('pomo-card')?.classList.remove('running');
+                    const quoteEl = document.getElementById('pomo-quote');
+                    if(quoteEl) quoteEl.textContent = "Timer reset. Ready!";
                     updatePomoDisplay();
                 });
                 updatePomoDisplay();
@@ -805,7 +855,10 @@
 
                     const tree = {};
                     filtered.forEach(b => {
-                        const f1 = b.folders[1] || 'General';
+                        let f1 = b.folders[1] || 'General';
+                        if (activeModule === 'SUPPORT') {
+                            f1 = b.folders[0] || 'General'; 
+                        }
                         const f2 = b.folders[2] || 'Misc';
                         if (!tree[f1]) tree[f1] = {};
                         if (!tree[f1][f2]) tree[f1][f2] = [];
@@ -946,22 +999,22 @@
                         });
 
                         up.innerHTML = `
-                            <div class="util-workspace-inner">
-                                <h2 style="font-size:2em; margin-bottom:30px;">📊 Analytics Dashboard</h2>
+                            <div class="util-workspace-inner" style="padding:30px; max-width:1000px; margin:0 auto;">
+                                <h2 style="font-size:2em; margin-bottom:30px; text-align:center;">📊 Analytics Dashboard</h2>
                                 <div class="util-grid">
                                     <div class="stat-box"><h3>${total}</h3><p>Sessions</p></div>
                                     <div class="stat-box"><h3 style="color:var(--danger);">${streak} 🔥</h3><p>Streak</p></div>
                                     <div class="stat-box"><h3 style="color:var(--success);">${((total*pomoSettings.focusTime)/60).toFixed(1)}</h3><p>Hours</p></div>
                                 </div>
-                                <h3 style="font-size:1.3em; margin-bottom:15px;">Subject Mastery</h3>
-                                <div style="display:flex; gap:30px; padding:20px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
+                                <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Subject Mastery</h3>
+                                <div style="display:flex; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
                                     ${chartHtml}
                                 </div>
                             </div>`;
                     } else if(type === 'timetable') {
                         up.innerHTML = `
                             <div class="tt-layout">
-                                <h2 style="font-size:1.8em; margin-bottom:10px;">📅 Timeline</h2>
+                                <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📅 Timeline</h2>
                                 <div class="tt-form">
                                     <input type="time" id="tt-start">
                                     <input type="text" id="tt-task" placeholder="Task description...">
@@ -1010,8 +1063,19 @@
                     } else if(type === 'syllabus') {
                         const deepSyllabus = {
                             "Class12": {
-                                "Physics": ["Electric Charges", "Electrostatic Potential", "Current Electricity", "Moving Charges", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
-                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block", "Coordination Compounds", "Haloalkanes", "Alcohols", "Aldehydes", "Amines", "Biomolecules"]
+                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
+                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block", "Coordination Compounds", "Haloalkanes", "Alcohols", "Aldehydes", "Amines", "Biomolecules"],
+                                "Maths": ["Relations and Functions", "Inverse Trigonometric", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Probability"]
+                            },
+                            "JEEMains": {
+                                "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy Power", "Rotational Motion", "Gravitation", "Solids and Liquids", "Thermodynamics", "KTG", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Optics", "Dual Nature", "Atoms and Nuclei", "Electronic Devices"],
+                                "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Periodic Table", "p-Block", "d- and f-Block", "Coordination Compounds", "GOC", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules"],
+                                "Maths": ["Sets Relations Functions", "Complex Numbers & Quadratics", "Matrices Determinants", "P&C", "Binomial Theorem", "Sequence & Series", "Limit Continuity Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics & Probability", "Trigonometry"]
+                            },
+                            "JEEAdv": {
+                                "Physics": ["General Physics", "Kinematics", "Newton's Laws", "Work Power Energy", "COM & Collision", "Rotational Dynamics", "Gravitation", "Fluid Mechanics", "Thermal Physics", "Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Ray & Wave Optics", "Modern Physics"],
+                                "Chemistry": ["Atomic Structure", "Gaseous State", "Thermodynamics", "Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Chemical Bonding", "Coordination Compounds", "Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Functional Groups", "Biomolecules"],
+                                "Maths": ["Algebra", "Matrices", "Probability", "Trigonometry", "Analytical Geometry", "Differential Calculus", "Integral Calculus", "Vectors"]
                             }
                         };
                         window.sylStates = [
@@ -1025,27 +1089,33 @@
                         up.innerHTML = `
                             <div class="syl-tracker">
                                 <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📑 Syllabus Mastery</h2>
+                                <div class="syl-tabs" style="display:flex; gap:10px; background:var(--folder-bg); padding:8px; border-radius:12px; border:1px solid var(--border-color);">
+                                    <button class="syl-tab active" data-target="Class12" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:var(--sidebar-bg); color:var(--accent-color); box-shadow:var(--card-shadow); transition:0.2s;">Class 12 Boards</button>
+                                    <button class="syl-tab" data-target="JEEMains" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Mains</button>
+                                    <button class="syl-tab" data-target="JEEAdv" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Advanced</button>
+                                </div>
                                 <div class="syl-progress-bar"><div class="syl-progress-fill" id="syl-prog-fill"></div></div>
                                 <div id="syl-content" style="display:flex; flex-direction:column; gap:16px; margin-top:20px;"></div>
                             </div>`;
 
-                        window._renderSylContent = () => {
+                        window._renderSylContent = (level) => {
                             const container = document.getElementById('syl-content');
                             if(!container) return;
                             let html = '';
                             let total=0, done=0;
-                            Object.keys(deepSyllabus["Class12"]).forEach(subj => {
+                            const data = deepSyllabus[level];
+                            Object.keys(data).forEach(subj => {
                                 html += `<details class="syl-subject-card" open><summary>${subj}</summary><div class="syl-grid">`;
-                                deepSyllabus["Class12"][subj].forEach(chap => {
+                                data[subj].forEach(chap => {
                                     total++;
-                                    let key = `C12_${subj}_${chap}`;
+                                    let key = `${level}_${subj}_${chap}`;
                                     let st = window.sylData[key] || 0;
                                     if(st === 3) done++; else if (st>0) done += (st*0.25);
                                     
                                     html += `
                                         <div class="syl-chap-row">
                                             <span style="font-size:0.9em; font-weight:600;">${chap}</span>
-                                            <button class="syl-btn" data-key="${key}" style="background:${window.sylStates[st].b}; color:${window.sylStates[st].c};">${window.sylStates[st].t}</button>
+                                            <button class="syl-btn" data-key="${key}" data-level="${level}" style="background:${window.sylStates[st].b}; color:${window.sylStates[st].c};">${window.sylStates[st].t}</button>
                                         </div>`;
                                 });
                                 html += `</div></details>`;
@@ -1058,12 +1128,32 @@
                         document.getElementById('syl-content').addEventListener('click', (e) => {
                             if(e.target.classList.contains('syl-btn')) {
                                 let key = e.target.getAttribute('data-key');
+                                let level = e.target.getAttribute('data-level');
                                 window.sylData[key] = ((window.sylData[key]||0)+1)%4;
                                 localStorage.setItem('syl_tracker_pro', JSON.stringify(window.sylData));
-                                window._renderSylContent();
+                                window._renderSylContent(level);
                             }
                         });
-                        window._renderSylContent();
+                        
+                        let currentSylTab = 'Class12';
+                        window._renderSylContent(currentSylTab);
+
+                        document.querySelectorAll('.syl-tab').forEach(tab => {
+                            tab.onclick = (e) => {
+                                document.querySelectorAll('.syl-tab').forEach(t=>{
+                                    t.classList.remove('active');
+                                    t.style.background = 'transparent';
+                                    t.style.color = 'var(--text-muted)';
+                                    t.style.boxShadow = 'none';
+                                });
+                                e.target.classList.add('active');
+                                e.target.style.background = 'var(--sidebar-bg)';
+                                e.target.style.color = 'var(--accent-color)';
+                                e.target.style.boxShadow = 'var(--card-shadow)';
+                                currentSylTab = e.target.getAttribute('data-target');
+                                window._renderSylContent(currentSylTab);
+                            };
+                        });
                     } else if(type === 'flashcards') {
                         window.fcDeck = [
                             { q: "What is the formula for Capacitance of a parallel plate capacitor?", a: "C = (ε₀ * A) / d" },
@@ -1128,7 +1218,8 @@
                     document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
                     document.getElementById('audio-iframe-box').style.display = isSynth ? 'none' : 'block';
                     stopAllAudio();
-                    document.getElementById('audio-toggle').textContent = "▶ Start Audio";
+                    const toggleBtn = document.getElementById('audio-toggle');
+                    if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
                 });
 
                 document.getElementById('audio-volume')?.addEventListener('input', (e) => {
@@ -1183,7 +1274,7 @@
                             synthNode = node;
                         }
                     } else {
-                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&modestbranding=1`;
+                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
                     }
                 });
 
@@ -1255,6 +1346,7 @@
                     applySettings();
                     document.getElementById('settings-modal')?.classList.remove('open');
                     if(!isPomoRunning) { pomoSeconds = pomoSettings.focusTime*60; updatePomoDisplay(); }
+                    window.showToast("Settings applied successfully!");
                 });
 
                 document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.add('open'));
