@@ -144,7 +144,7 @@
         .sidebar-view { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .sidebar-view.active { display: flex; }
         .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: transparent; }
-        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
+        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--accent-color); }
         
         .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; }
@@ -229,7 +229,7 @@
         .syl-progress-bar { width: 100%; height: 12px; background: var(--border-color); border-radius: 6px; overflow: hidden; }
         .syl-progress-fill { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; }
         .syl-subject-card { background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); margin-bottom: 16px;}
-        .syl-subject-card summary { padding: 16px 20px; font-size: 1.15em; font-weight: 700; background: var(--folder-bg); color: var(--text-color); border-radius: var(--radius-lg); outline:none; cursor: pointer;}
+        .syl-subject-card summary { padding: 16px 20px; font-size: 1.15em; background: var(--folder-bg); color: var(--text-color); border-radius: var(--radius-lg); outline:none; font-weight: 700; cursor: pointer;}
         .syl-subject-card[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid var(--border-color); }
         .syl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; padding: 16px; }
         .syl-chap-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--primary-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
@@ -372,7 +372,7 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="5qap5aO4i9A">🎧 Lofi Beats (Static Mix)</option>
                                 <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
                                 <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
                                 <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
@@ -498,7 +498,7 @@
         </div>
     </div>
 
-    <!-- MAIN SCRIPT (Native Objects & Event Delegation for 100% Stability) -->
+    <!-- MAIN SCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             try {
@@ -535,8 +535,6 @@
                 };
 
                 let activeModule = 'LECTURES';
-                let masterList = [];
-                for(let k in window.libraryData) masterList.push(...window.libraryData[k]);
 
                 // ==========================================
                 // 2. SETTINGS & THEMING
@@ -566,17 +564,40 @@
                 applySettings();
 
                 // ==========================================
-                // 3. POMODORO TIMER
+                // 3. POMODORO TIMER & INTERACTIVE PLANT
                 // ==========================================
                 let pomoSeconds = pomoSettings.focusTime * 60;
                 let pomoInterval = null;
                 let isPomoRunning = false;
+
+                const pomoQuotes = [
+                    "You're doing great!", "Focus is your superpower.", "One concept at a time.", 
+                    "Growth happens in the struggle.", "Planting seeds for the future!", "No distractions.",
+                    "Deep breath. Next problem."
+                ];
 
                 function updatePomoDisplay() {
                     let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
                     let s = String(pomoSeconds % 60).padStart(2, '0');
                     const dEl = document.getElementById('pomo-time');
                     if(dEl) dEl.textContent = `${m}:${s}`;
+
+                    let total = pomoSettings.focusTime * 60;
+                    let pct = ((total - pomoSeconds) / total) * 100;
+                    const prog = document.getElementById('pomo-progress-fill');
+                    if(prog) prog.style.width = `${pct}%`;
+                    
+                    let icon = '🌱'; 
+                    if (pct > 25) icon = '🌿'; 
+                    if (pct > 60) icon = '🪴'; 
+                    if (pct > 90) icon = '🌳'; 
+                    const stage = document.getElementById('pomo-plant-stage');
+                    if(stage) stage.textContent = icon;
+
+                    if (isPomoRunning && pomoSeconds % 30 === 0) {
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = pomoQuotes[Math.floor(Math.random() * pomoQuotes.length)];
+                    }
                 }
 
                 document.getElementById('pomo-toggle')?.addEventListener('click', (e) => {
@@ -584,12 +605,16 @@
                     if (isPomoRunning) {
                         clearInterval(pomoInterval);
                         isPomoRunning = false;
-                        e.target.innerHTML = '▶ Start Focus';
+                        e.target.innerHTML = '▶ Resume Focus';
                         card?.classList.remove('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Paused. Ready when you are.";
                     } else {
                         isPomoRunning = true;
                         e.target.innerHTML = '⏸ Pause Focus';
                         card?.classList.add('running');
+                        const quoteEl = document.getElementById('pomo-quote');
+                        if(quoteEl) quoteEl.textContent = "Let's lock in!";
                         pomoInterval = setInterval(() => {
                             if (pomoSeconds > 0) {
                                 pomoSeconds--;
@@ -606,6 +631,7 @@
                                 studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
                                 localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
                                 
+                                if(quoteEl) quoteEl.textContent = "Session complete! You grew a tree!";
                                 window.showToast("Focus Session Complete! Great job.");
                                 pomoSeconds = pomoSettings.focusTime * 60;
                                 updatePomoDisplay();
@@ -621,12 +647,14 @@
                     const btn = document.getElementById('pomo-toggle');
                     if(btn) btn.innerHTML = '▶ Start Focus';
                     document.getElementById('pomo-card')?.classList.remove('running');
+                    const quoteEl = document.getElementById('pomo-quote');
+                    if(quoteEl) quoteEl.textContent = "Timer reset. Ready!";
                     updatePomoDisplay();
                 });
                 updatePomoDisplay();
 
                 // ==========================================
-                // 4. LIBRARY RENDERING
+                // 4. LIBRARY RENDERING (Recursive Tree)
                 // ==========================================
                 function renderLibrary(query = '') {
                     const list = document.getElementById('book-list');
@@ -638,37 +666,64 @@
                     let filtered = data.filter(b => (b.title + " " + (b.folders||[]).join(" ")).toLowerCase().includes(query.toLowerCase()));
                     if(filtered.length === 0) { list.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.6;">No resources found.</div>`; return; }
 
-                    const tree = {};
+                    const root = { _files: [] };
                     filtered.forEach(b => {
-                        const f1 = b.folders[1] || 'General';
-                        const f2 = b.folders[2] || 'Misc';
-                        if (!tree[f1]) tree[f1] = {};
-                        if (!tree[f1][f2]) tree[f1][f2] = [];
-                        tree[f1][f2].push(b);
+                        let current = root;
+                        let path = [...(b.folders||[])];
+                        
+                        // Clean truncations for specific tabs
+                        if (activeModule === 'LECTURES' && path[0] === 'LECTURES') path.shift();
+                        if (activeModule === 'SUPPORT' && (path[0] === 'EXTRAS' || path[0] === 'MATHANGO')) path.shift();
+                        if (activeModule === 'FILES' && path[0] === 'IIT-JEE') path.shift();
+
+                        if (path.length === 0) path = ["Uncategorized"];
+
+                        path.forEach(folder => {
+                            if (!current[folder]) current[folder] = { _files: [] };
+                            current = current[folder];
+                        });
+                        current._files.push(b);
                     });
 
-                    Object.keys(tree).sort().forEach(f1 => {
-                        let d1 = document.createElement('details');
-                        d1.open = query.length > 0;
-                        d1.innerHTML = `<summary>${f1}</summary><div class="folder-contents"></div>`;
-                        let c1 = d1.querySelector('.folder-contents');
-
-                        Object.keys(tree[f1]).sort().forEach(f2 => {
-                            let d2 = document.createElement('details');
-                            d2.open = query.length > 0;
-                            d2.innerHTML = `<summary>${f2}</summary><div class="folder-contents"></div>`;
-                            let c2 = d2.querySelector('.folder-contents');
-
-                            tree[f1][f2].forEach(book => {
+                    function buildTree(node, isOpen) {
+                        const container = document.createElement('div');
+                        Object.keys(node).sort().forEach(folderName => {
+                            if (folderName === '_files') return;
+                            const details = document.createElement('details');
+                            if (isOpen) details.open = true;
+                            details.innerHTML = `<summary>${folderName}</summary><div class="folder-contents"></div>`;
+                            details.querySelector('.folder-contents').appendChild(buildTree(node[folderName], isOpen));
+                            container.appendChild(details);
+                        });
+                        if (node._files && node._files.length > 0) {
+                            node._files.forEach(book => {
                                 let item = document.createElement('div');
                                 item.className = 'book-item';
                                 item.innerHTML = `<span>${book.title}</span>`;
                                 item.onclick = () => loadResource(book, item);
-                                c2.appendChild(item);
+                                container.appendChild(item);
                             });
-                            c1.appendChild(d2);
-                        });
-                        list.appendChild(d1);
+                        }
+                        return container;
+                    }
+
+                    // Append tree contents to list
+                    Object.keys(root).sort().forEach(key => {
+                        if(key === '_files') {
+                            root._files.forEach(book => {
+                                let item = document.createElement('div');
+                                item.className = 'book-item';
+                                item.innerHTML = `<span>${book.title}</span>`;
+                                item.onclick = () => loadResource(book, item);
+                                list.appendChild(item);
+                            });
+                        } else {
+                            const details = document.createElement('details');
+                            details.open = query.length > 0;
+                            details.innerHTML = `<summary>${key}</summary><div class="folder-contents"></div>`;
+                            details.querySelector('.folder-contents').appendChild(buildTree(root[key], query.length > 0));
+                            list.appendChild(details);
+                        }
                     });
                 }
 
@@ -845,19 +900,19 @@
                     } else if(type === 'syllabus') {
                         const deepSyllabus = {
                             "Class12": {
-                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
-                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols and Ethers", "Aldehydes Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
-                                "Maths": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of the Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
+                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
+                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols Ethers", "Aldehydes Ketones Carboxylic Acids", "Amines", "Biomolecules"],
+                                "Maths": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
                             },
                             "JEEMains": {
-                                "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects of Current and Magnetism", "Electromagnetic Induction and Alternating Currents", "Electromagnetic Waves", "Optics", "Dual Nature of Matter and Radiation", "Atoms and Nuclei", "Electronic Devices", "Experimental Skills"],
-                                "Chemistry": ["Some Basic Concepts in Chemistry", "Atomic Structure", "Chemical Bonding and Molecular Structure", "Chemical Thermodynamics", "Solutions", "Equilibrium", "Redox Reactions and Electrochemistry", "Chemical Kinetics", "Classification of Elements and Periodicity", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "Purification and Characterisation of Organic Compounds", "Some Basic Principles of Organic Chemistry", "Hydrocarbons", "Organic Compounds Containing Halogens", "Organic Compounds Containing Oxygen", "Organic Compounds Containing Nitrogen", "Biomolecules", "Principles Related to Practical Chemistry"],
-                                "Maths": ["Sets Relations and Functions", "Complex Numbers and Quadratic Equations", "Matrices and Determinants", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity and Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "Three Dimensional Geometry", "Vector Algebra", "Statistics and Probability", "Trigonometry"]
+                                "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "KTG", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects", "EMI & AC", "EM Waves", "Optics", "Dual Nature", "Atoms and Nuclei", "Electronic Devices"],
+                                "Chemistry": ["Basic Concepts", "Atomic Structure", "Chemical Bonding", "Thermodynamics", "Solutions", "Equilibrium", "Redox & Electrochemistry", "Chemical Kinetics", "Periodic Table", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "GOC", "Hydrocarbons", "Halogens", "Oxygen Compounds", "Nitrogen Compounds", "Biomolecules"],
+                                "Maths": ["Sets Relations Functions", "Complex Numbers", "Matrices & Determinants", "Permutations & Combinations", "Binomial Theorem", "Sequence & Series", "Limit Continuity Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "3D Geometry", "Vector Algebra", "Statistics & Probability", "Trigonometry"]
                             },
                             "JEEAdv": {
-                                "Physics": ["General Physics", "Kinematics", "Laws of Motion", "Work Power & Energy", "Center of Mass & Collision", "Rotational Dynamics", "Gravitation", "Properties of Matter & Fluid Mechanics", "Thermal Physics & Thermodynamics", "Electrostatics", "Current Electricity", "Magnetic Effects of Current", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Matter", "Atoms & Nuclei", "Semiconductors"],
-                                "Chemistry": ["Basic Concepts of Chemistry", "Atomic Structure", "Chemical Bonding", "Gaseous & Liquid States", "Chemical Thermodynamics", "Chemical Equilibrium", "Ionic Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Classification of Elements", "Hydrogen & s-Block", "p-Block Elements", "d & f-Block Elements", "Coordination Compounds", "Isolation of Metals", "Qualitative Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Alkyl & Aryl Halides", "Alcohols, Phenols & Ethers", "Aldehydes & Ketones", "Carboxylic Acids & Derivatives", "Amines", "Biomolecules & Polymers", "Practical Organic Chemistry (POC)"],
-                                "Maths": ["Sets, Relations & Functions", "Algebra of Complex Numbers", "Quadratic Equations", "Sequence & Series", "Logarithms", "Permutations & Combinations", "Binomial Theorem", "Matrices & Determinants", "Probability", "Trigonometric Functions & Equations", "Inverse Trigonometric Functions", "Properties of Triangles", "2D Geometry: Lines & Circles", "Conic Sections: Parabola", "Conic Sections: Ellipse & Hyperbola", "3D Geometry", "Limits & Continuity", "Differentiability & MOD", "Application of Derivatives", "Indefinite Integration", "Definite Integration", "Application of Integrals (Area)", "Differential Equations", "Vector Algebra"]
+                                "Physics": ["General Physics", "Kinematics", "Newton's Laws", "Work Power Energy", "COM & Collision", "Rotational Dynamics", "Gravitation", "Fluid Mechanics", "Thermal Physics", "Electrostatics", "Current Electricity", "Magnetism", "EMI & AC", "Ray & Wave Optics", "Modern Physics"],
+                                "Chemistry": ["Atomic Structure", "Gaseous State", "Thermodynamics", "Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Chemical Bonding", "Coordination Compounds", "Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Functional Groups", "Biomolecules", "Polymers"],
+                                "Maths": ["Algebra", "Matrices", "Probability", "Trigonometry", "Analytical Geometry 2D", "Analytical Geometry 3D", "Differential Calculus", "Integral Calculus", "Vectors"]
                             }
                         };
                         window.sylStates = [
@@ -1144,15 +1199,25 @@
                     
                     setTimeout(() => {
                         let matchesHtml = '';
+                        let count = 0;
                         masterList.forEach((b, i) => {
-                            if(b.title && b.title.toLowerCase().includes(q)) {
+                            if(count < 5 && b.title && b.title.toLowerCase().includes(q)) {
                                 matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
+                                count++;
                             }
                         });
                         if(matchesHtml === '') matchesHtml = "No local files found.";
                         cb.innerHTML += `<div class="chat-msg bot-msg">${matchesHtml}</div>`;
                         cb.scrollTop = cb.scrollHeight;
                     }, 400);
+                });
+
+                document.getElementById('chat-body')?.addEventListener('click', (e) => {
+                    if(e.target.classList.contains('chat-match-btn')) {
+                        const idx = e.target.getAttribute('data-index');
+                        loadResource(masterList[idx], null);
+                        window.showToast("Resource Loaded!");
+                    }
                 });
 
                 // INITIALIZE
@@ -1165,272 +1230,3 @@
     </script>
 </body>
 </html>
-```
-
-### Explanation of Direct Edits Applied:
-1.  **Pomodoro Enhancements**:
-    *   Replaced the basic `updatePomoDisplay()` function. It now calculates the percentage passed to update `#pomo-progress-fill`.
-    *   Added logic to change the plant icon (`🌱 -> 🌿 -> 🪴 -> 🌳`) based on timer completion percentages.
-    *   Integrated dynamic quotes that update every 30 seconds (`pomoSeconds % 30 === 0`) while running, pulling from an array of motivational texts.
-2.  **Syllabus Tracker Restored**:
-    *   Within the `openUtility(type)` function, I completely replaced the truncated syllabus logic with the massive 3-level `deepSyllabus` object containing the exhaustive Class 12, JEE Mains, and JEE Advanced arrays for Physics, Chemistry, and Maths.
-    *   The click listeners (`syl-tab`) map appropriately to switch between these three arrays instantly.
-3.  **Lofi Audio Fix**:
-    *   In the audio switch logic (`document.getElementById('audio-toggle')`), I modified the `src` being applied to the iframe. It now correctly sets `autoplay=1&loop=1&playlist=${type}` (passing its own video ID to the playlist parameter), which forces YouTube embeds to infinitely loop without stopping.
-4.  **Data Architecture**:
-    *   The recursive `renderLibrary()` tree logic and all 200+ links within `libraryData` are strictly maintained in the exact format shown in `index_3.html` so the UI hierarchy renders flawlessly.```html:Study Dashboard:index.html
-<!-- ... existing code ... -->
-        .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
-        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 3.2em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
-        
-        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
-        .pomo-plant-icon { font-size: 1.3em; }
-        .pomo-progress-bar { flex-grow: 1; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
-        #pomo-progress-fill { height: 100%; width: 0%; background: var(--success); transition: width 1s linear; }
-
-        .pomo-controls { display: flex; gap: 12px; width: 100%; justify-content: center; }
-<!-- ... existing code ... -->
-            <!-- POMODORO -->
-            <div class="pomo-container">
-                <div class="pomo-card" id="pomo-card">
-                    <div class="pomo-top-row">
-                        <div class="pomo-avatar-section">
-                            <span class="pomo-icon" id="pomo-icon-display">⚡</span>
-                            <div class="pomo-speech-bubble" id="pomo-quote">Ready to focus!</div>
-                        </div>
-                        <div class="pomo-timer-section">
-                            <div class="pomo-time" id="pomo-time">25:00</div>
-                        </div>
-                    </div>
-                    <div class="pomo-plant-section">
-                        <span class="pomo-plant-icon" id="pomo-plant-stage">🌱</span>
-                        <div class="pomo-progress-bar"><div id="pomo-progress-fill"></div></div>
-                    </div>
-                    <select id="pomo-subject" class="pomo-subject-select">
-                        <option value="General">General Study</option>
-<!-- ... existing code ... -->
-                // ==========================================
-                // 3. POMODORO TIMER
-                // ==========================================
-                let pomoSeconds = pomoSettings.focusTime * 60;
-                let pomoInterval = null;
-                let isPomoRunning = false;
-                const pomoQuotes = [
-                    "You're doing great!", "Focus is your superpower.", "One concept at a time.", 
-                    "Growth happens in the struggle.", "Planting seeds for the future!", "No distractions.",
-                    "Deep breath. Next problem."
-                ];
-
-                function updatePomoDisplay() {
-                    let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
-                    let s = String(pomoSeconds % 60).padStart(2, '0');
-                    const dEl = document.getElementById('pomo-time');
-                    if(dEl) dEl.textContent = `${m}:${s}`;
-                    
-                    let total = pomoSettings.focusTime * 60;
-                    let pct = ((total - pomoSeconds) / total) * 100;
-                    const prog = document.getElementById('pomo-progress-fill');
-                    if(prog) prog.style.width = `${pct}%`;
-                    
-                    let icon = '🌱'; 
-                    if (pct > 25) icon = '🌿'; 
-                    if (pct > 60) icon = '🪴'; 
-                    if (pct > 90) icon = '🌳'; 
-                    const stage = document.getElementById('pomo-plant-stage');
-                    if(stage) stage.textContent = icon;
-
-                    if (isPomoRunning && pomoSeconds % 30 === 0) {
-                        const quoteEl = document.getElementById('pomo-quote');
-                        if(quoteEl) quoteEl.textContent = pomoQuotes[Math.floor(Math.random() * pomoQuotes.length)];
-                    }
-                }
-
-                document.getElementById('pomo-toggle')?.addEventListener('click', (e) => {
-                    const card = document.getElementById('pomo-card');
-                    if (isPomoRunning) {
-                        clearInterval(pomoInterval);
-                        isPomoRunning = false;
-                        e.target.innerHTML = '▶ Start Focus';
-                        card?.classList.remove('running');
-                        const quoteEl = document.getElementById('pomo-quote');
-                        if(quoteEl) quoteEl.textContent = "Paused. Ready when you are.";
-                    } else {
-                        isPomoRunning = true;
-                        e.target.innerHTML = '⏸ Pause Focus';
-                        card?.classList.add('running');
-                        const quoteEl = document.getElementById('pomo-quote');
-                        if(quoteEl) quoteEl.textContent = "Let's lock in!";
-                        pomoInterval = setInterval(() => {
-                            if (pomoSeconds > 0) {
-                                pomoSeconds--;
-                                updatePomoDisplay();
-                            } else {
-                                clearInterval(pomoInterval);
-                                isPomoRunning = false;
-                                e.target.innerHTML = '▶ Start Focus';
-                                card?.classList.remove('running');
-                                
-                                studyStats[todayStr]++;
-                                let subjEl = document.getElementById('pomo-subject');
-                                let currentSubject = subjEl ? subjEl.value : 'General';
-                                studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
-                                localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
-                                
-                                if(quoteEl) quoteEl.textContent = "Session complete! You grew a tree!";
-                                window.showToast("Focus Session Complete! Great job.");
-                                pomoSeconds = pomoSettings.focusTime * 60;
-                                updatePomoDisplay();
-                            }
-                        }, 1000);
-                    }
-                });
-
-                document.getElementById('pomo-reset')?.addEventListener('click', () => {
-                    clearInterval(pomoInterval);
-                    isPomoRunning = false;
-                    pomoSeconds = pomoSettings.focusTime * 60;
-                    const btn = document.getElementById('pomo-toggle');
-                    if(btn) btn.innerHTML = '▶ Start Focus';
-                    document.getElementById('pomo-card')?.classList.remove('running');
-                    const quoteEl = document.getElementById('pomo-quote');
-                    if(quoteEl) quoteEl.textContent = "Timer reset. Ready!";
-                    updatePomoDisplay();
-                });
-                updatePomoDisplay();
-
-                // ==========================================
-                // 4. LIBRARY RENDERING
-<!-- ... existing code ... -->
-                        let current = root;
-                        let path = [...(b.folders||[])];
-                        
-                        // Clean up root redundancies to make hierarchy cleaner
-                        if (path[0] === 'IIT-JEE') path.shift();
-                        if (path[0] === 'LECTURES') path.shift();
-                        if (activeModule === 'SUPPORT' && (path[0] === 'EXTRAS' || path[0] === 'MATHANGO')) {
-                            path.shift();
-                        }
-                        if (path.length === 0) path = ["Uncategorized"];
-
-                        path.forEach(folder => {
-                            if (!current[folder]) current[folder] = { _files: [] };
-<!-- ... existing code ... -->
-                        window.renderTT();
-                    } else if(type === 'syllabus') {
-                        const deepSyllabus = {
-                            "Class12": {
-                                "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Magnetism and Matter", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature", "Atoms", "Nuclei", "Semiconductors"],
-                                "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d-and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols Phenols and Ethers", "Aldehydes Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
-                                "Maths": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Applications of the Integrals", "Differential Equations", "Vector Algebra", "3D Geometry", "Linear Programming", "Probability"]
-                            },
-                            "JEEMains": {
-                                "Physics": ["Physics and Measurement", "Kinematics", "Laws of Motion", "Work Energy and Power", "Rotational Motion", "Gravitation", "Properties of Solids and Liquids", "Thermodynamics", "Kinetic Theory of Gases", "Oscillations and Waves", "Electrostatics", "Current Electricity", "Magnetic Effects of Current and Magnetism", "Electromagnetic Induction and Alternating Currents", "Electromagnetic Waves", "Optics", "Dual Nature of Matter and Radiation", "Atoms and Nuclei", "Electronic Devices", "Experimental Skills"],
-                                "Chemistry": ["Some Basic Concepts in Chemistry", "Atomic Structure", "Chemical Bonding and Molecular Structure", "Chemical Thermodynamics", "Solutions", "Equilibrium", "Redox Reactions and Electrochemistry", "Chemical Kinetics", "Classification of Elements and Periodicity", "p-Block Elements", "d- and f-Block Elements", "Coordination Compounds", "Purification and Characterisation of Organic Compounds", "Some Basic Principles of Organic Chemistry", "Hydrocarbons", "Organic Compounds Containing Halogens", "Organic Compounds Containing Oxygen", "Organic Compounds Containing Nitrogen", "Biomolecules", "Principles Related to Practical Chemistry"],
-                                "Maths": ["Sets Relations and Functions", "Complex Numbers and Quadratic Equations", "Matrices and Determinants", "Permutations and Combinations", "Binomial Theorem", "Sequence and Series", "Limit Continuity and Differentiability", "Integral Calculus", "Differential Equations", "Coordinate Geometry", "Three Dimensional Geometry", "Vector Algebra", "Statistics and Probability", "Trigonometry"]
-                            },
-                            "JEEAdv": {
-                                "Physics": ["General Physics", "Kinematics", "Laws of Motion", "Work Power & Energy", "Center of Mass & Collision", "Rotational Dynamics", "Gravitation", "Properties of Matter & Fluid Mechanics", "Thermal Physics & Thermodynamics", "Electrostatics", "Current Electricity", "Magnetic Effects of Current", "Electromagnetic Induction", "Alternating Current", "Electromagnetic Waves", "Ray Optics", "Wave Optics", "Dual Nature of Matter", "Atoms & Nuclei", "Semiconductors"],
-                                "Chemistry": ["Basic Concepts of Chemistry", "Atomic Structure", "Chemical Bonding", "Gaseous & Liquid States", "Chemical Thermodynamics", "Chemical Equilibrium", "Ionic Equilibrium", "Electrochemistry", "Chemical Kinetics", "Solid State", "Solutions", "Surface Chemistry", "Classification of Elements", "Hydrogen & s-Block", "p-Block Elements", "d & f-Block Elements", "Coordination Compounds", "Isolation of Metals", "Qualitative Salt Analysis", "GOC & Isomerism", "Hydrocarbons", "Alkyl & Aryl Halides", "Alcohols, Phenols & Ethers", "Aldehydes & Ketones", "Carboxylic Acids & Derivatives", "Amines", "Biomolecules & Polymers", "Practical Organic Chemistry (POC)"],
-                                "Maths": ["Sets, Relations & Functions", "Algebra of Complex Numbers", "Quadratic Equations", "Sequence & Series", "Logarithms", "Permutations & Combinations", "Binomial Theorem", "Matrices & Determinants", "Probability", "Trigonometric Functions & Equations", "Inverse Trigonometric Functions", "Properties of Triangles", "2D Geometry: Lines & Circles", "Conic Sections: Parabola", "Conic Sections: Ellipse & Hyperbola", "3D Geometry", "Limits & Continuity", "Differentiability & MOD", "Application of Derivatives", "Indefinite Integration", "Definite Integration", "Application of Integrals (Area)", "Differential Equations", "Vector Algebra"]
-                            }
-                        };
-                        window.sylStates = [
-                            { t: '⚪ Unstudied', c: 'var(--text-color)', b: 'transparent' },
-                            { t: '🟡 Theory', c: '#000', b: '#fde047' },
-                            { t: '🔵 PYQs', c: '#fff', b: '#3b82f6' },
-                            { t: '🟢 Mastered', c: '#fff', b: '#22c55e' }
-                        ];
-                        window.sylData = JSON.parse(localStorage.getItem('syl_tracker_pro')) || {};
-
-                        up.innerHTML = `
-                            <div class="syl-tracker">
-                                <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📑 Syllabus Mastery</h2>
-                                <div class="syl-tabs" style="display:flex; gap:10px; margin-bottom:20px; width:100%; background:var(--folder-bg); padding:8px; border-radius:12px; border:1px solid var(--border-color);">
-                                    <button class="syl-tab active" data-target="Class12" style="flex:1; padding:14px; font-size:1.05em; font-weight:800; background:var(--sidebar-bg); border:none; border-radius:8px; cursor:pointer; color:var(--accent-color); transition:0.2s; text-align:center; box-shadow:var(--card-shadow);">Class 12 Boards</button>
-                                    <button class="syl-tab" data-target="JEEMains" style="flex:1; padding:14px; font-size:1.05em; font-weight:800; background:transparent; border:none; border-radius:8px; cursor:pointer; color:var(--text-muted); transition:0.2s; text-align:center;">JEE Mains</button>
-                                    <button class="syl-tab" data-target="JEEAdv" style="flex:1; padding:14px; font-size:1.05em; font-weight:800; background:transparent; border:none; border-radius:8px; cursor:pointer; color:var(--text-muted); transition:0.2s; text-align:center;">JEE Advanced</button>
-                                </div>
-                                <div class="syl-progress-bar"><div class="syl-progress-fill" id="syl-prog-fill"></div></div>
-                                <div id="syl-content" style="display:flex; flex-direction:column; gap:16px; margin-top:20px;"></div>
-                            </div>`;
-
-                        window._renderSylContent = (level) => {
-                            const container = document.getElementById('syl-content');
-                            if(!container) return;
-                            let html = '';
-                            let total=0, done=0;
-                            const data = deepSyllabus[level];
-                            Object.keys(data).forEach(subj => {
-                                html += `<details class="syl-subject-card" open><summary>${subj}</summary><div class="syl-grid">`;
-                                data[subj].forEach(chap => {
-                                    total++;
-                                    let key = `${level}_${subj}_${chap}`;
-                                    let st = window.sylData[key] || 0;
-                                    if(st === 3) done++; else if (st>0) done += (st*0.25);
-                                    
-                                    html += `
-                                        <div class="syl-chap-row">
-                                            <span style="font-size:0.9em; font-weight:600;">${chap}</span>
-                                            <button class="syl-btn" data-key="${key}" data-level="${level}" style="background:${window.sylStates[st].b}; color:${window.sylStates[st].c};">${window.sylStates[st].t}</button>
-                                        </div>`;
-                                });
-                                html += `</div></details>`;
-                            });
-                            container.innerHTML = html;
-                            let pct = total===0?0:Math.round((done/total)*100);
-                            document.getElementById('syl-prog-fill').style.width = `${pct}%`;
-                        };
-
-                        document.getElementById('syl-content').addEventListener('click', (e) => {
-                            if(e.target.classList.contains('syl-btn')) {
-                                let key = e.target.getAttribute('data-key');
-                                let level = e.target.getAttribute('data-level');
-                                window.sylData[key] = ((window.sylData[key]||0)+1)%4;
-                                localStorage.setItem('syl_tracker_pro', JSON.stringify(window.sylData));
-                                window._renderSylContent(level);
-                            }
-                        });
-                        
-                        let currentSylTab = 'Class12';
-                        window._renderSylContent(currentSylTab);
-
-                        document.querySelectorAll('.syl-tab').forEach(tab => {
-                            tab.onclick = (e) => {
-                                document.querySelectorAll('.syl-tab').forEach(t=>{
-                                    t.classList.remove('active');
-                                    t.style.background = 'transparent';
-                                    t.style.color = 'var(--text-muted)';
-                                    t.style.boxShadow = 'none';
-                                });
-                                e.target.classList.add('active');
-                                e.target.style.background = 'var(--sidebar-bg)';
-                                e.target.style.color = 'var(--accent-color)';
-                                e.target.style.boxShadow = 'var(--card-shadow)';
-                                currentSylTab = e.target.getAttribute('data-target');
-                                window._renderSylContent(currentSylTab);
-                            };
-                        });
-                    } else if(type === 'flashcards') {
-<!-- ... existing code ... -->
-                            for(let i=0; i<bSize; i++) {
-                                let w = Math.random()*2-1;
-                                if(type==='white') { out[i] = w * 0.1; }
-                                else if(type==='brown') { last = (last + (0.02 * w)) / 1.02; out[i] = last * 1.5; }
-                                else if(type==='pink') {
-                                    b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
-                                    b2 = 0.96900 * b2 + w * 0.1538520; b3 = 0.86650 * b3 + w * 0.3104856;
-                                    b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
-                                    out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926;
-                                }
-                            }
-                            const node = ctx.createBufferSource(); node.buffer = buff; node.loop = true;
-                            node.connect(synthGain); node.start();
-                            synthNode = node;
-                        }
-                    } else {
-                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
-                    }
-                });
-
-                // ==========================================
-<!-- ... existing code ... -->
