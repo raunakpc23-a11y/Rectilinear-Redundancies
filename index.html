@@ -1673,126 +1673,238 @@
                                     b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
                                     b2 = 0.96900 * b2 + w * 0.1538520; b3 = 0.86650 * b3 + w * 0.3104856;
                                     b4 = 0.55000 * b4 + w * 0.5329522; b5 = -0.7616 * b5 - w * 0.0168980;
-                                    out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; b6 = w * 0.115926;
+                                    out[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + w * 0.5362) * 0.11; 
+                                    b6 = w * 0.115926;
                                 }
                             }
-                            const node = ctx.createBufferSource(); node.buffer = buff; node.loop = true;
-                            node.connect(synthGain); node.start();
-                            synthNode = node;
+                            let src = ctx.createBufferSource();
+                            src.buffer = buff;
+                            src.loop = true;
+                            src.connect(synthGain);
+                            src.start();
+                            synthNode = src;
                         }
                     } else {
-                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
+                        document.getElementById('audio-frame').src = `https://www.youtube.com/embed/${type}?autoplay=1&loop=1&playlist=${type}`;
                     }
                 });
 
                 // ==========================================
-                // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
+                // 7. UI INTERACTIONS & SPLIT SCREEN
                 // ==========================================
-                document.getElementById('sidebar-toggle')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('collapsed'));
+                document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+                    const sb = document.getElementById('sidebar');
+                    sb.style.marginLeft = sb.style.marginLeft === '-380px' ? '0' : '-380px';
+                });
+
+                document.getElementById('invert-btn')?.addEventListener('click', () => {
+                    document.getElementById('viewer-1').classList.toggle('inverted');
+                    document.getElementById('viewer-2').classList.toggle('inverted');
+                    window.showToast("Toggled Invert Colors");
+                });
+
+                document.getElementById('zen-btn')?.addEventListener('click', () => {
+                    document.body.classList.add('zen-active');
+                    window.showToast("Zen Mode Activated. Esc to exit.");
+                });
                 
+                document.getElementById('exit-zen-btn')?.addEventListener('click', () => {
+                    document.body.classList.remove('zen-active');
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    if(e.key === 'Escape' && document.body.classList.contains('zen-active')) {
+                        document.body.classList.remove('zen-active');
+                    }
+                    if((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        const sb = document.getElementById('search-bar');
+                        if(sb && sb.offsetParent !== null) sb.focus();
+                    }
+                });
+
+                document.getElementById('notes-btn')?.addEventListener('click', () => {
+                    document.getElementById('notes-drawer').classList.toggle('open');
+                });
+                document.getElementById('notes-close')?.addEventListener('click', () => {
+                    document.getElementById('notes-drawer').classList.remove('open');
+                });
+                
+                document.getElementById('notes-reflect')?.addEventListener('click', () => {
+                    const area = document.getElementById('notes-area');
+                    const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    area.value += `\n[${timestamp}] Reflection: `;
+                    area.focus();
+                });
+
+                // FULLSCREEN
                 document.getElementById('fs-btn')?.addEventListener('click', () => {
-                    try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e){}
-                });
-
-                document.getElementById('notes-btn')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.add('open'));
-                document.getElementById('notes-close')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.remove('open'));
-
-                let isSplit = false;
-                document.getElementById('split-btn')?.addEventListener('click', () => {
-                    isSplit = !isSplit;
-                    const main = document.getElementById('main-workspace');
-                    const v1 = document.getElementById('viewer-1');
-                    const v2 = document.getElementById('viewer-2');
-                    const res = document.getElementById('resizer');
-                    
-                    if(isSplit) {
-                        main.style.flexDirection = 'row';
-                        v2.style.display = 'block'; res.style.display = 'flex';
-                        v1.style.width = '50%'; v2.style.width = '50%';
-                        document.getElementById('frame-2').src = document.getElementById('frame-1').src;
+                    const ws = document.getElementById('main-workspace');
+                    if (!document.fullscreenElement) {
+                        ws.requestFullscreen().catch(err => window.showToast(`Error: ${err.message}`));
                     } else {
-                        v2.style.display = 'none'; res.style.display = 'none';
-                        v1.style.width = '100%';
+                        document.exitFullscreen();
                     }
                 });
 
-                let isRes = false;
-                document.getElementById('resizer')?.addEventListener('mousedown', () => { isRes=true; document.getElementById('resizer').classList.add('dragging'); document.body.style.cursor='col-resize'; });
-                document.addEventListener('mousemove', (e) => {
-                    if(!isRes) return;
-                    const rect = document.getElementById('main-workspace').getBoundingClientRect();
-                    let pct = ((e.clientX - rect.left) / rect.width)*100;
-                    if(pct>20 && pct<80) { document.getElementById('viewer-1').style.width=`${pct}%`; document.getElementById('viewer-2').style.width=`${100-pct}%`; }
+                // SPLIT SCREEN DRAGGING
+                const resizer = document.getElementById('resizer');
+                const v1 = document.getElementById('viewer-1');
+                const v2 = document.getElementById('viewer-2');
+                let isDragging = false;
+                
+                document.getElementById('split-btn')?.addEventListener('click', () => {
+                    if (v2.style.display === 'block') {
+                        v2.style.display = 'none';
+                        resizer.style.display = 'none';
+                        v1.style.width = '100%';
+                        window.showToast("Split Screen Disabled");
+                    } else {
+                        v2.style.display = 'block';
+                        resizer.style.display = 'flex';
+                        v1.style.width = '50%';
+                        v2.style.width = '50%';
+                        if(!v2.querySelector('iframe').src) v2.querySelector('iframe').src = v1.querySelector('iframe').src;
+                        window.showToast("Split Screen Enabled");
+                    }
                 });
-                document.addEventListener('mouseup', () => { if(isRes) { isRes=false; document.getElementById('resizer')?.classList.remove('dragging'); document.body.style.cursor='default'; }});
 
-                document.getElementById('settings-btn')?.addEventListener('click', () => {
-                    document.getElementById('set-theme').value = pomoSettings.theme;
-                    document.getElementById('set-bg').value = pomoSettings.bg || 'bg-none';
-                    document.getElementById('set-focus').value = pomoSettings.focusTime;
-                    document.getElementById('set-icon').value = pomoSettings.icon;
-                    document.querySelectorAll('.color-dot').forEach(d => { d.classList.remove('active'); if(d.getAttribute('data-color') === pomoSettings.accent) d.classList.add('active'); });
-                    document.getElementById('settings-modal')?.classList.add('open');
+                resizer?.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    resizer.classList.add('dragging');
+                    document.body.style.cursor = 'col-resize';
+                    document.querySelectorAll('iframe').forEach(i => i.style.pointerEvents = 'none');
                 });
                 
-                document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    const container = document.getElementById('main-workspace');
+                    let rect = container.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    let pct = (x / rect.width) * 100;
+                    if (pct > 10 && pct < 90) {
+                        v1.style.width = `calc(${pct}% - 6px)`;
+                        v2.style.width = `calc(${100 - pct}% - 6px)`;
+                    }
+                });
                 
-                document.querySelectorAll('.color-dot').forEach(d => d.addEventListener('click', (e) => { 
-                    document.querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active')); e.target.classList.add('active'); 
-                }));
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        resizer.classList.remove('dragging');
+                        document.body.style.cursor = 'default';
+                        document.querySelectorAll('iframe').forEach(i => i.style.pointerEvents = 'auto');
+                    }
+                });
+
+                // ==========================================
+                // 8. SETTINGS MODAL
+                // ==========================================
+                document.getElementById('settings-btn')?.addEventListener('click', () => document.getElementById('settings-modal').classList.add('open'));
+                document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal').classList.remove('open'));
+                
+                document.querySelectorAll('.color-dot').forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                        e.target.classList.add('active');
+                    });
+                });
+                
+                // Initialize settings UI
+                document.getElementById('set-theme').value = pomoSettings.theme || 'theme-amoled';
+                document.getElementById('set-bg').value = pomoSettings.bg || 'bg-none';
+                document.getElementById('set-focus').value = pomoSettings.focusTime || 25;
+                document.getElementById('set-icon').value = pomoSettings.icon || '⚡';
+                const sColor = pomoSettings.accent || '#3b82f6';
+                document.querySelectorAll('.color-dot').forEach(d => {
+                    if(d.getAttribute('data-color') === sColor) {
+                        document.querySelectorAll('.color-dot').forEach(x => x.classList.remove('active'));
+                        d.classList.add('active');
+                    }
+                });
 
                 document.getElementById('save-settings')?.addEventListener('click', () => {
                     pomoSettings.theme = document.getElementById('set-theme').value;
                     pomoSettings.bg = document.getElementById('set-bg').value;
-                    pomoSettings.focusTime = parseInt(document.getElementById('set-focus').value);
+                    pomoSettings.focusTime = parseInt(document.getElementById('set-focus').value) || 25;
                     pomoSettings.icon = document.getElementById('set-icon').value;
+                    
                     const activeDot = document.querySelector('.color-dot.active');
                     if(activeDot) pomoSettings.accent = activeDot.getAttribute('data-color');
                     
                     localStorage.setItem('pomo_settings_pro', JSON.stringify(pomoSettings));
                     applySettings();
-                    document.getElementById('settings-modal')?.classList.remove('open');
-                    if(!isPomoRunning) { pomoSeconds = pomoSettings.focusTime*60; updatePomoDisplay(); }
-                    window.showToast("Settings applied successfully!");
+                    
+                    if(!isPomoRunning) {
+                        pomoSeconds = pomoSettings.focusTime * 60;
+                        updatePomoDisplay();
+                    }
+                    document.getElementById('settings-modal').classList.remove('open');
+                    window.showToast("Settings Applied Successfully!");
                 });
 
-                document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.add('open'));
-                document.getElementById('chat-close')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.remove('open'));
+                // ==========================================
+                // 9. CHAT COPILOT (Local Search)
+                // ==========================================
+                document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window').classList.toggle('open'));
+                document.getElementById('chat-close')?.addEventListener('click', () => document.getElementById('chat-window').classList.remove('open'));
                 
-                document.getElementById('chat-send')?.addEventListener('click', () => {
-                    const inp = document.getElementById('chat-input');
-                    const q = inp.value.trim().toLowerCase();
-                    if(!q) return;
-                    const cb = document.getElementById('chat-body');
-                    cb.innerHTML += `<div class="chat-msg user-msg">${q}</div>`;
-                    inp.value = '';
+                function sendChatMsg() {
+                    const input = document.getElementById('chat-input');
+                    const text = input.value.trim();
+                    if(!text) return;
+                    
+                    const body = document.getElementById('chat-body');
+                    body.innerHTML += `<div class="chat-msg user-msg">${text}</div>`;
+                    input.value = '';
                     
                     setTimeout(() => {
-                        let matchesHtml = '';
-                        masterList.forEach((b, i) => {
-                            if(b.title && b.title.toLowerCase().includes(q)) {
-                                matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
-                            }
+                        let query = text.toLowerCase();
+                        let hits = masterList.filter(b => b.title.toLowerCase().includes(query) || (b.folders||[]).join(" ").toLowerCase().includes(query)).slice(0, 3);
+                        
+                        let reply = '';
+                        if(hits.length > 0) {
+                            reply = `I found ${hits.length} resource(s) that might help:`;
+                            hits.forEach((h, i) => {
+                                reply += `<button class="chat-match-btn" id="c-match-${Date.now()}-${i}" data-title="${h.title}">📄 ${h.title}</button>`;
+                            });
+                        } else {
+                            reply = "I couldn't find any exact matches for that in your library. Try broader keywords like 'Kinematics' or 'Maths'.";
+                        }
+                        
+                        let botDiv = document.createElement('div');
+                        botDiv.className = 'chat-msg bot-msg';
+                        botDiv.innerHTML = reply;
+                        body.appendChild(botDiv);
+                        body.scrollTop = body.scrollHeight;
+
+                        // Attach listeners to newly created buttons
+                        botDiv.querySelectorAll('.chat-match-btn').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                const targetTitle = e.target.getAttribute('data-title');
+                                const resource = masterList.find(r => r.title === targetTitle);
+                                if(resource) {
+                                    loadResource(resource, null);
+                                    window.showToast(`Loaded ${targetTitle}`);
+                                }
+                            });
                         });
-                        if(matchesHtml === '') matchesHtml = "No local files found.";
-                        cb.innerHTML += `<div class="chat-msg bot-msg">${matchesHtml}</div>`;
-                        cb.scrollTop = cb.scrollHeight;
+
                     }, 400);
-                });
+                    
+                    body.scrollTop = body.scrollHeight;
+                }
+                
+                document.getElementById('chat-send')?.addEventListener('click', sendChatMsg);
+                document.getElementById('chat-input')?.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendChatMsg(); });
 
-                document.getElementById('chat-body')?.addEventListener('click', (e) => {
-                    if(e.target.classList.contains('chat-match-btn')) {
-                        const idx = e.target.getAttribute('data-index');
-                        loadResource(masterList[idx], null);
-                        window.showToast("Resource Loaded!");
-                    }
-                });
-
-                // INITIALIZE
+                // Initial UI Setup
                 renderLibrary();
-
-            } catch (err) {
-                console.error("Critical Application Error:", err);
+                updatePomoDisplay();
+                
+            } catch(error) {
+                console.error("Critical Dashboard Error:", error);
+                alert("An error occurred loading the dashboard components.");
             }
         });
     </script>
