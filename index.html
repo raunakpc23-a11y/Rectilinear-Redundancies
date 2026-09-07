@@ -91,6 +91,7 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 15px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0px); } }
 
         /* =========================================================
            3. SIDEBAR & POMODORO
@@ -114,7 +115,7 @@
         
         .pomo-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;}
         .pomo-avatar-section { display: flex; align-items: center; gap: 10px; }
-        .pomo-icon { font-size: 2.2em; cursor: pointer; user-select: none; }
+        .pomo-icon { font-size: 2.2em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
         .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.3;}
         
         .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
@@ -143,7 +144,7 @@
         .sidebar-view { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .sidebar-view.active { display: flex; }
         .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: transparent; }
-        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
+        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background-color: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--accent-color); }
         
         .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; }
@@ -368,7 +369,7 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="5qap5aO4i9A">🎧 Lofi Beats (Static Mix)</option>
                                 <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
                                 <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
                                 <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
@@ -519,189 +520,226 @@
                 // 1. EMBEDDED DATA (NATIVE ARRAYS)
                 // ==========================================
                 const rawLectures = [
-                  {
-                    "title": "Physics One-Shots (PW)",
-                    "folders": ["LECTURES", "Physics", "Physics Wallah"],
-                    "playlist": [
-                      { "title": "Basic Maths & Vectors", "url": "https://www.youtube.com/embed/RAwcPN79g0Q" },
-                      { "title": "Kinematics", "url": "https://www.youtube.com/embed/mpFEnSQpJ9Q" },
-                      { "title": "Laws of Motion", "url": "https://www.youtube.com/embed/6HQgDO1trlM" },
-                      { "title": "Work, Energy & Power", "url": "https://www.youtube.com/embed/XGce-vIcMfU" },
-                      { "title": "COM & Collision", "url": "https://www.youtube.com/embed/Rh95KkMwklU" },
-                      { "title": "Rotational Motion", "url": "https://www.youtube.com/embed/vmaKeSkjtGo" },
-                      { "title": "Gravitation", "url": "https://www.youtube.com/embed/mE8w2uxm6XY" },
-                      { "title": "Solids & Elasticity", "url": "https://www.youtube.com/embed/1xPm3vIRIGI" },
-                      { "title": "Fluid Mechanics", "url": "https://www.youtube.com/embed/griSf2U_Zlk" },
-                      { "title": "SHM", "url": "https://www.youtube.com/embed/myNQbAYzD5A" },
-                      { "title": "Wave Motion", "url": "https://www.youtube.com/embed/PAlXOkn_Pa8" },
-                      { "title": "Thermal Properties", "url": "https://www.youtube.com/embed/1nTFrbJ8Jhg" },
-                      { "title": "Thermodynamics & KTG", "url": "https://www.youtube.com/embed/Ch9jLsgYIuM" },
-                      { "title": "Electrostatics", "url": "https://www.youtube.com/embed/h5HIyPNRhqI" },
-                      { "title": "Capacitors", "url": "https://www.youtube.com/embed/FImh-a0673s" },
-                      { "title": "Current Electricity", "url": "https://www.youtube.com/embed/cjoRcywyRv0" },
-                      { "title": "Magnetism & Moving Charges", "url": "https://www.youtube.com/embed/3h3OexznsA0" },
-                      { "title": "Electromagnetic Induction", "url": "https://www.youtube.com/embed/ebOF14qP21k" },
-                      { "title": "AC Circuits", "url": "https://www.youtube.com/embed/gziRcxMiO_Q" },
-                      { "title": "Wave Optics & EM Waves", "url": "https://www.youtube.com/embed/UYfR15GpKIs" },
-                      { "title": "Ray Optics", "url": "https://www.youtube.com/embed/AfPD-sHayb0" },
-                      { "title": "Semiconductors", "url": "https://www.youtube.com/embed/5h5ANJnVe08" },
-                      { "title": "Communication Systems", "url": "https://www.youtube.com/embed/fBqJdix2NjE" },
-                      { "title": "Modern Physics", "url": "https://www.youtube.com/embed/G58QS4soCuQ" },
-                      { "title": "Atoms", "url": "https://www.youtube.com/embed/AqjrqRyot6w" },
-                      { "title": "Nuclei", "url": "https://www.youtube.com/embed/XJZ1PdXyJU4" },
-                      { "title": "Dual Nature", "url": "https://www.youtube.com/embed/wE0xrUuJLnk" }
-                    ]
-                  },
-                  {
-                    "title": "Physical Chemistry (PW)",
-                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
-                    "playlist": [
-                      { "title": "Mole Concept", "url": "https://www.youtube.com/embed/CAb8YZKLoac" },
-                      { "title": "Atomic Structure", "url": "https://www.youtube.com/embed/f6ENSghG7T4" },
-                      { "title": "States of Matter", "url": "https://www.youtube.com/embed/8oypjDXAXZc" },
-                      { "title": "Thermodynamics", "url": "https://www.youtube.com/embed/GplPceRaMi0" },
-                      { "title": "Chemical Equilibrium", "url": "https://www.youtube.com/embed/NwCmoh7Vd9g" },
-                      { "title": "Ionic Equilibrium", "url": "https://www.youtube.com/embed/BceSksiNLD4" },
-                      { "title": "Redox Reactions", "url": "https://www.youtube.com/embed/1W-UvePUAKo" },
-                      { "title": "Chemical Kinetics", "url": "https://www.youtube.com/embed/kwPNxC9AgZA" },
-                      { "title": "Solutions", "url": "https://www.youtube.com/embed/7OkNy8vhDaw" }
-                    ]
-                  },
-                  {
-                    "title": "Inorganic Chemistry (PW)",
-                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
-                    "playlist": [
-                      { "title": "Periodic Table", "url": "https://www.youtube.com/embed/nLE7_YBFQNQ" },
-                      { "title": "Chemical Bonding", "url": "https://www.youtube.com/embed/kS8s_WX0IlY" },
-                      { "title": "Coordination Compounds", "url": "https://www.youtube.com/embed/5myJzBeN514" },
-                      { "title": "P-Block Elements", "url": "https://www.youtube.com/embed/b0k5LOk_uPk" },
-                      { "title": "D & F-Block Elements", "url": "https://www.youtube.com/embed/SjILQ6cX_Vo" },
-                      { "title": "Salt Analysis", "url": "https://www.youtube.com/embed/8rRnn4ECwXI" }
-                    ]
-                  },
-                  {
-                    "title": "Organic Chemistry (PW)",
-                    "folders": ["LECTURES", "Chemistry", "Physics Wallah"],
-                    "playlist": [
-                      { "title": "IUPAC Nomenclature", "url": "https://www.youtube.com/embed/A2QTsYu3fWo" },
-                      { "title": "GOC", "url": "https://www.youtube.com/embed/FFCT-lh86tA" },
-                      { "title": "Isomerism", "url": "https://www.youtube.com/embed/UOzWO2-Z9So" },
-                      { "title": "Hydrocarbons", "url": "https://www.youtube.com/embed/02CBTEOMMsA" },
-                      { "title": "Haloalkanes & Haloarenes", "url": "https://www.youtube.com/embed/7iJFvPI8vMM" },
-                      { "title": "Alcohols, Phenols & Ethers", "url": "https://www.youtube.com/embed/IDo8B0c5Xis" },
-                      { "title": "Aldehydes, Ketones & Acids", "url": "https://www.youtube.com/embed/oR19BqbPBu4" },
-                      { "title": "Amines", "url": "https://www.youtube.com/embed/SKHrfD34Kkc" },
-                      { "title": "Biomolecules", "url": "https://www.youtube.com/embed/LcVNwEWJtyI" }
-                    ]
-                  },
-                  {
-                    "title": "Mathematics (PW)",
-                    "folders": ["LECTURES", "Maths", "Physics Wallah"],
-                    "playlist": [
-                      { "title": "Basic Maths", "url": "https://www.youtube.com/embed/Z5uGIO_11vM" },
-                      { "title": "Determinants", "url": "https://www.youtube.com/embed/uhq_WUNlvh8" },
-                      { "title": "Trigonometric Ratios & Identities", "url": "https://www.youtube.com/embed/DitLpxy6V48" },
-                      { "title": "Vectors", "url": "https://www.youtube.com/embed/FsTlbTQyuJ0" },
-                      { "title": "Quadratic Equations", "url": "https://www.youtube.com/embed/iLIPlvjDkPU" },
-                      { "title": "Matrices", "url": "https://www.youtube.com/embed/2YFQIFQmPmw" },
-                      { "title": "Sets", "url": "https://www.youtube.com/embed/SOXQuRrgJHo" },
-                      { "title": "3D Geometry", "url": "https://www.youtube.com/embed/t_RMMkiYj4g" },
-                      { "title": "Sequence & Series", "url": "https://www.youtube.com/embed/CVG9PcraP1k" },
-                      { "title": "Relations & Functions", "url": "https://www.youtube.com/embed/Qs0wRt70mC4" },
-                      { "title": "Inverse Trigonometric Functions", "url": "https://www.youtube.com/embed/rdWRwY2kEXI" },
-                      { "title": "Permutation & Combination", "url": "https://www.youtube.com/embed/rPFlUfjcakw" },
-                      { "title": "Binomial Theorem", "url": "https://www.youtube.com/embed/QMWDHOcXEQI" },
-                      { "title": "Method of Differentiation", "url": "https://www.youtube.com/embed/3JMzZR2TvhA" },
-                      { "title": "Straight Lines", "url": "https://www.youtube.com/embed/pufR8xp-CQA" },
-                      { "title": "Indefinite Integration", "url": "https://www.youtube.com/embed/7dVDuyI_8FA" },
-                      { "title": "Circles", "url": "https://www.youtube.com/embed/qcpj3jjgr6o" },
-                      { "title": "Parabola", "url": "https://www.youtube.com/embed/Nv9s38ZGPes" },
-                      { "title": "Definite Integration", "url": "https://www.youtube.com/embed/UwRAUIeoCtI" },
-                      { "title": "Differential Equation", "url": "https://www.youtube.com/embed/H1FKKjz8hsw" },
-                      { "title": "Hyperbola", "url": "https://www.youtube.com/embed/zITyahKONeg" },
-                      { "title": "Application of Integrals", "url": "https://www.youtube.com/embed/x0vMQRKTmQ0" },
-                      { "title": "Ellipse", "url": "https://www.youtube.com/embed/ZdCd1G0NDUI" },
-                      { "title": "Complex Number", "url": "https://www.youtube.com/embed/Q-AlaLN72w0" },
-                      { "title": "Limits", "url": "https://www.youtube.com/embed/JnER25G1V7o" },
-                      { "title": "Statistics", "url": "https://www.youtube.com/embed/mWa7eSpT6kg" },
-                      { "title": "Probability", "url": "https://www.youtube.com/embed/3OFuYbk-BV4" },
-                      { "title": "Continuity & Differentiability", "url": "https://www.youtube.com/embed/hsedtF2azNQ" },
-                      { "title": "Application of Derivatives", "url": "https://www.youtube.com/embed/jOVcucQLv38" }
-                    ]
-                  },
-                  {
-                    "title": "JEE Maths Playlist 1 - Neha Ma'am",
-                    "folders": ["LECTURES", "Maths", "Neha Agrawal"],
-                    "playlist": [
-                      { "title": "Sequences & Series 3.0", "url": "https://www.youtube.com/embed/VMlrlqJgWdQ" },
-                      { "title": "Matrices & Determinants 3.0", "url": "https://www.youtube.com/embed/QIbRBtoAsjE" },
-                      { "title": "Vectors & 3D Geometry 3.0", "url": "https://www.youtube.com/embed/QWo-Uy7KRp4" },
-                      { "title": "Calculus Booster Sprint", "url": "https://www.youtube.com/embed/K8fyaYIGtBE" }
-                    ]
-                  },
-                  {
-                    "title": "Eduniti Physics Sure Shot",
-                    "folders": ["LECTURES", "Physics", "Eduniti"],
-                    "playlist": [
-                      { "title": "Kinematics 2D", "url": "https://www.youtube.com/embed/_d0XU35l5jY" },
-                      { "title": "NLM", "url": "https://www.youtube.com/embed/lKgWBOMWdVU" },
-                      { "title": "Mechanics Concepts", "url": "https://www.youtube.com/embed/pg2FdPiWeCk" },
-                      { "title": "Wave Optics/YDSE", "url": "https://www.youtube.com/embed/Wzi1hBDiyVo" }
-                    ]
-                  }
+                  {"title":"Physics One-Shots (PW)","folders":["LECTURES","Physics","Physics Wallah"],"playlist":[{"title":"Basic Maths & Vectors","url":"https://www.youtube.com/embed/RAwcPN79g0Q"},{"title":"Kinematics","url":"https://www.youtube.com/embed/mpFEnSQpJ9Q"},{"title":"Laws of Motion","url":"https://www.youtube.com/embed/6HQgDO1trlM"},{"title":"Work, Energy & Power","url":"https://www.youtube.com/embed/XGce-vIcMfU"},{"title":"COM & Collision","url":"https://www.youtube.com/embed/Rh95KkMwklU"},{"title":"Rotational Motion","url":"https://www.youtube.com/embed/vmaKeSkjtGo"},{"title":"Gravitation","url":"https://www.youtube.com/embed/mE8w2uxm6XY"},{"title":"Solids & Elasticity","url":"https://www.youtube.com/embed/1xPm3vIRIGI"},{"title":"Fluid Mechanics","url":"https://www.youtube.com/embed/griSf2U_Zlk"},{"title":"SHM","url":"https://www.youtube.com/embed/myNQbAYzD5A"},{"title":"Wave Motion","url":"https://www.youtube.com/embed/PAlXOkn_Pa8"},{"title":"Thermal Properties","url":"https://www.youtube.com/embed/1nTFrbJ8Jhg"},{"title":"Thermodynamics & KTG","url":"https://www.youtube.com/embed/Ch9jLsgYIuM"},{"title":"Electrostatics","url":"https://www.youtube.com/embed/h5HIyPNRhqI"},{"title":"Capacitors","url":"https://www.youtube.com/embed/FImh-a0673s"},{"title":"Current Electricity","url":"https://www.youtube.com/embed/cjoRcywyRv0"},{"title":"Magnetism & Moving Charges","url":"https://www.youtube.com/embed/3h3OexznsA0"},{"title":"Electromagnetic Induction","url":"https://www.youtube.com/embed/ebOF14qP21k"},{"title":"AC Circuits","url":"https://www.youtube.com/embed/gziRcxMiO_Q"},{"title":"Wave Optics & EM Waves","url":"https://www.youtube.com/embed/UYfR15GpKIs"},{"title":"Ray Optics","url":"https://www.youtube.com/embed/AfPD-sHayb0"},{"title":"Semiconductors","url":"https://www.youtube.com/embed/5h5ANJnVe08"},{"title":"Communication Systems","url":"https://www.youtube.com/embed/fBqJdix2NjE"},{"title":"Modern Physics","url":"https://www.youtube.com/embed/G58QS4soCuQ"},{"title":"Atoms","url":"https://www.youtube.com/embed/AqjrqRyot6w"},{"title":"Nuclei","url":"https://www.youtube.com/embed/XJZ1PdXyJU4"},{"title":"Dual Nature","url":"https://www.youtube.com/embed/wE0xrUuJLnk"}]},
+                  {"title":"Physical Chemistry (PW)","folders":["LECTURES","Chemistry","Physics Wallah"],"playlist":[{"title":"Mole Concept","url":"https://www.youtube.com/embed/CAb8YZKLoac"},{"title":"Atomic Structure","url":"https://www.youtube.com/embed/f6ENSghG7T4"},{"title":"States of Matter","url":"https://www.youtube.com/embed/8oypjDXAXZc"},{"title":"Thermodynamics","url":"https://www.youtube.com/embed/GplPceRaMi0"},{"title":"Chemical Equilibrium","url":"https://www.youtube.com/embed/NwCmoh7Vd9g"},{"title":"Ionic Equilibrium","url":"https://www.youtube.com/embed/BceSksiNLD4"},{"title":"Redox Reactions","url":"https://www.youtube.com/embed/1W-UvePUAKo"},{"title":"Chemical Kinetics","url":"https://www.youtube.com/embed/kwPNxC9AgZA"},{"title":"Solutions","url":"https://www.youtube.com/embed/7OkNy8vhDaw"}]},
+                  {"title":"Inorganic Chemistry (PW)","folders":["LECTURES","Chemistry","Physics Wallah"],"playlist":[{"title":"Periodic Table","url":"https://www.youtube.com/embed/nLE7_YBFQNQ"},{"title":"Chemical Bonding","url":"https://www.youtube.com/embed/kS8s_WX0IlY"},{"title":"Coordination Compounds","url":"https://www.youtube.com/embed/5myJzBeN514"},{"title":"P-Block Elements","url":"https://www.youtube.com/embed/b0k5LOk_uPk"},{"title":"D & F-Block Elements","url":"https://www.youtube.com/embed/SjILQ6cX_Vo"},{"title":"Salt Analysis","url":"https://www.youtube.com/embed/8rRnn4ECwXI"}]},
+                  {"title":"Organic Chemistry (PW)","folders":["LECTURES","Chemistry","Physics Wallah"],"playlist":[{"title":"IUPAC Nomenclature","url":"https://www.youtube.com/embed/A2QTsYu3fWo"},{"title":"GOC","url":"https://www.youtube.com/embed/FFCT-lh86tA"},{"title":"Isomerism","url":"https://www.youtube.com/embed/UOzWO2-Z9So"},{"title":"Hydrocarbons","url":"https://www.youtube.com/embed/02CBTEOMMsA"},{"title":"Haloalkanes & Haloarenes","url":"https://www.youtube.com/embed/7iJFvPI8vMM"},{"title":"Alcohols, Phenols & Ethers","url":"https://www.youtube.com/embed/IDo8B0c5Xis"},{"title":"Aldehydes, Ketones & Acids","url":"https://www.youtube.com/embed/oR19BqbPBu4"},{"title":"Amines","url":"https://www.youtube.com/embed/SKHrfD34Kkc"},{"title":"Biomolecules","url":"https://www.youtube.com/embed/LcVNwEWJtyI"}]},
+                  {"title":"Mathematics (PW)","folders":["LECTURES","Maths","Physics Wallah"],"playlist":[{"title":"Basic Maths","url":"https://www.youtube.com/embed/Z5uGIO_11vM"},{"title":"Determinants","url":"https://www.youtube.com/embed/uhq_WUNlvh8"},{"title":"Trigonometric Ratios & Identities","url":"https://www.youtube.com/embed/DitLpxy6V48"},{"title":"Vectors","url":"https://www.youtube.com/embed/FsTlbTQyuJ0"},{"title":"Quadratic Equations","url":"https://www.youtube.com/embed/iLIPlvjDkPU"},{"title":"Matrices","url":"https://www.youtube.com/embed/2YFQIFQmPmw"},{"title":"Sets","url":"https://www.youtube.com/embed/SOXQuRrgJHo"},{"title":"3D Geometry","url":"https://www.youtube.com/embed/t_RMMkiYj4g"},{"title":"Sequence & Series","url":"https://www.youtube.com/embed/CVG9PcraP1k"},{"title":"Relations & Functions","url":"https://www.youtube.com/embed/Qs0wRt70mC4"},{"title":"Inverse Trigonometric Functions","url":"https://www.youtube.com/embed/rdWRwY2kEXI"},{"title":"Permutation & Combination","url":"https://www.youtube.com/embed/rPFlUfjcakw"},{"title":"Binomial Theorem","url":"https://www.youtube.com/embed/QMWDHOcXEQI"},{"title":"Method of Differentiation","url":"https://www.youtube.com/embed/3JMzZR2TvhA"},{"title":"Straight Lines","url":"https://www.youtube.com/embed/pufR8xp-CQA"},{"title":"Indefinite Integration","url":"https://www.youtube.com/embed/7dVDuyI_8FA"},{"title":"Circles","url":"https://www.youtube.com/embed/qcpj3jjgr6o"},{"title":"Parabola","url":"https://www.youtube.com/embed/Nv9s38ZGPes"},{"title":"Definite Integration","url":"https://www.youtube.com/embed/UwRAUIeoCtI"},{"title":"Differential Equation","url":"https://www.youtube.com/embed/H1FKKjz8hsw"},{"title":"Hyperbola","url":"https://www.youtube.com/embed/zITyahKONeg"},{"title":"Application of Integrals","url":"https://www.youtube.com/embed/x0vMQRKTmQ0"},{"title":"Ellipse","url":"https://www.youtube.com/embed/ZdCd1G0NDUI"},{"title":"Complex Number","url":"https://www.youtube.com/embed/Q-AlaLN72w0"},{"title":"Limits","url":"https://www.youtube.com/embed/JnER25G1V7o"},{"title":"Statistics","url":"https://www.youtube.com/embed/mWa7eSpT6kg"},{"title":"Probability","url":"https://www.youtube.com/embed/3OFuYbk-BV4"},{"title":"Continuity & Differentiability","url":"https://www.youtube.com/embed/hsedtF2azNQ"},{"title":"Application of Derivatives","url":"https://www.youtube.com/embed/jOVcucQLv38"}]},
+                  {"title":"JEE Maths Playlist 1 - Neha Ma'am","folders":["LECTURES","Maths","Neha Agrawal"],"playlist":[{"title":"Sequences & Series 3.0","url":"https://www.youtube.com/embed/VMlrlqJgWdQ"},{"title":"Matrices & Determinants 3.0","url":"https://www.youtube.com/embed/QIbRBtoAsjE"},{"title":"Vectors & 3D Geometry 3.0","url":"https://www.youtube.com/embed/QWo-Uy7KRp4"},{"title":"Calculus Booster Sprint","url":"https://www.youtube.com/embed/K8fyaYIGtBE"}]},
+                  {"title":"Eduniti Physics Sure Shot","folders":["LECTURES","Physics","Eduniti"],"playlist":[{"title":"Kinematics 2D","url":"https://www.youtube.com/embed/_d0XU35l5jY"},{"title":"NLM","url":"https://www.youtube.com/embed/lKgWBOMWdVU"},{"title":"Mechanics Concepts","url":"https://www.youtube.com/embed/pg2FdPiWeCk"},{"title":"Wave Optics/YDSE","url":"https://www.youtube.com/embed/Wzi1hBDiyVo"}]}
                 ];
 
                 const rawFiles = [
-                  {"title":"Physics ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1tA2TE6nY8pEqxymkj734VSv-dcn7tev1/preview"},
-                  {"title":"Mathematics ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1fyN6TqNl54WI1XZkFHiG34Q7HqNOPHrB/preview"},
-                  {"title":"Chemistry ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1nsO5H549jvYWkeyYWcEeegSqJeo8QfRA/preview"},
                   {"title":"PW Old Test Series","folders":["IIT-JEE","COACHINGS","PW"],"url":"https://drive.google.com/file/d/1Emnjudx3tfSJct8--uQ2z26TZj86H7oJ/preview"},
-                  {"title":"Allen Physics Module WEP","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1xULnniKoj59JwLEi8AXJv4n51UiACQiS/preview"},
-                  {"title":"Allen Physics Module Wave Optics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1AgKut73Qr_Du05cELF2hGcl8x8NORcjD/preview"},
-                  {"title":"Allen Physics Module Kinematics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1bvIu_ADongu9euU_IG8gmI7gJRlbwTQL/preview"},
-                  {"title":"Allen Physics Module Rotational Motion","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/136jvz4DUPwgFqVVoUbCL5yUVKoDMG_tS/preview"},
+                  {"title":"PW NSEP","folders":["IIT-JEE","COACHINGS","PW"],"url":"https://drive.google.com/file/d/17FzVNq7ElEJX8ew_Irk4fEv4av-in3m2/preview"},
+                  {"title":"Physics ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1tA2TE6nY8pEqxymkj734VSv-dcn7tev1/preview"},
+                  {"title":"Physics Archive - JEE (Main) Solutions","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1BUioz6yZGETzjsLuR4XKlKDO40bERoc_/preview"},
+                  {"title":"Mathematics ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1fyN6TqNl54WI1XZkFHiG34Q7HqNOPHrB/preview"},
+                  {"title":"Mathematics Archive - JEE (Main) Solutions","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1zGri0N_oUEbrm3qWvB0ik_6YUAaHUfjt/preview"},
+                  {"title":"Chemistry ARCHIVE - JEE (Main)","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/1nsO5H549jvYWkeyYWcEeegSqJeo8QfRA/preview"},
+                  {"title":"Chemistry Archive - JEE (Main) Solutions","folders":["IIT-JEE","COACHINGS","AAKASH Archives"],"url":"https://drive.google.com/file/d/19o6UQZCp7FMyQmyg8IXLb2iJjVTk5oU-/preview"},
+                  {"title":"R S Aggarwal Senior Secondary School","folders":["IIT-JEE","SUBJECTS","Maths Special"],"url":"https://drive.google.com/file/d/1roqhcr9mEw2tthlhfZ28uBtbAQeDOCJa/preview"},
                   {"title":"Black Book Algebra (Vikas Gupta)","folders":["IIT-JEE","SUBJECTS","Maths Special"],"url":"https://drive.google.com/file/d/14HukOgsh19UCXfpHXVWA1a7yPurM8rRl/preview"},
-                  {"title":"R S Aggarwal","folders":["IIT-JEE","SUBJECTS","Maths Special"],"url":"https://drive.google.com/file/d/1roqhcr9mEw2tthlhfZ28uBtbAQeDOCJa/preview"},
-                  {"title":"Solomon's Organic Chem","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1hii-MGmLGPfE1990P6xQ2l56MbjSah-B/preview"},
-                  {"title":"M.S. Chauhan Balaji (Organic)","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/115SVTrs9sXRaYRK6Rz7EEoKw5k7sPUZu/preview"},
                   {"title":"VK Jaiswal Inorganic Chemistry","folders":["IIT-JEE","SUBJECTS","Inorganic Chemistry Special Books"],"url":"https://drive.google.com/file/d/14EVwhdkYYjFDfNiSbh3pWNN_wSF5DFUF/preview"},
-                  {"title":"Atkins’ Physical Chemistry","folders":["IIT-JEE","PUBLICATIONS","Peter Atkins"],"url":"https://drive.google.com/file/d/19hXU7_-5tREW2DZXby1i_P_NmJpoDoc4/preview"},
-                  {"title":"DC Pandey Mechanics Volume-1","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1JQQoDETXifTl9ncORgpeb2Vnqf2GiVIn/preview"},
-                  {"title":"Concept of Physics HC Verma Vol 1","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1lfFiGEUvj2_EWi4L08z-Gnwumbs9r9Cf/preview"},
-                  {"title":"Mechanics Physics Galaxy","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1hha9C9UpP2H76_VYW47xIFRT_PpysWnA/preview"},
-                  {"title":"Irodov Problems","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1ZBLPSV2lvNyYEIsEdsS47uMWN4yZfzFR/preview"},
+                  {"title":"Inorganic Chemistry V Joshi Cengage","folders":["IIT-JEE","SUBJECTS","Inorganic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1ViSbCC3isEKL3_0_p_PxPvKTI8F1ql2k/preview"},
+                  {"title":"SOLUTIONS OF HIMANSHU PANDEY","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1cj7cIJaixw7mKwWQog8-H4WM-onicEqG/preview"},
+                  {"title":"Solomon's","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1hii-MGmLGPfE1990P6xQ2l56MbjSah-B/preview"},
+                  {"title":"Paula Yurkanis Bruice Organic Chemistry","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1q4o5H1pwVAvNfdC7tG_PYSYPEgD0jz9b/preview"},
+                  {"title":"organic chemistry Peter Sykes","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1PjWDWfqgEAM1a8UE12AwZspAnUPyusp2/preview"},
+                  {"title":"Morrison & Boyd - Organic Chemistry","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1D5_Ah31gmm72wlN_y3U3RNr8rHil_jyz/preview"},
+                  {"title":"Himanshu Pandey Organic","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1e6M1o-aL3_ljsS_-ez4yGOtaYoSczRUo/preview"},
+                  {"title":"francis a carey Organic Chemistry","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1rKh__FNDRyVxPesr7TYAswazlEK-2LXJ/preview"},
+                  {"title":"Black Book (Ashish Mishra)","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books"],"url":"https://drive.google.com/file/d/1WhdfQp2HibUelWv0IPBz6lkeEN0QM3eE/preview"},
+                  {"title":"Physical Chemistry (P Bahadur)","folders":["IIT-JEE","SUBJECTS","Physical Chemistry Special Books"],"url":"https://drive.google.com/file/d/1KRwuBmQUI-2sBqtjdAFVcTZmFhEOJY1Q/preview"},
+                  {"title":"Physical Chemistry - Narendra Avasthi","folders":["IIT-JEE","SUBJECTS","Physical Chemistry Special Books"],"url":"https://drive.google.com/file/d/1UdvBPQyfuyqNAw3lUnIj4_yxTRF33H8y/preview"},
+                  {"title":"Narendra Awasti Physical Chemistry","folders":["IIT-JEE","SUBJECTS","Physical Chemistry Special Books"],"url":"https://drive.google.com/file/d/12ZA84qXWPZM6Mh4eBxIoprhNXBgmV42v/preview"},
+                  {"title":"Olympiad Arvind Tiwari","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1ZPdcFAif6rlZhuU4Ei9_6zt1uTPcmYGy/preview"},
+                  {"title":"DC Pandey Arihant","folders":["IIT-JEE","SUBJECTS","Physics Specials"],"url":"https://drive.google.com/file/d/1FHuoAZrC36sUKKAy3PuHZaEeo_fknDbx/preview"},
                   {"title":"Physics ARS Class 12","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/17BOjGk1HO_KZdGKgjItlTag18Wens8vS/preview"},
+                  {"title":"Physics ARS Class 11","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/1eNXeL3ohXrm0XTGgX3kdZ3RT7h2BO08P/preview"},
                   {"title":"Chemistry ARS Class 12","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/10j6hRd8tt5za9bDqUBkR0Q9U4NIAp91v/preview"},
+                  {"title":"Chemistry ARS Class 11","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/1qytl9OdIW30ijDavvvfSaHZdb9_N_npp/preview"},
+                  {"title":"Mathematics flashcards","folders":["IIT-JEE","EXTRAS","Flashcards"],"url":"https://drive.google.com/file/d/1dsp04rVqxjgFsUnXHTOttmUVPSYgvfXE/preview"},
                   {"title":"JEE physics formula booklet","folders":["IIT-JEE","EXTRAS","Formula BOOKLET"],"url":"https://drive.google.com/file/d/1-DkwbSvzoYBKtXvx0IUMfYyzur9XcoOv/preview"},
-                  {"title":"Wave Optics Mind Map","folders":["IIT-JEE","MATHANGO","Physics","Mind Maps"],"url":"https://drive.google.com/file/d/1QB0PLEzhrDZhIYTsdJtNmxCcbMIfCLEY/preview"},
-                  {"title":"Current Electricity Mind Map","folders":["IIT-JEE","MATHANGO","Physics","Mind Maps"],"url":"https://drive.google.com/file/d/1grDB6mhvKpyLA-NEKoHOAmWxMxJiOTJu/preview"},
-                  {"title":"Rotational Motion PYQs","folders":["IIT-JEE","MATHANGO","Physics","PYQ Sheet"],"url":"https://drive.google.com/file/d/1Gek3AJY2n8bi1b-obkeKoRcsB-NmgsHU/preview"},
-                  {"title":"Vector Algebra PYQs","folders":["IIT-JEE","MATHANGO","Maths","PYQ Practice Sheet"],"url":"https://drive.google.com/file/d/16SMV2RATtOHdgjIztbZaHF7fMz_KP601/preview"},
-                  {"title":"1. Geometrical Optics Part 1 Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Optics and Modern Physics"],"url":"https://drive.google.com/file/d/1fTPaLB8OpXfkSFsQSvjkUmSqleIAfsD3/preview"},
+                  {"title":"JEE maths formula booklet","folders":["IIT-JEE","EXTRAS","Formula BOOKLET"],"url":"https://drive.google.com/file/d/1BvvhnHsZ_L-vCKBxVXE1V77ZmGf-Zcfx/preview"},
+                  {"title":"JEE chemistry formula booklet","folders":["IIT-JEE","EXTRAS","Formula BOOKLET"],"url":"https://drive.google.com/file/d/1Fp3O8J-Oy82ZBLkkl3cHQtryWx_lGjm-/preview"},
+                  {"title":"PHYSICS CONCEPT MAP CLASS 11 AND 12","folders":["IIT-JEE","EXTRAS","Concept Maps"],"url":"https://drive.google.com/file/d/15XEURyXYGyUZz8n3BuJ5tYlf2ELzoWhN/preview"},
+                  {"title":"Maths","folders":["IIT-JEE","EXTRAS","Concept Maps"],"url":"https://drive.google.com/file/d/1s31K47z09kgoV9i6wRB1EMsrk5L5r9kJ/preview"},
+                  {"title":"CHEMISTRY CONCEPT MAP","folders":["IIT-JEE","EXTRAS","Concept Maps"],"url":"https://drive.google.com/file/d/1FCQot9abtW3KHHXPXt1NKper9xmSQ_IJ/preview"},
+                  {"title":"Physical Chemhack","folders":["IIT-JEE","EXTRAS","Hack Books"],"url":"https://drive.google.com/file/d/1GLBEHS_DRrWU6g-BBWjCdaUZtoxxvrlo/preview"},
+                  {"title":"Organic Chemhack","folders":["IIT-JEE","EXTRAS","Hack Books"],"url":"https://drive.google.com/file/d/1qsfoK7ythXDqGEorVHwRUbksblQcaGK7/preview"},
+                  {"title":"Inorganic Chemhack","folders":["IIT-JEE","EXTRAS","Hack Books"],"url":"https://drive.google.com/file/d/1ngAepRgoe4coWeyVrWIPvYXkAs2a5Q37/preview"},
+                  {"title":"13 circle formula sheets quizrr","folders":["IIT-JEE","MATHANGO","Maths"],"url":"https://drive.google.com/file/d/1r73gdV_DUtfS2kulxLeL7qu9ncRjL5rZ/preview"},
+                  {"title":"16 hyperbola formula sheets quizrr","folders":["IIT-JEE","MATHANGO","Maths"],"url":"https://drive.google.com/file/d/1i-cNgjD9mlyarv41Gj0lcsU64pT16dWb/preview"},
+                  {"title":"15 ellipse formula sheets quizrr","folders":["IIT-JEE","MATHANGO","Maths"],"url":"https://drive.google.com/file/d/1h3UxZkXLsInP5twudypkqQMsZsTNosC3/preview"},
+                  {"title":"14 parabola formula sheets quizrr","folders":["IIT-JEE","MATHANGO","Maths"],"url":"https://drive.google.com/file/d/1i48fYdaF7TpgukFDWwgp0ZJu0c1TP6k6/preview"},
+                  {"title":"12 straight line formula sheets quizrr","folders":["IIT-JEE","MATHANGO","Maths"],"url":"https://drive.google.com/file/d/1iHl_cWsgpJr7GwdsovIecjdDsijZYkji/preview"},
+                  {"title":"Arihant NCERT Exemplar Chemistry Class 11","folders":["IIT-JEE","PUBLICATIONS","Arihant NCERT Exemplar"],"url":"https://drive.google.com/file/d/1iNrIddzztR5L7ThGy8jBl5QKyID0wm-s/preview"},
+                  {"title":"Arihant NCERT Examplar Physics 12th","folders":["IIT-JEE","PUBLICATIONS","Arihant NCERT Exemplar"],"url":"https://drive.google.com/file/d/1C_-y17T_C8r2SxFpzTFbrthcUSu8-lxd/preview"},
+                  {"title":"Arihant NCERT Examplar Physics 11th","folders":["IIT-JEE","PUBLICATIONS","Arihant NCERT Exemplar"],"url":"https://drive.google.com/file/d/17FKg-WbCUzAAc8TV0WffFc-ok13RGOdC/preview"},
+                  {"title":"Arihant NCERT Examplar Chemistry 12th","folders":["IIT-JEE","PUBLICATIONS","Arihant NCERT Exemplar"],"url":"https://drive.google.com/file/d/1hFAygxNOviiMaCvM4yiIHFSrtaTbY3qo/preview"},
+                  {"title":"Balaji Chapter 1 to 5 Problems in Inorganic Chemistry by V K Jaiswal","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/1cVxrUcFMK2aJllzUK8ViDj74dtfGG29x/preview"},
+                  {"title":"Mechanic 1","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/16_E0svoHAIVwOVyGs_eYGLfkwUmA2V7I/preview"},
+                  {"title":"Mechanic 2","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/1UIs_hN81GY2Xit5WmMC1qdQzZkEco3Go/preview"},
+                  {"title":"Heat and thermodynamics","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/1ADZ4qWz6ePnRDgdbnzkZCvQaBO62jfSE/preview"},
+                  {"title":"Electricity and magnetism","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/1fLkEHAhL6G2gLNerXptG28du_aw8g3Wz/preview"},
+                  {"title":"Optics","folders":["IIT-JEE","PUBLICATIONS","Balajji"],"url":"https://drive.google.com/file/d/1Gqwmwzbzx-YFmFLOl9L4yYkmY3092oj3/preview"},
+                  {"title":"OP Tandon Physical Chemistry","folders":["IIT-JEE","PUBLICATIONS","OP Tandon Chemistry"],"url":"https://drive.google.com/file/d/1BjVJ3cgl-zJ2g7sRZX_yjwD8F_haDfeO/preview"},
+                  {"title":"OP Tandon Organic Chemistry","folders":["IIT-JEE","PUBLICATIONS","OP Tandon Chemistry"],"url":"https://drive.google.com/file/d/15E5y97s7eVP58qOeWrZ5lxP2GZm5fZB7/preview"},
+                  {"title":"OP Tandon Inorganic Chemistry","folders":["IIT-JEE","PUBLICATIONS","OP Tandon Chemistry"],"url":"https://drive.google.com/file/d/1XZanxWEG2TsT_POpaTbXuOPixM2s5MgQ/preview"},
+                  {"title":"SL ARORA VOL1","folders":["IIT-JEE","PUBLICATIONS","SL Arora"],"url":"https://drive.google.com/file/d/1v4JvrzVXLQtgw6WtF7fFxLB08mrgB_uK/preview"},
+                  {"title":"SL Arora physics class 11 vol 2","folders":["IIT-JEE","PUBLICATIONS","SL Arora"],"url":"https://drive.google.com/file/d/1jn25_vru7vVN8sgyLmgcIZ7a7vTgneNf/preview"},
+                  {"title":"Sl arora class 11 vol 1","folders":["IIT-JEE","PUBLICATIONS","SL Arora"],"url":"https://drive.google.com/file/d/1Jr1rg9CcY5oZs2oJcwuuRb305NIs1zGp/preview"},
+                  {"title":"Physical Chemistry","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/17FnHP3oDcSRJLMB_H2Q0uOT8HRYxgHxv/preview"},
+                  {"title":"Organic Chemistry","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1Cubh3dtmY0pfn_CCKiviLpHVLCkNkYWP/preview"},
+                  {"title":"Mechanics 2","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1tyZDM0UdWPUtIvS5gS6PKuNV6A5RxMXp/preview"},
+                  {"title":"Mechanics 1","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1gqP-xjVwGICiS8jnYqfEd6Ipi2Z-iwcn/preview"},
+                  {"title":"Inorganic Chemistry","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1vf0Adva2_Feqhs0rR7M6xBxHe_gjLlMK/preview"},
+                  {"title":"Algebra 2","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1FRAz5Dul21yUreQKo1hyFln1hah9fETU/preview"},
+                  {"title":"Algebra 1","folders":["IIT-JEE","PUBLICATIONS","PEARSON"],"url":"https://drive.google.com/file/d/1ujiYp-EotfHKQ02MQa_jXQjfeq6ssZX-/preview"},
+                  {"title":"Inorganic Chem atkins","folders":["IIT-JEE","PUBLICATIONS","Peter Atkins"],"url":"https://drive.google.com/file/d/19b8owDcaoGdLtw8KdTojTvOj7fQfsAf7/preview"},
+                  {"title":"Atkins’ Physical Chemistry","folders":["IIT-JEE","PUBLICATIONS","Peter Atkins"],"url":"https://drive.google.com/file/d/19hXU7_-5tREW2DZXby1i_P_NmJpoDoc4/preview"},
+                  {"title":"Atkins Physical chemistry","folders":["IIT-JEE","PUBLICATIONS","Peter Atkins"],"url":"https://drive.google.com/file/d/14nIpxww7-Kja4lko8javBmg5qF6QBCBn/preview"},
+                  {"title":"Disha Physics 500 BlockBuster Problems for JEE Advanced","folders":["IIT-JEE","PUBLICATIONS","Disha"],"url":"https://drive.google.com/file/d/13bL7HPqEXVKYu8MoHFibyqIs_acSbtUn/preview"},
+                  {"title":"Disha Mathematics 500 BlockBuster Problems for JEE Advanced","folders":["IIT-JEE","PUBLICATIONS","Disha"],"url":"https://drive.google.com/file/d/1r6wsZ8B3W4RAh77vYzyaCDPk3w0Gz5PK/preview"},
+                  {"title":"Disha Chemistry 500 BlockBuster Problems for JEE Advanced","folders":["IIT-JEE","PUBLICATIONS","Disha"],"url":"https://drive.google.com/file/d/1ayE4jrU-VMELw7wxIfVwTKGutS2cYcbD/preview"},
+                  {"title":"Wiley maths class 12","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/1bGyEToUBtStKgrvd0VbRYFllmf84mpDG/preview"},
+                  {"title":"Wiley Maths 2","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/190nwPG0oqYCgZciDGxKWw3EAvpaWFTqx/preview"},
+                  {"title":"Wiley Maths 11","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/1M9e1BnvzslFPe7BTn7YLWI4R6Z-AP7We/preview"},
+                  {"title":"Wiley Maths 1","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/1T_CqRlFIEF-1phkyVQi25wsXzEXZIKQe/preview"},
+                  {"title":"Wiley Geometry","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/10CHORKTj0VKfslxMNn-LwX1EucsKLsZI/preview"},
+                  {"title":"Wiley Algebra","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/1f8_Ad-cueHWAaKGN0pRTgp5LlVmKq7xZ/preview"},
+                  {"title":"Calculas","folders":["IIT-JEE","PUBLICATIONS","Wiley"],"url":"https://drive.google.com/file/d/17AIeddxg7BHxVKnY1dwn6FSyrtLmoPVN/preview"},
+                  {"title":"leph206","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/15zJ4nmakh1oiVsbBOAqxBJo5Gc7dl97Q/preview"},
+                  {"title":"leph205","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1hqV2BZl1_X6HcadQoz-fT5RJWPEcxsbF/preview"},
+                  {"title":"leph204","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1Br5FOhX71xO5wOqRAMsx_85g9Fa0xKe7/preview"},
+                  {"title":"leph203","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/153v6X_XboAx2YHh2_9J8nCUzutEfzYgX/preview"},
+                  {"title":"leph202","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1hPuacGILKRefl0lj1hwp8FPt7X_HL5Bb/preview"},
+                  {"title":"leph201","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1l1jMCBlre3j7c9u3Qn2x3PTghJS2QlsA/preview"},
+                  {"title":"leph108","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1K8NrfRZ-Y67NB-zQx6MUgOwrQE-U6AtW/preview"},
+                  {"title":"leph107","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1m3KP0bs3QMK75H8FJ5EYNoiDpUmrueDK/preview"},
+                  {"title":"leph106","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/176bMRG-1D2XOT9fBtNYX45eRVqZH-6WP/preview"},
+                  {"title":"leph105","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/121awrY83XfnbSlPPqypGudJfoBBJyNCs/preview"},
+                  {"title":"leph104","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1VeWQQIG0VZJ7cpXguplJj9JyUF7rrNxF/preview"},
+                  {"title":"leph103","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/16-3OGqy8bndGAKQ37g0dj0sKw8g_0Z2M/preview"},
+                  {"title":"leph102","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1P0oPdl46DdAw55eJBGuwwi10Xr-j1gaQ/preview"},
+                  {"title":"leph101","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1j-X7p6B7DlIoAHgH_h1auQef6J0pmUn1/preview"},
+                  {"title":"Jee Main Physics Syllabus","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1Icw61aNVJ_1MKfumgYQHwShdrFmdsudM/preview"},
+                  {"title":"lech205","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/18vKrFaRicotPCj7NN4BqOQZuOko9OBYx/preview"},
+                  {"title":"lech204","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1v7sqHRUdVivyTgEIFwI91krpufwF7IX6/preview"},
+                  {"title":"lech203","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1dTvdqgFN3nkKkvWosgmTcPDu4m08kmRP/preview"},
+                  {"title":"lech202","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1smH_l4qUHyXbRtLQW5dwAQdUnjBywvPt/preview"},
+                  {"title":"lech201","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1GsKv2-M3gAmhS8Iumc9VTC16tG-xrwfP/preview"},
+                  {"title":"lech105","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1kBmgy--Mmo2rveZ0SUFHp7LjT9c3YGoD/preview"},
+                  {"title":"lech104","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/113CKLW8AlDDFRFlUDnJNLJYk6VqNI0H_/preview"},
+                  {"title":"lech103","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1qvA5UChSUsgOfCf29E-oc7RCW1on45Ke/preview"},
+                  {"title":"lech102","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1C52qs9JSBmYR28R7VyGPR-kFluoAhMb5/preview"},
+                  {"title":"lech101","folders":["IIT-JEE","NCERT","Chemistry"],"url":"https://drive.google.com/file/d/1Cf_qeBqmZJFcIRh7EDsMNyOjI1sNQ6gN/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Physics","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1Nyv7aLN-adqKzgy2hDsBBaeKL3c1qjX5/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Physics (2)","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1yZ0ftszCR5v1kdFtZrGBkWJVzgHlsaUj/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Mathematics","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1tTwjo7ypQPXOdDz40NZBhoboBz2V-kvP/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Mathematics (2)","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1MQXIlmT0jAKsKUjuneoP8Kni5R4Z-s3c/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Chemistry","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1o4tatzPu-6nu81RTSmuGPP88nhcThUGA/preview"},
+                  {"title":"JEE 47 Years JEE Advanced Chemistry (2)","folders":["IIT-JEE","COACHINGS","PW","47 Year JEE"],"url":"https://drive.google.com/file/d/1YmMXSuSpO4fHnHpI4_4a__IMLMUlTAyw/preview"},
+                  {"title":"WEP","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1xULnniKoj59JwLEi8AXJv4n51UiACQiS/preview"},
+                  {"title":"wave optics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1AgKut73Qr_Du05cELF2hGcl8x8NORcjD/preview"},
+                  {"title":"WAVE MOTION","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1eG_N2BL6hjIC3OynNeZi5ZcotCPm3uJ_/preview"},
+                  {"title":"Ray Optics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1ZT2CcRbV4mEbkN1bPxKFgU1l9RrD5nMK/preview"},
+                  {"title":"SHM","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/11o5EqW3f92OecPIfc0E1tF4G83uFcCHE/preview"},
+                  {"title":"thermal physics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1T-W2u2GcdqdQh6PSb25QEMTv-daahqIb/preview"},
+                  {"title":"semiconductor","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1p_sPdnFMSbiskCEW173UfbPUv1kTporN/preview"},
+                  {"title":"Physics Module 4 solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1A3I8A7r3ckWxEw075RWTa0qyb0mK30nM/preview"},
+                  {"title":"rotational motion","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/136jvz4DUPwgFqVVoUbCL5yUVKoDMG_tS/preview"},
+                  {"title":"Physics Module 2 Solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/198VWd_BR43sRxYq27am8gVdeDHbepYHj/preview"},
+                  {"title":"Physics Module 1 Solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1q0fUx3x2k6xNS-6XHmHYWorrG3eT-jsZ/preview"},
+                  {"title":"Physics Module 5 Solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1Ff63q0W-8a5lgMDdaEX5FmYmV1gESgig/preview"},
+                  {"title":"NLM","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/12rGR_t0rbAalfcvS1liHgCg6ZzFtMads/preview"},
+                  {"title":"modern physics 2","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1etQgEfaN6scWlBWbQZUVEbs4MEyZ5Mm1/preview"},
+                  {"title":"modern physics 3","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1w_FE2VeGKv6QJJzvFlaZAvjdQvA8kOVp/preview"},
+                  {"title":"Magnetism Module","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1Pr7AiY_flRQmZaOSaWWzsowJjF1fxENM/preview"},
+                  {"title":"Physical World Unit Dimensions Error","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1h-yY0G0jYXm5hzF0ZEgEqL_WfOyHzrXv/preview"},
+                  {"title":"modern physics 1","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1r9t3BAWQukY9-5hWNXh-qr2uQP1jF1sU/preview"},
+                  {"title":"kinematics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1bvIu_ADongu9euU_IG8gmI7gJRlbwTQL/preview"},
+                  {"title":"EMI","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1OaJElTRy0gWn3dy9UZWsH-ima3ILqEwE/preview"},
+                  {"title":"gravitation","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1JT3wytjJjJBZGd7EV7emA563Csu0GDXz/preview"},
+                  {"title":"electrostatics","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/17-pl-QrrvuyCpF2QvbNfjdEV32sTYub1/preview"},
+                  {"title":"current electricity","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1nxzaSZaLEzj22bJ3bgJqPONYEbf2_EmF/preview"},
+                  {"title":"com collision","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1HbRjHRtmO5NmvOwYlqjbFwUbexvxa6AO/preview"},
+                  {"title":"Circular motion","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1I7p3siljsC5rOZA7yeNK7Q1cNbbqszqE/preview"},
+                  {"title":"capacitor","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1S4CT-NdklfwBsOPdfSCfYJmOczVA6U0Z/preview"},
+                  {"title":"basic math","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1odngS2g1Owh-K0JqTyI1Z_GayO8dBRCq/preview"},
+                  {"title":"Alternating current","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1kT2AWWti5Gg2_AwZz5KvLJCCBqKwUTye/preview"},
+                  {"title":"ALLEN PHYSICS RACE SOLUTIONS-2021","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/178xaPf58qPmEyPLq401YQX2muFGklp9G/preview"},
+                  {"title":"ALLEN PHYSICS RACE 2021","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1G_Ol5DxwFLjcBgAsxU9AavQf74_wRRcm/preview"},
+                  {"title":"Physics Module 6 Solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1EgwquKwScWV7UskP7SWkPTOM5z35ynHz/preview"},
+                  {"title":"Physics Module 03 Solution","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/19TI7oxTCgwqEjctBywBLCVPcBYPzVwOp/preview"},
+                  {"title":"EM WAVES","folders":["IIT-JEE","COACHINGS","ALLEN","Allen Physics Module"],"url":"https://drive.google.com/file/d/1SsTDpQ5XAPvW6UkFlN6UDgw2c1zO7Qte/preview"},
+                  {"title":"RD Sharma XI","folders":["IIT-JEE","SUBJECTS","Maths Special","RD Sharma"],"url":"https://drive.google.com/file/d/1snOvRMYYpvUahT1t0sX7Nw68WqF1T90D/preview"},
+                  {"title":"RD sharma class 12 volume 2","folders":["IIT-JEE","SUBJECTS","Maths Special","RD Sharma"],"url":"https://drive.google.com/file/d/1k7B2x5zJHH0vhgdnv8Oz4XfYI19oAcaA/preview"},
+                  {"title":"Class 12 RD Sharma part 1","folders":["IIT-JEE","SUBJECTS","Maths Special","RD Sharma"],"url":"https://drive.google.com/file/d/1_Cb3iKjkK2u22khee5pUWvkPcU5jmt6s/preview"},
+                  {"title":"Sameer Bansal Solutions","folders":["IIT-JEE","SUBJECTS","Maths Special","Sameer Bansal"],"url":"https://drive.google.com/file/d/1a1jjWj4RAK_mGzvFgz73QgbAQqxEYJhk/preview"},
+                  {"title":"Sameer Bansal (Calculus)","folders":["IIT-JEE","SUBJECTS","Maths Special","Sameer Bansal"],"url":"https://drive.google.com/file/d/1sUQhmwzAfYqy0YT5-G0orjauv_iKsb4s/preview"},
+                  {"title":"Organic chemistry 2 for JEE Mc graw hill","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books","Mc Graw Hill"],"url":"https://drive.google.com/file/d/1_E18uvHE6w4zF_Eyt5uW2KE0dKmxjQv4/preview"},
+                  {"title":"Organic chemistry 1 for JEE Mc graw hill","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books","Mc Graw Hill"],"url":"https://drive.google.com/file/d/1DE6mNtrS-8EzDzUXS58SnrmNVEnRMRbk/preview"},
+                  {"title":"M.S. Chauhan Balaji (Organic)","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books","M.S. Chauhan"],"url":"https://drive.google.com/file/d/115SVTrs9sXRaYRK6Rz7EEoKw5k7sPUZu/preview"},
+                  {"title":"M.S. Chauhan Balaji (Organic) (Solutions)","folders":["IIT-JEE","SUBJECTS","Organic Chemistry Special Books","M.S. Chauhan"],"url":"https://drive.google.com/file/d/1F1ynJktB7ttYPK9sZcchgQTP6N4CS3ct/preview"},
+                  {"title":"Solutions to Irodov 2","folders":["IIT-JEE","SUBJECTS","Physics Specials","Irodov"],"url":"https://drive.google.com/file/d/1meHmYWdgfkLEtC46sjHQBzoa-D1IC_FG/preview"},
+                  {"title":"Solutions to Irodov 1","folders":["IIT-JEE","SUBJECTS","Physics Specials","Irodov"],"url":"https://drive.google.com/file/d/1F3W_Qw7VESf-Vfl4r_ZS9TNaaLXbf2rj/preview"},
+                  {"title":"Irodov","folders":["IIT-JEE","SUBJECTS","Physics Specials","Irodov"],"url":"https://drive.google.com/file/d/1ZBLPSV2lvNyYEIsEdsS47uMWN4yZfzFR/preview"},
+                  {"title":"DC Pandey Waves And Thermodynamics","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/100JwDyaIhuEqSxTSr8K9Q4yG-QJ87Lln/preview"},
+                  {"title":"DC Pandey Optics And Modern Physics","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/1WXdx6lSTMhlRrzcCCXnaZjoWjQ9H0oBf/preview"},
+                  {"title":"DC Pandey Mechanics Volume-2","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/1cjWJ6B6FHqP4X5nGuqzZsAzZbeu8B7mg/preview"},
+                  {"title":"DC Pandey Mechanics Volume-1","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/1JQQoDETXifTl9ncORgpeb2Vnqf2GiVIn/preview"},
+                  {"title":"DC Pandey Electricity And Magnetism","folders":["IIT-JEE","SUBJECTS","Physics Specials","DC Pandey"],"url":"https://drive.google.com/file/d/1eEZZ_MIvoyWe1b1wh7h9W_OhpXNVaY6V/preview"},
+                  {"title":"Concept of Physics HC Verma Vol 2","folders":["IIT-JEE","SUBJECTS","Physics Specials","HC Verma"],"url":"https://drive.google.com/file/d/15lg6DFtpExmilI8YXaXlUbdgCVRz7RkV/preview"},
+                  {"title":"Concept of Physics HC Verma Vol 1","folders":["IIT-JEE","SUBJECTS","Physics Specials","HC Verma"],"url":"https://drive.google.com/file/d/1lfFiGEUvj2_EWi4L08z-Gnwumbs9r9Cf/preview"},
+                  {"title":"Physics Galaxy Optics ","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1wv1LpTWYK0QJmz4MOrI_DLGK2b1HyntU/preview"},
+                  {"title":"Physics Galaxy Magnetism EMI and AC","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1bo8bp9lPl1ejMpnMEJa2Cdn2Ao5znwVX/preview"},
+                  {"title":"Physics Galaxy electrostatics &Current 3A","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1rj7ZwFb83vBdGfROmm5C7w9L9APELMwy/preview"},
+                  {"title":"Mechanics Physics Galaxy","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1hha9C9UpP2H76_VYW47xIFRT_PpysWnA/preview"},
+                  {"title":"galaxy vol 2 thermodynamics, oscillations & waves","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1U-DCdgAtG9LX95haPIYDB6Fn81ONYesk/preview"},
+                  {"title":"700+ Advanced Illustrations in Physics by Physics Galaxy","folders":["IIT-JEE","SUBJECTS","Physics Specials","Physics Galaxy"],"url":"https://drive.google.com/file/d/1ivzQ916gntIuVrXF-SHKz2uvOwAH7WFj/preview"},
+                  {"title":"Solutions to Resnixk halliday","folders":["IIT-JEE","SUBJECTS","Physics Specials","Resnick Halliday"],"url":"https://drive.google.com/file/d/17fimn7oyIQa-HDCvlkonSlB6Cqp4LiIn/preview"},
+                  {"title":"Halliday Resnick","folders":["IIT-JEE","SUBJECTS","Physics Specials","Resnick Halliday"],"url":"https://drive.google.com/file/d/1Onlhw7OiZD-s8Uhpp3Z8U6t-0ubdib47/preview"},
+                  {"title":"lemh2ps","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1NVeefKO0zI35pCkFEM8HxTkPIF6ls1Qa/preview"},
+                  {"title":"lemh2an","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1PgE4DJcAnjWN44qidaYZ4VByknXfc-IJ/preview"},
+                  {"title":"lemh207","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1YHR1ucRUFNxbaphVXHUjQnjsEigP3wgs/preview"},
+                  {"title":"lemh205","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1UDESW2L1CWukH-zV1q0UAj_bAVgOaO7C/preview"},
+                  {"title":"lemh204","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1SYm0gv1cs2p7z0oWV95ew4fg53BYhfF2/preview"},
+                  {"title":"lemh203","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1YXPqwq48kGKFhWR-Pqt1FPmHoP4onVdn/preview"},
+                  {"title":"lemh201","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1VyFbprG4Gs7VHZPPpd2UW-SfT76NM_Na/preview"},
+                  {"title":"lemh206","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1ahT17UZ8iNmHiYBz3gYDw5dC8ACyl5hW/preview"},
+                  {"title":"lemh202","folders":["IIT-JEE","NCERT","Maths","Part 2"],"url":"https://drive.google.com/file/d/1fiU00ebQKSVsDS0eCAAEd7tITaUxyhZY/preview"},
+                  {"title":"lemh1ps","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/12LGiB9vJ49IzKv9TkSTWQPxl0FzghY25/preview"},
+                  {"title":"lemh1an","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1_21xoWVJrnBFWz9QR8OG3gWXD_xMQ2iQ/preview"},
+                  {"title":"lemh1a2","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1OwSXEdYv8qWZkJTjJ4kNlu2e9in9owTA/preview"},
+                  {"title":"lemh106","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1cy4Av0hOZ-6liar5K8C8gXhJDvNad3GB/preview"},
+                  {"title":"lemh105","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/17iwpoY1OXL0MjiZO5FE8wsY1ay8Xg5uI/preview"},
+                  {"title":"lemh104","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/19e6nuG_jJTqw7LNIYesA4Kfffhi1lTF3/preview"},
+                  {"title":"lemh103","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1yKKdnnQm4wFoIPIINwsKEC40kiKFbPNc/preview"},
+                  {"title":"lemh102","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1GHL3q6VC798AaAvRq70PyFsFnOU-D2xA/preview"},
+                  {"title":"lemh101","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/1ndg-kZi1i4l0gwKRB1IaZdqO-OQvXiCZ/preview"},
+                  {"title":"lemh1a1","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/10FREAlf39oTb4tOedhWFiCdAvfKarRcs/preview"},
+                  {"title":"6. Fluid Mechanics Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1reSFdxhTtEJ2KZ6HLBu5FbxAXYxi85ww/preview"},
+                  {"title":"5. Gravitation DPP","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1_KTu6LLuf5_3h_KbiMS5vfNjJUkp-y8S/preview"},
+                  {"title":"5. Gravitation Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/15DuFGdtMq-nhCA2DYsXUeNocDInn-dmy/preview"},
+                  {"title":"4. Rigid Body Dynamics Part 2 DPP","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1LP6qlVsJ4vTcNxNZqTvV0IpDqAoHIqbJ/preview"},
+                  {"title":"4. Rigid Body Dynamics Part 2 Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1-JQC42JlSI-E3EcX55ngOogisf7VKlY6/preview"},
                   {"title":"1. System of Particles and Centre of Mass Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1zRAf1bp3X9K7TwJ2MdQbN3X0LrCPzvKO/preview"},
-                  {"title":"1. Thermometry, Thermal Expansion Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Waves and Thermodynamics"],"url":"https://drive.google.com/file/d/1mG2hxyq-A4hT8FGrHCjcZNq_FwUwVJMO/preview"},
-                  {"title":"Physics Part 1 NCERT","folders":["IIT-JEE","NCERT","Physics"],"url":"https://drive.google.com/file/d/1j-X7p6B7DlIoAHgH_h1auQef6J0pmUn1/preview"},
-                  {"title":"Maths Part 1 NCERT","folders":["IIT-JEE","NCERT","Maths","Part 1"],"url":"https://drive.google.com/file/d/12LGiB9vJ49IzKv9TkSTWQPxl0FzghY25/preview"}
+                  {"title":"2. Impulse and Collision Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1_LuIwREYRW9KACCetHckJ7QMJK6r-Glu/preview"},
+                  {"title":"2. Impulse and Collision DPP","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1T-K5MvSmfEVYnPFLVgyb_LgsFqnfsuK2/preview"},
+                  {"title":"3. Rigid Body Dynamics Part 1 Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1sVtYSnckbS18hybwVrnEQ292xRyTxbl8/preview"},
+                  {"title":"3. Rigid Body Dynamics Part 1 DPP","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1sLiJEA0CqDEyIhdkMb2YF4s1MFpjW3On/preview"},
+                  {"title":"7. Elasticity Chapter","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1jYGhS6vdkq7ZxwOSALqJM_BsaI0Fwiv1/preview"},
+                  {"title":"1. System of Particles and Centre of Mass DPP","folders":["IIT-JEE","PUBLICATIONS","Cengage","Physics","Mechanics-2"],"url":"https://drive.google.com/file/d/1Yg9HT1L_qWtA1f5W0ilFxLHh9-mTVCh0/preview"}
                 ];
 
-                const cleanFiles = rawFiles.filter(b => {
-                    if(!b || !b.folders) return false;
-                    const pathStr = b.folders.join(" ").toUpperCase();
-                    // Drop Class 10 and Nucleus completely
-                    if(pathStr.includes("CLASS 10") || pathStr.includes("NUCLEUS")) return false;
-                    return true;
-                });
+                const safeFiles = rawFiles.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('NUCLEUS')) && !b.folders.some(f => f.toUpperCase().includes('CLASS 10')));
 
                 window.libraryData = {
                     LECTURES: rawLectures,
-                    FILES: cleanFiles.filter(b => {
-                        const f1 = b.folders[1]; // after IIT-JEE
-                        return f1 === 'COACHINGS' || f1 === 'SUBJECTS' || f1 === 'PUBLICATIONS' || f1 === 'NCERT';
-                    }),
-                    SUPPORT: cleanFiles.filter(b => {
-                        const f1 = b.folders[1];
-                        return f1 === 'EXTRAS' || f1 === 'MATHANGO';
-                    })
+                    FILES: safeFiles.filter(b => b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS') || b.folders.includes('PUBLICATIONS') || b.folders.includes('NCERT')),
+                    SUPPORT: safeFiles.filter(b => b.folders.includes('EXTRAS') || b.folders.includes('MATHANGO'))
                 };
 
                 let activeModule = 'LECTURES';
@@ -827,7 +865,7 @@
                 updatePomoDisplay();
 
                 // ==========================================
-                // 4. RECURSIVE FOLDER RENDERING
+                // 4. RECURSIVE LIBRARY RENDERING
                 // ==========================================
                 function renderLibrary(query = '') {
                     const list = document.getElementById('book-list');
@@ -840,19 +878,23 @@
                     if(filtered.length === 0) { list.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.6;">No resources found.</div>`; return; }
 
                     const tree = { _files: [] };
+                    
                     filtered.forEach(b => {
                         let current = tree;
-                        let paths = [...(b.folders||[])];
+                        let paths = [...(b.folders || [])];
                         
                         // Strict Truncation Rules
-                        if(paths[0] === 'IIT-JEE') paths.shift();
-                        if(activeModule === 'LECTURES' && paths[0] === 'LECTURES') paths.shift();
-                        if(activeModule === 'SUPPORT') {
-                            if (paths[0] === 'EXTRAS') paths.shift(); 
+                        if (activeModule === 'LECTURES') {
+                            if(paths[0] === 'LECTURES') paths.shift(); 
+                        } else if (activeModule === 'FILES') {
+                            if(paths[0] === 'IIT-JEE') paths.shift(); 
+                        } else if (activeModule === 'SUPPORT') {
+                            if(paths[0] === 'IIT-JEE') paths.shift(); 
+                            if(paths[0] === 'EXTRAS') paths.shift();  
                         }
 
                         paths.forEach(folder => {
-                            if(!current[folder]) current[folder] = { _files: [] };
+                            if (!current[folder]) current[folder] = { _files: [] };
                             current = current[folder];
                         });
                         current._files.push(b);
@@ -868,7 +910,7 @@
                             d.querySelector('.folder-contents').appendChild(buildDOM(node[key], isOpen));
                             container.appendChild(d);
                         });
-                        if(node._files && node._files.length > 0) {
+                        if (node._files && node._files.length > 0) {
                             node._files.forEach(book => {
                                 let item = document.createElement('div');
                                 item.className = 'book-item';
@@ -1195,7 +1237,7 @@
                 }
 
                 // ==========================================
-                // 6. AUDIO HUB (Stable, No overlapping)
+                // 6. AUDIO HUB (Stable, Fixed API embeds)
                 // ==========================================
                 let synthNode = null;
                 let synthGain = null;
@@ -1211,8 +1253,7 @@
                     document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
                     document.getElementById('audio-iframe-box').style.display = isSynth ? 'none' : 'block';
                     stopAllAudio();
-                    const toggleBtn = document.getElementById('audio-toggle');
-                    if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
+                    document.getElementById('audio-toggle').textContent = "▶ Start Audio";
                 });
 
                 document.getElementById('audio-volume')?.addEventListener('input', (e) => {
@@ -1267,12 +1308,13 @@
                             synthNode = node;
                         }
                     } else {
+                        // FIX: Added &playlist=ID required for YouTube loop parameter to work properly
                         document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
                     }
                 });
 
                 // ==========================================
-                // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
+                // 7. HEADER, SPLIT, CHAT & MODALS
                 // ==========================================
                 document.getElementById('sidebar-toggle')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('collapsed'));
                 
