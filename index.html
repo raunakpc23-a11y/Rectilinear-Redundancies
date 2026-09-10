@@ -51,16 +51,12 @@
         
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
-        /* Custom Backgrounds with Updated Paths */
+        /* Custom Backgrounds with Overlays for Readability */
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
-        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background 4.jpg'); opacity: 1; }
-        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background 5.jpg'); opacity: 1; }
-        
-        /* New Dynamic Background Engine */
-        .bg-dynamic { background: linear-gradient(-45deg, #0f172a, #1e293b, var(--accent-color), #09090b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; opacity: 0.6; }
-        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('Background 4.jpg'); opacity: 1; }
+        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('Background 5.jpg'); opacity: 1; }
 
         .app-container { display: flex; width: 100%; height: 100%; background: transparent; backdrop-filter: blur(8px); }
 
@@ -90,33 +86,33 @@
         .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 6px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        /* OPTIMIZED POMODORO (+10% Scaled Up as Requested) */
-        .pomo-container { padding: 18px 20px; border-bottom: 1px solid var(--border-color); }
-        .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        /* COMPACT POMODORO */
+        .pomo-container { padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+        .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border-color); transition: 0.3s; }
         .pomo-card.running { border-color: var(--accent-color); animation: pulseGlow 2s infinite; transform: translateY(-2px); }
         .pomo-card.running::before { background: var(--accent-color); }
         
         .pomo-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;}
         .pomo-avatar-section { display: flex; align-items: center; gap: 10px; }
-        .pomo-icon { font-size: 2em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
-        .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px 12px 12px 0; font-size: 0.8em; font-weight: 600; color: var(--accent-color); max-width: 150px; box-shadow: var(--card-shadow); line-height: 1.25;}
+        .pomo-icon { font-size: 1.8em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
+        .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.2;}
         
         .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
-        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 2.8em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
+        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 2.4em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
         
-        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
-        .pomo-plant-icon { font-size: 1.3em; transition: 0.3s; }
+        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 6px 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
+        .pomo-plant-icon { font-size: 1.2em; transition: 0.3s; }
         .pomo-progress-bar { flex-grow: 1; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
         #pomo-progress-fill { height: 100%; width: 0%; background: var(--success); transition: width 1s linear; }
 
-        .pomo-controls { display: flex; gap: 10px; width: 100%; justify-content: center; }
-        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
+        .pomo-controls { display: flex; gap: 8px; width: 100%; justify-content: center; }
+        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
         .pomo-btn-main:hover { filter: brightness(1.1); }
-        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95em; cursor: pointer; transition: 0.2s; }
+        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9em; cursor: pointer; transition: 0.2s; }
         .pomo-btn-sec:hover { background: var(--folder-bg); }
 
-        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.9em; font-weight: 600;}
+        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.85em; font-weight: 600;}
 
         /* MODULE TABS */
         .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 20px 8px; }
@@ -291,14 +287,14 @@
 
     <!-- OFFLINE OVERLAY -->
     <div id="offline-overlay" class="fs-overlay">
-        <img src="assets/Important/Net 1.jpg" alt="No Internet" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="Net 1.jpg" alt="No Internet">
         <h2>WIFI BEWAAFA HAI</h2>
         <p>You have lost connection to the matrix. Please check your internet connection to continue streaming lectures.</p>
     </div>
 
     <!-- BURNOUT / TOUCH GRASS OVERLAY -->
     <div id="burnout-overlay" class="fs-overlay">
-        <img src="assets/Important/Touch Grass 1.jpg" alt="Touch Grass" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="Touch Grass 1.jpg" alt="Touch Grass">
         <h2 style="color: #10b981;">GO TOUCH GRASS</h2>
         <p>You've been studying hardcore for hours today. Your CPU is melting and your posture resembles a shrimp. Take a mandatory break!</p>
         <button class="primary-btn" id="burnout-close" style="padding: 14px 24px; font-size: 1.1em;">I Promise to Touch Grass</button>
@@ -308,13 +304,13 @@
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><img id="sidebar-logo" src="assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
+                <h2><img id="sidebar-logo" src="Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                 </div>
             </div>
 
-            <!-- OPTIMIZED POMODORO -->
+            <!-- COMPACT POMODORO -->
             <div class="pomo-container">
                 <div class="pomo-card" id="pomo-card">
                     <div class="pomo-top-row">
@@ -424,14 +420,14 @@
             <div class="workspace-container" id="main-workspace">
                 <!-- BORED EMPTY STATE -->
                 <div class="placeholder-box" id="placeholder-box">
-                    <img src="assets/Important/Background 1.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="Background 1.jpg" alt="Bored Robot">
                     <h3>Yes, I was bored</h3>
                     <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
                 </div>
 
                 <!-- 404 ERROR STATE (Hidden by default) -->
                 <div class="placeholder-box" id="error-box" style="display: none; background: transparent; border: none; box-shadow: none;">
-                    <img src="assets/Important/Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;">
                     <h3 style="text-transform: uppercase;">Lost in the Sauce</h3>
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
@@ -451,18 +447,17 @@
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
             </div>
 
-            <!-- PERSONAL SEA LION -->
-            <button class="chat-fab" id="chat-fab" title="Personal Sea Lion">🦭</button>
+            <button class="chat-fab" id="chat-fab" title="Personal Capybara">🐹</button>
             <div class="chat-window" id="chat-window">
                 <div class="modal-header">
-                    <span>🦭 Personal Sea Lion</span>
+                    <span>🐹 Personal Capybara</span>
                     <button class="icon-btn" id="chat-close">✖</button>
                 </div>
                 <div class="chat-body" id="chat-body">
-                    <div class="chat-msg bot-msg">*Arf arf!* Flaps flippers excitedly. Type a topic to search, or ask me for a picture of a cat, dog, capybara, or meme!</div>
+                    <div class="chat-msg bot-msg">*Happy Capybara Noises* Type a topic like "Kinematics" or "Organic" and I'll fetch the best files and lectures for you.</div>
                 </div>
                 <div class="chat-footer">
-                    <input type="text" id="chat-input" placeholder="Ask Sea Lion...">
+                    <input type="text" id="chat-input" placeholder="Ask Capybara...">
                     <button class="primary-btn" id="chat-send">Ask</button>
                 </div>
             </div>
@@ -471,7 +466,7 @@
 
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settings-modal">
-        <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-content">
             <div class="modal-header"><span>⚙️ Preferences</span><button class="icon-btn" id="settings-close">✖</button></div>
             <div class="modal-body">
                 <div class="setting-row">
@@ -491,7 +486,6 @@
                         <option value="bg-space">Deep Space</option>
                         <option value="bg-lofi">Neon Lofi Rain (Custom)</option>
                         <option value="bg-topo">Dark Topography (Custom)</option>
-                        <option value="bg-dynamic">Dynamic Aurora (Animated)</option>
                     </select>
                 </div>
                 <div class="setting-row">
@@ -541,8 +535,7 @@
                 // Logo Randomizer (90% Logo 2, 10% Logo 1)
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
-                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo 1.jpg' : 'assets/Important/Logo 2.jpg';
-                    sidebarLogo.onerror = () => { sidebarLogo.src = sidebarLogo.src.replace('.jpg', '.png'); };
+                    sidebarLogo.src = Math.random() < 0.1 ? 'Logo 1.jpg' : 'Logo 2.jpg';
                 }
 
                 // Offline State Handler
@@ -570,8 +563,7 @@
                 const rawLecturesData = window.rawLectures || [];
                 const rawFilesData = window.rawFiles || [];
 
-                // Master Filtering Logic: Strips out Class 10 AND ALL Nucleus Modules
-                const safeFiles = rawFilesData.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10') || f.toUpperCase().includes('NUCLEUS')));
+                const safeFiles = rawFilesData.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10')));
 
                 window.libraryData = {
                     LECTURES: rawLecturesData,
@@ -788,7 +780,7 @@
                     if(filtered.length === 0) { 
                         list.innerHTML = `
                         <div style="padding:40px 15px; text-align:center; opacity:0.8; display:flex; flex-direction:column; align-items:center;">
-                            <img src="assets/Important/Found Nothing 1.jpg" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
+                            <img src="Found Nothing 1.jpg" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
                             <h4 style="color:var(--text-color); font-size:1.1em; text-transform:uppercase; font-weight:800;">Found Literally Nothing</h4>
                             <p style="color:var(--text-muted); font-size:0.9em; margin-top:8px;">Try spelling it correctly this time.</p>
                         </div>`; 
@@ -1277,7 +1269,7 @@
                 
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
                 
-                // Close modal when clicking outside overlay
+                // Close modal when clicking outside
                 document.getElementById('settings-modal')?.addEventListener('click', (e) => {
                     if(e.target === document.getElementById('settings-modal')) {
                         document.getElementById('settings-modal').classList.remove('open');
@@ -1305,80 +1297,28 @@
                     window.showToast("Settings applied successfully!");
                 });
 
-                // ==========================================
-                // 8. PERSONAL SEA LION (Chatbot)
-                // ==========================================
                 document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.add('open'));
                 document.getElementById('chat-close')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.remove('open'));
                 
                 document.getElementById('chat-send')?.addEventListener('click', () => {
                     const inp = document.getElementById('chat-input');
-                    const qRaw = inp.value.trim();
-                    if(!qRaw) return;
-                    const q = qRaw.toLowerCase();
+                    const q = inp.value.trim().toLowerCase();
+                    if(!q) return;
                     const cb = document.getElementById('chat-body');
-                    cb.innerHTML += `<div class="chat-msg user-msg">${qRaw}</div>`;
+                    cb.innerHTML += `<div class="chat-msg user-msg">${q}</div>`;
                     inp.value = '';
                     
-                    // Trigger delayed response
                     setTimeout(() => {
-                        // 1. Image / Category Request Logic
-                        let isImageReq = false;
-                        let category = '';
-                        const imgCategories = ['cats', 'dogs', 'capybaras', 'memes'];
-                        
-                        // Check if a specific animal/meme is requested
-                        for (let c of imgCategories) {
-                            if (q.includes(c) || q.includes(c.slice(0, -1))) { 
-                                isImageReq = true;
-                                category = c;
-                                break;
-                            }
-                        }
-                        
-                        // Check if a general picture is requested
-                        if (!isImageReq && (q.includes('picture') || q.includes('image') || q.includes('random') || q.includes('show me something'))) {
-                            isImageReq = true;
-                            category = imgCategories[Math.floor(Math.random() * imgCategories.length)];
-                        }
-
-                        if (isImageReq) {
-                            // Generate random image number 1 to 5
-                            let rNum = Math.floor(Math.random() * 5) + 1;
-                            let imgPath = `assets/${category}/${rNum}.jpg`;
-                            
-                            // Random Sea Lion Noises
-                            const seaLionSounds = [
-                                "*Arf! Arf!* Slides on belly.",
-                                "*Happy flipper slaps!*",
-                                "Eep eep! Here you go:",
-                                "As requested by the master coder:",
-                                "*Barks happily and balances a ball*"
-                            ];
-                            let sound = seaLionSounds[Math.floor(Math.random() * seaLionSounds.length)];
-                            
-                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
-                            cb.scrollTop = cb.scrollHeight;
-                            return;
-                        }
-
-                        // 2. Fallback Library Search Logic
                         let matchesHtml = '';
                         masterList.forEach((b, i) => {
                             if(b.title && b.title.toLowerCase().includes(q)) {
                                 matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
                             }
                         });
-                        
-                        if(matchesHtml === '') {
-                            matchesHtml = "*Sad Arf...* I couldn't find any resources for that. Want to see a capybara instead?";
-                        } else {
-                            matchesHtml = "*Barks happily!* Found these for you:<br>" + matchesHtml;
-                        }
-                        
+                        if(matchesHtml === '') matchesHtml = "No local files found.";
                         cb.innerHTML += `<div class="chat-msg bot-msg">${matchesHtml}</div>`;
                         cb.scrollTop = cb.scrollHeight;
-                    }, 450);
+                    }, 400);
                 });
 
                 document.getElementById('chat-body')?.addEventListener('click', (e) => {
