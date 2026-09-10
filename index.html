@@ -71,49 +71,52 @@
         /* =========================================================
            3. SIDEBAR & POMODORO
            ========================================================= */
-        .sidebar { width: 380px; min-width: 320px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; }
+        .sidebar { width: 380px; min-width: 380px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .sidebar.collapsed { margin-left: -380px; }
+        
         body.theme-amoled .sidebar { background-color: rgba(9, 9, 11, 0.92); }
         body.theme-charcoal .sidebar { background-color: rgba(30, 30, 36, 0.92); }
         body.theme-slate .sidebar { background-color: rgba(30, 41, 59, 0.92); }
 
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .sidebar-header h2 { font-size: 1.3em; font-weight: 700; display:flex; align-items:center; gap:8px;}
-        .sidebar-logo { height: 32px; width: 32px; border-radius: 6px; object-fit: cover; }
+        .sidebar-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h2 { font-size: 1.2em; font-weight: 700; display:flex; align-items:center; gap:8px;}
+        .sidebar-logo { height: 28px; width: 28px; border-radius: 6px; object-fit: cover; }
         
         .header-controls { display: flex; align-items: center; gap: 8px; }
-        .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 8px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 6px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        .pomo-container { padding: 24px 20px; border-bottom: 1px solid var(--border-color); }
-        .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--border-color); transition: 0.3s; }
+        /* COMPACT POMODORO */
+        .pomo-container { padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+        .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border-color); transition: 0.3s; }
         .pomo-card.running { border-color: var(--accent-color); animation: pulseGlow 2s infinite; transform: translateY(-2px); }
         .pomo-card.running::before { background: var(--accent-color); }
         
         .pomo-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;}
         .pomo-avatar-section { display: flex; align-items: center; gap: 10px; }
-        .pomo-icon { font-size: 2.2em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
-        .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.3;}
+        .pomo-icon { font-size: 1.8em; animation: float 3s ease-in-out infinite; cursor: pointer; user-select: none; }
+        .pomo-speech-bubble { background: var(--folder-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 12px 12px 12px 0; font-size: 0.75em; font-weight: 600; color: var(--accent-color); max-width: 140px; box-shadow: var(--card-shadow); line-height: 1.2;}
         
         .pomo-timer-section { display: flex; flex-direction: column; align-items: flex-end; }
-        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 3.2em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
+        .pomo-time { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 2.4em; font-weight: 800; color: var(--text-color); line-height: 1; letter-spacing: -0.05em; }
         
-        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
-        .pomo-plant-icon { font-size: 1.3em; transition: 0.3s; }
+        .pomo-plant-section { display: flex; align-items: center; gap: 12px; background: var(--folder-bg); padding: 6px 10px; border-radius: var(--radius-md); border: 1px solid var(--border-color); width: 100%; }
+        .pomo-plant-icon { font-size: 1.2em; transition: 0.3s; }
         .pomo-progress-bar { flex-grow: 1; height: 6px; background: var(--border-color); border-radius: 3px; overflow: hidden; }
         #pomo-progress-fill { height: 100%; width: 0%; background: var(--success); transition: width 1s linear; }
 
-        .pomo-controls { display: flex; gap: 12px; width: 100%; justify-content: center; }
-        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 12px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.95em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
+        .pomo-controls { display: flex; gap: 8px; width: 100%; justify-content: center; }
+        .pomo-btn-main { flex: 1; background: var(--accent-color); color: white; border: none; padding: 10px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9em; cursor: pointer; transition: filter 0.2s; display:flex; justify-content:center; align-items:center; gap:8px;}
         .pomo-btn-main:hover { filter: brightness(1.1); }
-        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .pomo-btn-sec { background: transparent; color: var(--text-color); border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9em; cursor: pointer; transition: 0.2s; }
         .pomo-btn-sec:hover { background: var(--folder-bg); }
 
-        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.9em; font-weight: 600;}
+        .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 10px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.85em; font-weight: 600;}
 
         /* MODULE TABS */
-        .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 20px 8px; }
-        .mod-tab { flex: 1; padding: 10px 4px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.85em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
+        .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 20px 8px; }
+        .mod-tab { flex: 1; padding: 8px 4px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.8em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
         .mod-tab:hover { color: var(--text-color); background: var(--folder-bg); border-color: var(--border-color); }
         .mod-tab.active { background-color: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 12px var(--accent-glow); }
 
@@ -121,19 +124,19 @@
         .sidebar-view { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .sidebar-view.active { display: flex; }
         .search-container { position: sticky; top: 0; z-index: 10; padding: 12px 20px; border-bottom: 1px solid var(--border-color); background-color: transparent; }
-        .search-input { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.95em; transition: border-color 0.2s; }
+        .search-input { width: 100%; padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 0.9em; transition: border-color 0.2s; }
         .search-input:focus { border-color: var(--accent-color); }
         
         .book-list { flex-grow: 1; overflow-y: auto; padding: 12px 20px; list-style: none; }
         details { margin-bottom: 6px; }
-        summary { padding: 12px 16px; cursor: pointer; font-weight: 600; border-radius: var(--radius-md); display: flex; align-items: center; background-color: transparent; user-select: none; font-size: 0.95em; color: var(--sidebar-text); border: 1px solid transparent; transition: 0.2s; }
+        summary { padding: 10px 14px; cursor: pointer; font-weight: 600; border-radius: var(--radius-md); display: flex; align-items: center; background-color: transparent; user-select: none; font-size: 0.9em; color: var(--sidebar-text); border: 1px solid transparent; transition: 0.2s; }
         summary:hover { background-color: var(--folder-bg); border-color: var(--border-color); }
         summary::marker, summary::-webkit-details-marker { display: none; }
         summary::before { content: "📁"; margin-right: 12px; font-size: 1.2em; opacity: 0.8; }
         details[open] > summary::before { content: "📂"; opacity: 1; }
         .folder-contents { padding-left: 14px; margin-top: 6px; border-left: 1px solid var(--border-color); margin-left: 16px; display:flex; flex-direction:column; gap:4px;}
 
-        .book-item { padding: 10px 14px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9em; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: transparent; }
+        .book-item { padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.85em; color: var(--text-muted); border: 1px solid transparent; transition: 0.2s; background: transparent; }
         .book-item:hover { background-color: var(--folder-bg); color: var(--text-color); border-color: var(--border-color); }
         .book-item.active { background-color: var(--accent-color); color: white; border-color: var(--accent-color); font-weight: 600; }
         .book-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
@@ -223,8 +226,8 @@
         .fc-front { background: var(--sidebar-bg); border: 2px solid var(--border-color); font-size: 1.5em; color: var(--text-color); }
         .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
-        /* Audio Module */
-        .audio-container { padding: 20px; display:flex; flex-direction:column; gap:20px; }
+        /* Audio Module Overhaul */
+        .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; margin: 20px; background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
         .audio-setting select:focus { border-color: var(--accent-color); }
@@ -249,7 +252,7 @@
         .notes-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size:1.1em;}
         .notes-area { flex-grow: 1; border: none; padding: 20px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
 
-        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.6em; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.8em; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
         .chat-fab:hover { transform: scale(1.08); filter: brightness(1.1);}
         
         .chat-window { position: fixed; bottom: 95px; right: 24px; width: 380px; height: 500px; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.2s ease; overflow: hidden; }
@@ -307,7 +310,7 @@
                 </div>
             </div>
 
-            <!-- POMODORO -->
+            <!-- COMPACT POMODORO -->
             <div class="pomo-container">
                 <div class="pomo-card" id="pomo-card">
                     <div class="pomo-top-row">
@@ -362,8 +365,9 @@
                 </div>
             </div>
 
-            <div id="view-audio" class="sidebar-view">
-                <div class="audio-container">
+            <div id="view-audio" class="sidebar-view" style="padding: 0;">
+                <div class="audio-wrapper">
+                    <h3 style="font-size: 1.2em; text-align: center; color: var(--accent-color);">🎧 Focus Hub</h3>
                     <div class="audio-setting">
                         <label>Select Track / Generator:</label>
                         <select id="audio-select">
@@ -378,6 +382,10 @@
                                 <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
                                 <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
                                 <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
+                                <option value="tgOcmXil_jU">📚 Dark Academia Strings</option>
+                                <option value="nDq6TstdEi8">🌿 Studio Ghibli Piano</option>
+                                <option value="7NOSDKb0HlU">🌌 Hans Zimmer Epic Focus</option>
+                                <option value="DWcJFNfaw9c">🔥 Mario Kart Study Music (Intense)</option>
                             </optgroup>
                         </select>
                     </div>
@@ -439,17 +447,17 @@
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
             </div>
 
-            <button class="chat-fab" id="chat-fab">🤖</button>
+            <button class="chat-fab" id="chat-fab" title="Personal Capybara">🐹</button>
             <div class="chat-window" id="chat-window">
                 <div class="modal-header">
-                    <span>🧭 Local Search Copilot</span>
+                    <span>🐹 Personal Capybara</span>
                     <button class="icon-btn" id="chat-close">✖</button>
                 </div>
                 <div class="chat-body" id="chat-body">
-                    <div class="chat-msg bot-msg">Type a topic like "Kinematics" or "Organic" and I'll find the best files and lectures for you from your library.</div>
+                    <div class="chat-msg bot-msg">*Happy Capybara Noises* Type a topic like "Kinematics" or "Organic" and I'll fetch the best files and lectures for you.</div>
                 </div>
                 <div class="chat-footer">
-                    <input type="text" id="chat-input" placeholder="Search library...">
+                    <input type="text" id="chat-input" placeholder="Ask Capybara...">
                     <button class="primary-btn" id="chat-send">Ask</button>
                 </div>
             </div>
@@ -610,7 +618,10 @@
                 const pomoQuotes = [
                     "You're doing great!", "Focus is your superpower.", "One concept at a time.", 
                     "Growth happens in the struggle.", "Trust the process!", "No distractions.",
-                    "Deep breath. Next problem."
+                    "Deep breath. Next problem.", "Discipline equals freedom.", "Stay hard!",
+                    "Rome wasn't built in a day.", "Brick by brick.", "Keep pushing.",
+                    "The magic you are looking for is in the work you're avoiding.",
+                    "Embrace the grind.", "Small steps, big mountain.", "Conquer the day."
                 ];
 
                 function updatePomoDisplay() {
@@ -1202,9 +1213,13 @@
                 });
 
                 // ==========================================
-                // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
+                // 7. HEADER, SPLIT, CHAT & MODALS
                 // ==========================================
-                document.getElementById('sidebar-toggle')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('collapsed'));
+                
+                // Functional Sidebar Toggle
+                document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+                    document.getElementById('sidebar')?.classList.toggle('collapsed');
+                });
                 
                 document.getElementById('fs-btn')?.addEventListener('click', () => {
                     try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e){}
@@ -1253,6 +1268,13 @@
                 });
                 
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
+                
+                // Close modal when clicking outside
+                document.getElementById('settings-modal')?.addEventListener('click', (e) => {
+                    if(e.target === document.getElementById('settings-modal')) {
+                        document.getElementById('settings-modal').classList.remove('open');
+                    }
+                });
                 
                 document.querySelectorAll('.color-dot').forEach(d => d.addEventListener('click', (e) => { 
                     document.querySelectorAll('.color-dot').forEach(b=>b.classList.remove('active')); e.target.classList.add('active'); 
