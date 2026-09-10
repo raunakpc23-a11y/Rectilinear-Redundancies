@@ -47,31 +47,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
         body { display: flex; height: 100vh; overflow: hidden; width: 100vw; color: var(--text-color); }
         
-        #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; pointer-events: none;}
+        #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
         .bg-forest { background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1920'); opacity: 0.15; }
         .bg-cafe { background-image: url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1920'); opacity: 0.15; }
-
-        /* Animated Backgrounds */
-        .bg-gradient { background: linear-gradient(-45deg, var(--sidebar-bg), var(--folder-bg), var(--accent-glow), var(--sidebar-bg)); background-size: 400% 400%; animation: gradientFlow 15s ease infinite; opacity: 0.4; }
-        @keyframes gradientFlow { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
-        
-        .bg-particles .particle { display: block; position: absolute; border-radius: 50%; background: var(--accent-color); filter: blur(50px); opacity: 0.25; }
-        .bg-particles .p1 { width: 350px; height: 350px; top: 10%; left: 10%; animation: drift 30s infinite alternate linear; }
-        .bg-particles .p2 { width: 500px; height: 500px; bottom: 5%; right: 5%; animation: drift 45s infinite alternate-reverse linear; }
-        .bg-particles .p3 { width: 250px; height: 250px; top: 40%; left: 40%; animation: drift 25s infinite alternate linear; }
-        @keyframes drift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(150px, 100px) scale(1.3); } }
-        .particle { display: none; }
-        
-        .bg-stars { background-color: #050510; }
-        .bg-stars::after { content: ""; position: absolute; top: 0; left: 0; width: 200%; height: 200%; background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 60px 60px; animation: starDrift 100s linear infinite; opacity: 0.2; }
-        @keyframes starDrift { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-        
-        .bg-rain-anim { background-color: var(--primary-bg); }
-        .bg-rain-anim::after { content: ""; position: absolute; top: -100%; left: 0; width: 100%; height: 200%; background-image: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(150,200,255,0.3) 100%); background-size: 2px 80px; animation: rainFall 0.7s linear infinite; }
-        @keyframes rainFall { from { transform: translateY(0); } to { transform: translateY(50%); } }
 
         .app-container { display: flex; width: 100%; height: 100%; background: transparent; backdrop-filter: blur(8px); }
 
@@ -86,7 +67,7 @@
         /* =========================================================
            3. SIDEBAR & POMODORO
            ========================================================= */
-        .sidebar { width: 380px; min-width: 320px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; transition: margin-left 0.3s ease; }
+        .sidebar { width: 380px; min-width: 320px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; }
         body.theme-amoled .sidebar { background-color: rgba(9, 9, 11, 0.92); }
         body.theme-charcoal .sidebar { background-color: rgba(30, 30, 36, 0.92); }
         body.theme-slate .sidebar { background-color: rgba(30, 41, 59, 0.92); }
@@ -124,16 +105,6 @@
 
         .pomo-subject-select { background: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: var(--radius-md); width: 100%; outline: none; font-size: 0.9em; font-weight: 600;}
 
-        /* Quick Todo List */
-        .todo-header-sm { font-size: 0.85em; font-weight: 700; color: var(--text-muted); display: flex; justify-content: space-between; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;}
-        .todo-item { display: flex; align-items: center; gap: 10px; padding: 8px; background: var(--folder-bg); border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.9em; cursor: pointer; transition: 0.2s; }
-        .todo-item:hover { border-color: var(--accent-color); }
-        .todo-item.done { opacity: 0.6; text-decoration: line-through; }
-        .todo-item .todo-check { accent-color: var(--success); width: 16px; height: 16px; pointer-events: none;}
-        .todo-item .todo-text { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .todo-item .todo-del { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 1.1em; opacity: 0.5; }
-        .todo-item .todo-del:hover { opacity: 1; }
-
         /* MODULE TABS */
         .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 20px 8px; }
         .mod-tab { flex: 1; padding: 10px 4px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.85em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
@@ -164,7 +135,7 @@
         /* =========================================================
            4. MAIN CONTENT & WORKSPACE
            ========================================================= */
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: rgba(var(--reader-bg-rgb, 241, 245, 249), 0.8); position: relative; overflow: hidden; transition: 0.3s; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: rgba(var(--reader-bg-rgb, 241, 245, 249), 0.8); position: relative; overflow: hidden; }
         body.theme-amoled .main-content { background-color: rgba(0, 0, 0, 0.8); }
         body.theme-charcoal .main-content { background-color: rgba(18, 18, 18, 0.8); }
         body.theme-slate .main-content { background-color: rgba(15, 23, 42, 0.8); }
@@ -182,9 +153,8 @@
 
         .workspace-container { flex-grow: 1; display: flex; position: relative; padding: 20px; gap: 20px; height: calc(100vh - 85px); overflow:hidden;}
         
-        .viewer-box { width: 100%; height: 100%; background: #000; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); display: none; transition: filter 0.3s; }
-        .viewer-box.inverted iframe { filter: invert(0.92) hue-rotate(180deg); }
-        iframe { width: 100%; height: 100%; border: none; background: #fff;}
+        .viewer-box { width: 100%; height: 100%; background: #000; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); display: none; }
+        iframe { width: 100%; height: 100%; border: none; }
 
         .split-resizer { width: 12px; cursor: col-resize; background: transparent; display: none; position: relative; z-index: 10; align-items:center; justify-content:center;}
         .split-resizer::after { content: ''; width: 4px; height: 40px; background: var(--border-color); border-radius: 2px; transition: 0.2s; }
@@ -193,13 +163,6 @@
         .placeholder-box { margin: auto; background: var(--sidebar-bg); padding: 40px; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); text-align: center; max-width: 400px; }
         .placeholder-box h3 { font-size: 1.5em; margin-bottom: 12px; }
         .placeholder-box p { color: var(--text-muted); font-size: 1em; line-height: 1.5; }
-
-        /* ZEN MODE OVERRIDES */
-        body.zen-active .sidebar { display: none !important; }
-        body.zen-active .reader-header { display: none !important; }
-        body.zen-active .workspace-container { height: 100vh; padding: 0; }
-        body.zen-active .viewer-box { border-radius: 0; border: none; }
-        body.zen-active #exit-zen-btn { display: flex !important; }
 
         /* =========================================================
            5. UTILITIES & MODULES
@@ -297,11 +260,7 @@
 </head>
 <body class="theme-amoled font-medium">
 
-    <div id="ambient-bg" class="bg-none">
-        <div class="particle p1"></div>
-        <div class="particle p2"></div>
-        <div class="particle p3"></div>
-    </div>
+    <div id="ambient-bg" class="bg-none"></div>
     <div id="toast-container"></div>
 
     <div class="app-container">
@@ -330,8 +289,6 @@
                         <span class="pomo-plant-icon" id="pomo-plant-stage">🌱</span>
                         <div class="pomo-progress-bar"><div id="pomo-progress-fill"></div></div>
                     </div>
-                    <!-- NEW: Feature 3 - Session Goal Input -->
-                    <input type="text" id="pomo-goal" class="pomo-subject-select" placeholder="Session goal (e.g. 20 PYQs)">
                     <select id="pomo-subject" class="pomo-subject-select">
                         <option value="General">General Study</option>
                         <option value="Physics">Physics</option>
@@ -342,13 +299,6 @@
                         <button class="pomo-btn-sec" id="pomo-reset">Reset</button>
                         <button class="pomo-btn-main" id="pomo-toggle">▶ Start Focus</button>
                     </div>
-                </div>
-
-                <!-- NEW: Feature 2 - Quick Persistent Todo List -->
-                <div class="quick-todos" style="margin-top: 20px;">
-                    <div class="todo-header-sm"><span>Quick Tasks</span><span id="qtodo-count">0/0</span></div>
-                    <ul id="qtodo-list" style="list-style:none; display:flex; flex-direction:column; gap:6px; max-height:120px; overflow-y:auto; margin-bottom:10px;"></ul>
-                    <input type="text" id="qtodo-input" placeholder="+ Add task & press Enter" class="pomo-subject-select">
                 </div>
             </div>
 
@@ -411,9 +361,6 @@
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
-            <!-- NEW: Feature 6 - Exit Zen Button -->
-            <button id="exit-zen-btn" class="primary-btn" style="display:none; position:absolute; top:20px; right:20px; z-index:9999; box-shadow:0 10px 30px rgba(0,0,0,0.5);">✖ Exit Zen Mode (Esc)</button>
-            
             <div class="reader-header">
                 <button class="icon-btn" id="sidebar-toggle" title="Toggle Sidebar">☰</button>
                 <div class="header-title-box">
@@ -422,9 +369,6 @@
                     <select id="playlist-select" class="playlist-select" style="display:none;"></select>
                 </div>
                 <div class="header-actions">
-                    <!-- NEW: Features 5 & 6 buttons -->
-                    <button id="invert-btn" class="icon-btn" title="Invert Colors (Dark Mode)">🌓</button>
-                    <button id="zen-btn" class="icon-btn" title="Zen Mode">🧘</button>
                     <button id="split-btn" class="icon-btn" title="Split Screen">🔲</button>
                     <button id="notes-btn" class="icon-btn" title="Notes Drawer">📝</button>
                     <button id="fs-btn" class="icon-btn" title="Fullscreen">⛶</button>
@@ -447,11 +391,7 @@
             <div class="notes-panel" id="notes-drawer">
                 <div class="notes-header">
                     <span id="notes-label">📝 Context Notes</span>
-                    <div>
-                        <!-- NEW: Feature 10 - Daily Reflection -->
-                        <button class="icon-btn" id="notes-reflect" title="Daily Reflection" style="display:inline-block;">✨</button>
-                        <button class="icon-btn" id="notes-close" style="display:inline-block;">✖</button>
-                    </div>
+                    <button class="icon-btn" id="notes-close">✖</button>
                 </div>
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
             </div>
@@ -495,11 +435,6 @@
                         <option value="bg-space">Deep Space</option>
                         <option value="bg-forest">Forest Nature</option>
                         <option value="bg-cafe">Cozy Cafe</option>
-                        <!-- NEW: Animated Backgrounds -->
-                        <option value="bg-gradient">✨ Breathing Gradient</option>
-                        <option value="bg-particles">🫧 Drifting Orbs</option>
-                        <option value="bg-stars">🌌 Twinkling Stars</option>
-                        <option value="bg-rain-anim">🌧️ Animated Rain</option>
                     </select>
                 </div>
                 <div class="setting-row">
@@ -1209,40 +1144,6 @@
                 }
                 applySettings();
 
-                /* ==========================================
-                 * Quick Todos Feature
-                 * ========================================== */
-                let qTodos = JSON.parse(localStorage.getItem('q_todos_pro')) || [];
-                function renderQTodos() {
-                    const list = document.getElementById('qtodo-list');
-                    if(!list) return;
-                    list.innerHTML = qTodos.map((t, i) => `
-                        <li class="todo-item ${t.done ? 'done':''}">
-                            <input type="checkbox" class="todo-check" data-idx="${i}" ${t.done?'checked':''}>
-                            <span class="todo-text">${t.text}</span>
-                            <button class="todo-del" data-idx="${i}">✖</button>
-                        </li>`).join('');
-                    document.getElementById('qtodo-count').textContent = `${qTodos.filter(t=>t.done).length}/${qTodos.length}`;
-                }
-                
-                document.getElementById('qtodo-input')?.addEventListener('keypress', (e) => {
-                    if(e.key === 'Enter' && e.target.value.trim()) {
-                        qTodos.push({ text: e.target.value.trim(), done: false });
-                        localStorage.setItem('q_todos_pro', JSON.stringify(qTodos));
-                        e.target.value = ''; renderQTodos();
-                    }
-                });
-                
-                document.getElementById('qtodo-list')?.addEventListener('click', (e) => {
-                    let idx = e.target.getAttribute('data-idx');
-                    if(idx === null) return;
-                    if(e.target.classList.contains('todo-del')) { qTodos.splice(idx, 1); }
-                    else if(e.target.closest('.todo-item')) { qTodos[idx].done = !qTodos[idx].done; }
-                    localStorage.setItem('q_todos_pro', JSON.stringify(qTodos));
-                    renderQTodos();
-                });
-                renderQTodos();
-
                 // ==========================================
                 // 3. POMODORO TIMER & INTERACTIVE PLANT
                 // ==========================================
@@ -1312,16 +1213,6 @@
                                 studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
                                 localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
                                 
-                                // Feature 3: Save Session Goal
-                                let goalInput = document.getElementById('pomo-goal');
-                                if(goalInput && goalInput.value.trim()) {
-                                    let logs = JSON.parse(localStorage.getItem('pomo_logs_pro')) || [];
-                                    logs.unshift({ date: new Date().toLocaleDateString(), subj: currentSubject, goal: goalInput.value.trim(), time: pomoSettings.focusTime });
-                                    if(logs.length > 50) logs.pop();
-                                    localStorage.setItem('pomo_logs_pro', JSON.stringify(logs));
-                                    goalInput.value = '';
-                                }
-
                                 if(quoteEl) quoteEl.textContent = "Session complete! You grew a tree!";
                                 window.showToast("Focus Session Complete! Great job.");
                                 pomoSeconds = pomoSettings.focusTime * 60;
@@ -1523,15 +1414,8 @@
                                     <div class="stat-box"><h3 style="color:var(--success);">${((total*pomoSettings.focusTime)/60).toFixed(1)}</h3><p>Hours</p></div>
                                 </div>
                                 <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Subject Mastery</h3>
-                                <div style="display:flex; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%; margin-bottom: 20px;">
+                                <div style="display:flex; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
                                     ${chartHtml}
-                                </div>
-                                <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Recent Achievements</h3>
-                                <div style="background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); padding:10px; box-shadow:var(--card-shadow); max-height:250px; overflow-y:auto;">
-                                    ${(() => {
-                                        let logs = JSON.parse(localStorage.getItem('pomo_logs_pro')) || [];
-                                        return logs.length > 0 ? logs.map(l => `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid var(--border-color); font-size:0.9em;"><span style="color:var(--text-muted); font-family:monospace;">${l.date} - ${l.time}m</span><span style="color:var(--accent-color); font-weight:bold;">${l.subj}</span><span style="flex-grow:1; text-align:right;">${l.goal}</span></div>`).join('') : '<div style="text-align:center; padding:20px; color:var(--text-muted);">No goals recorded yet.</div>';
-                                    })()}
                                 </div>
                             </div>`;
                     } else if(type === 'timetable') {
@@ -1804,48 +1688,14 @@
                 // ==========================================
                 // 7. HEADER, SPLIT, CHAT & MODALS (Safe Delegation)
                 // ==========================================
-                document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-                    const sb = document.getElementById('sidebar');
-                    sb.style.marginLeft = sb.style.marginLeft === '-380px' ? '0' : '-380px';
-                });
+                document.getElementById('sidebar-toggle')?.addEventListener('click', () => document.getElementById('sidebar')?.classList.toggle('collapsed'));
                 
-                // Feature 5: Invert Viewer Toggle
-                document.getElementById('invert-btn')?.addEventListener('click', () => {
-                    document.getElementById('viewer-1')?.classList.toggle('inverted');
-                    document.getElementById('viewer-2')?.classList.toggle('inverted');
-                    window.showToast("Toggled Invert Colors for Viewer");
-                });
-
-                // Feature 6: Zen Mode Toggle
-                document.getElementById('zen-btn')?.addEventListener('click', () => {
-                    document.body.classList.add('zen-active');
-                    window.showToast("Zen Mode Activated. Click Exit or hit Esc to return.");
-                });
-                
-                document.getElementById('exit-zen-btn')?.addEventListener('click', () => {
-                    document.body.classList.remove('zen-active');
-                });
-                
-                document.addEventListener('keydown', (e) => {
-                    if(e.key === 'Escape' && document.body.classList.contains('zen-active')) {
-                        document.body.classList.remove('zen-active');
-                    }
-                });
-
                 document.getElementById('fs-btn')?.addEventListener('click', () => {
                     try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e){}
                 });
 
                 document.getElementById('notes-btn')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.add('open'));
                 document.getElementById('notes-close')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.remove('open'));
-
-                // Feature 10: Daily Reflection Prompt
-                document.getElementById('notes-reflect')?.addEventListener('click', () => {
-                    const area = document.getElementById('notes-area');
-                    const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    area.value += `\n[${timestamp}] Reflection: \n1. What was the hardest concept?\n2. What do I need to review tomorrow?\n- `;
-                    area.focus();
-                });
 
                 let isSplit = false;
                 document.getElementById('split-btn')?.addEventListener('click', () => {
