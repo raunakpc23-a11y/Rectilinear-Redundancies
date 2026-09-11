@@ -51,12 +51,12 @@
         
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
-        /* Custom Backgrounds with Correct URI Encoding */
+        /* Custom Backgrounds with Vercel-Safe URL Encoding */
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
-        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('./assets/Important/Background%204.jpg'); opacity: 1; }
-        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('./assets/Important/Background%205.jpg'); opacity: 1; }
+        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background%204.jpg'); opacity: 1; }
+        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background%205.jpg'); opacity: 1; }
         
         /* Dynamic Background Engine */
         .bg-dynamic { background: linear-gradient(-45deg, #0f172a, #1e293b, var(--accent-color), #09090b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; opacity: 0.6; }
@@ -90,7 +90,7 @@
         .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 6px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        /* OPTIMIZED POMODORO (Perfectly Scaled) */
+        /* OPTIMIZED POMODORO (+10% Scaled Up) */
         .pomo-container { padding: 18px 20px; border-bottom: 1px solid var(--border-color); }
         .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border-color); transition: 0.3s; }
@@ -230,7 +230,7 @@
         .fc-front { background: var(--sidebar-bg); border: 2px solid var(--border-color); font-size: 1.5em; color: var(--text-color); }
         .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
-        /* Audio Module Overhaul */
+        /* Audio Module */
         .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; margin: 20px; background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
@@ -284,23 +284,22 @@
 
     </style>
     
-    <!-- MASTER IMAGE RESCUE SYSTEM -->
+    <!-- MASTER IMAGE RESCUE SYSTEM: Safeguard against GitHub/Vercel extension mutations -->
     <script>
         window.rescueImage = function(img) {
             if(!img.dataset.retries) img.dataset.retries = '0';
             let retries = parseInt(img.dataset.retries);
-            const formats = ['.png', '.jpeg', '.webp', '.jfif'];
+            const formats = ['.png', '.jpeg', '.webp', '.JPG', '.PNG', '.jfif'];
             if(retries < formats.length) {
                 let cleanSrc = img.src.split('?')[0]; 
                 let basePath = cleanSrc.substring(0, cleanSrc.lastIndexOf('.'));
                 img.src = basePath + formats[retries];
                 img.dataset.retries = (retries + 1).toString();
             } else {
-                img.onerror = null; 
+                img.onerror = null; // Stop looping if everything fails
             }
         };
     </script>
-
 </head>
 <body class="theme-amoled font-medium">
 
@@ -309,14 +308,14 @@
 
     <!-- OFFLINE OVERLAY -->
     <div id="offline-overlay" class="fs-overlay">
-        <img src="./assets/Important/Net%201.jpg" alt="No Internet" onerror="window.rescueImage(this)">
+        <img src="assets/Important/Net 1.jpg" alt="No Internet" onerror="window.rescueImage(this)">
         <h2>WIFI BEWAAFA HAI</h2>
         <p>You have lost connection to the matrix. Please check your internet connection to continue streaming lectures.</p>
     </div>
 
     <!-- BURNOUT / TOUCH GRASS OVERLAY -->
     <div id="burnout-overlay" class="fs-overlay">
-        <img src="./assets/Important/Touch%20Grass%201.jpg" alt="Touch Grass" onerror="window.rescueImage(this)">
+        <img src="assets/Important/Touch Grass 1.jpg" alt="Touch Grass" onerror="window.rescueImage(this)">
         <h2 style="color: #10b981;">GO TOUCH GRASS</h2>
         <p>You've been studying hardcore for hours today. Your CPU is melting and your posture resembles a shrimp. Take a mandatory break!</p>
         <button class="primary-btn" id="burnout-close" style="padding: 14px 24px; font-size: 1.1em;">I Promise to Touch Grass</button>
@@ -326,7 +325,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><img id="sidebar-logo" src="./assets/Important/Logo%202.jpg" class="sidebar-logo" alt="Logo" onerror="window.rescueImage(this)"> Dashboard</h2>
+                <h2><img id="sidebar-logo" src="assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo" onerror="window.rescueImage(this)"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                 </div>
@@ -442,14 +441,14 @@
             <div class="workspace-container" id="main-workspace">
                 <!-- BORED EMPTY STATE -->
                 <div class="placeholder-box" id="placeholder-box">
-                    <img src="./assets/Important/Background%201.jpg" alt="Bored Robot" onerror="window.rescueImage(this)">
+                    <img src="assets/Important/Background 1.jpg" alt="Bored Robot" onerror="window.rescueImage(this)">
                     <h3>Yes, I was bored</h3>
                     <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
                 </div>
 
                 <!-- 404 ERROR STATE (Hidden by default) -->
                 <div class="placeholder-box" id="error-box" style="display: none; background: transparent; border: none; box-shadow: none;">
-                    <img src="./assets/Important/Error%20404%201.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="window.rescueImage(this)">
+                    <img src="assets/Important/Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="window.rescueImage(this)">
                     <h3 style="text-transform: uppercase;">Lost in the Sauce</h3>
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
@@ -559,7 +558,7 @@
                 // Logo Randomizer (90% Logo 2, 10% Logo 1)
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
-                    sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo%201.jpg' : './assets/Important/Logo%202.jpg';
+                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo 1.jpg' : 'assets/Important/Logo 2.jpg';
                 }
 
                 // Offline State Handler
@@ -805,7 +804,7 @@
                     if(filtered.length === 0) { 
                         list.innerHTML = `
                         <div style="padding:40px 15px; text-align:center; opacity:0.8; display:flex; flex-direction:column; align-items:center;">
-                            <img src="./assets/Important/Found%20Nothing%201.jpg" onerror="window.rescueImage(this)" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
+                            <img src="assets/Important/Found Nothing 1.jpg" onerror="window.rescueImage(this)" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
                             <h4 style="color:var(--text-color); font-size:1.1em; text-transform:uppercase; font-weight:800;">Found Literally Nothing</h4>
                             <p style="color:var(--text-muted); font-size:0.9em; margin-top:8px;">Try spelling it correctly this time.</p>
                         </div>`; 
@@ -1342,11 +1341,14 @@
                         // 1. Image / Category Request Logic
                         let isImageReq = false;
                         let category = '';
-                        const imgCategories = ['cats', 'dogs', 'capybaras', 'memes'];
+                        
+                        // Exact Vercel-Safe Case Folders
+                        const imgCategories = ['Cats', 'Dogs', 'Capybaras', 'Memes'];
                         
                         // Check if a specific animal/meme is requested
                         for (let c of imgCategories) {
-                            if (q.includes(c) || q.includes(c.slice(0, -1))) { 
+                            let singular = c.toLowerCase().slice(0, -1);
+                            if (q.includes(c.toLowerCase()) || q.includes(singular)) { 
                                 isImageReq = true;
                                 category = c;
                                 break;
@@ -1362,7 +1364,9 @@
                         if (isImageReq) {
                             // Generate random image number 1 to 5
                             let rNum = Math.floor(Math.random() * 5) + 1;
-                            let imgPath = `./assets/${category}/${rNum}.jpg`; // Fixed relative pathing
+                            
+                            // Using standard spacing syntax. Vercel supports this, and standard browser encoding passes it correctly.
+                            let imgPath = `assets/${category}/${rNum}.jpg`; 
                             
                             // Random Sea Lion Noises
                             const seaLionSounds = [
