@@ -51,14 +51,14 @@
         
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
-        /* Custom Backgrounds - Using Strict Case-Sensitive Relative Paths */
+        /* Custom Backgrounds - Strictly Encoded for Vercel/Linux */
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
-        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background 4.jpg'); opacity: 1; }
-        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background 5.jpg'); opacity: 1; }
+        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background%204.jpg'); opacity: 1; }
+        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background%205.jpg'); opacity: 1; }
         
-        /* Upgraded Dynamic Background Engine */
+        /* Dynamic Aurora Background Engine */
         .bg-dynamic { background: linear-gradient(-45deg, #0f172a, #3b82f6, #8b5cf6, #09090b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; opacity: 0.85; }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
 
@@ -90,7 +90,7 @@
         .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 6px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        /* SCALED POMODORO (+8% as Requested) */
+        /* SCALED POMODORO (+10% Prominence) */
         .pomo-container { padding: 18px 20px; border-bottom: 1px solid var(--border-color); }
         .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border-color); transition: 0.3s; }
@@ -283,27 +283,6 @@
         .fs-overlay p { font-size: 1.1em; opacity: 0.8; max-width: 400px; line-height: 1.5; margin-bottom: 30px; }
 
     </style>
-    
-    <!-- MASTER IMAGE RESCUE SYSTEM: Impervious to Vercel/GitHub Extension Hiding -->
-    <script>
-        window.handleImageError = function(img) {
-            if (img.dataset.failed === 'true') return;
-            let currentSrc = img.src;
-            
-            // Cycle through all possible extension mutations automatically
-            if (currentSrc.includes('.jpg')) {
-                img.src = currentSrc.replace('.jpg', '.png');
-            } else if (currentSrc.includes('.png')) {
-                img.src = currentSrc.replace('.png', '.JPG');
-            } else if (currentSrc.includes('.JPG')) {
-                img.src = currentSrc.replace('.JPG', '.jpeg');
-            } else {
-                img.dataset.failed = 'true';
-                img.style.display = 'none'; // Fallback if file simply does not exist
-            }
-        };
-    </script>
-
 </head>
 <body class="theme-amoled font-medium">
 
@@ -312,14 +291,14 @@
 
     <!-- OFFLINE OVERLAY -->
     <div id="offline-overlay" class="fs-overlay">
-        <img src="assets/Important/Net 1.jpg" alt="No Internet" onerror="window.handleImageError(this)">
+        <img src="assets/Important/Net%201.jpg" alt="No Internet">
         <h2>WIFI BEWAAFA HAI</h2>
         <p>You have lost connection to the matrix. Please check your internet connection to continue streaming lectures.</p>
     </div>
 
     <!-- BURNOUT / TOUCH GRASS OVERLAY -->
     <div id="burnout-overlay" class="fs-overlay">
-        <img src="assets/Important/Touch Grass 1.jpg" alt="Touch Grass" onerror="window.handleImageError(this)">
+        <img src="assets/Important/Touch%20Grass%201.jpg" alt="Touch Grass">
         <h2 style="color: #10b981;">GO TOUCH GRASS</h2>
         <p>You've been studying hardcore for hours today. Your CPU is melting and your posture resembles a shrimp. Take a mandatory break!</p>
         <button class="primary-btn" id="burnout-close" style="padding: 14px 24px; font-size: 1.1em;">I Promise to Touch Grass</button>
@@ -329,7 +308,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><img id="sidebar-logo" src="assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo" onerror="window.handleImageError(this)"> Dashboard</h2>
+                <h2><img id="sidebar-logo" src="assets/Important/Logo%202.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                 </div>
@@ -388,7 +367,7 @@
                     <button class="util-card-btn" data-util="syllabus"><span class="icon">📑</span><div class="info"><h3>Syllabus Tracker</h3><p>Chapter-wise mastery</p></div></button>
                     <button class="util-card-btn" data-util="flashcards"><span class="icon">📇</span><div class="info"><h3>Flashcards</h3><p>High-yield quick review</p></div></button>
                     
-                    <!-- NEW PRODUCTIVITY SUGGESTIONS -->
+                    <!-- PRODUCTIVITY SUGGESTIONS -->
                     <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                         <h4 style="color: var(--text-muted); font-size: 0.85em; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;">🚀 Suggested Expansions</h4>
                         <button class="util-card-btn" style="opacity: 0.6; cursor: not-allowed; padding: 12px;"><span class="icon" style="font-size: 1.5em;">🧠</span><div class="info"><h3 style="font-size: 1em;">Spaced Repetition</h3><p style="font-size: 0.75em;">AI-scheduled review intervals</p></div></button>
@@ -452,14 +431,14 @@
             <div class="workspace-container" id="main-workspace">
                 <!-- BORED EMPTY STATE -->
                 <div class="placeholder-box" id="placeholder-box">
-                    <img src="assets/Important/Background 1.jpg" alt="Bored Robot" onerror="window.handleImageError(this)">
+                    <img src="assets/Important/Background%201.jpg" alt="Bored Robot">
                     <h3>Yes, I was bored</h3>
                     <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
                 </div>
 
                 <!-- 404 ERROR STATE (Hidden by default) -->
                 <div class="placeholder-box" id="error-box" style="display: none; background: transparent; border: none; box-shadow: none;">
-                    <img src="assets/Important/Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="window.handleImageError(this)">
+                    <img src="assets/Important/Error%20404%201.jpg" alt="404 Not Found" style="max-width: 350px;">
                     <h3 style="text-transform: uppercase;">Lost in the Sauce</h3>
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
@@ -569,7 +548,7 @@
                 // Logo Randomizer (90% Logo 2, 10% Logo 1)
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
-                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo 1.jpg' : 'assets/Important/Logo 2.jpg';
+                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo%201.jpg' : 'assets/Important/Logo%202.jpg';
                 }
 
                 // Offline State Handler
@@ -815,7 +794,7 @@
                     if(filtered.length === 0) { 
                         list.innerHTML = `
                         <div style="padding:40px 15px; text-align:center; opacity:0.8; display:flex; flex-direction:column; align-items:center;">
-                            <img src="assets/Important/Found Nothing 1.jpg" onerror="window.handleImageError(this)" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
+                            <img src="assets/Important/Found%20Nothing%201.jpg" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
                             <h4 style="color:var(--text-color); font-size:1.1em; text-transform:uppercase; font-weight:800;">Found Literally Nothing</h4>
                             <p style="color:var(--text-muted); font-size:0.9em; margin-top:8px;">Try spelling it correctly this time.</p>
                         </div>`; 
@@ -1376,7 +1355,7 @@
                             // Generate random image number 1 to 5
                             let rNum = Math.floor(Math.random() * 5) + 1;
                             
-                            // Safe dynamic path mapping
+                            // Absolutely Vercel Safe pathing
                             let imgPath = `assets/${category}/${rNum}.jpg`; 
                             
                             // Random Sea Lion Noises
@@ -1389,7 +1368,7 @@
                             ];
                             let sound = seaLionSounds[Math.floor(Math.random() * seaLionSounds.length)];
                             
-                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="window.handleImageError(this)" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
+                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
                             cb.scrollTop = cb.scrollHeight;
                             return;
                         }
