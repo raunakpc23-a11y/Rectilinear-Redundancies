@@ -540,7 +540,7 @@
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
                     sidebarLogo.onerror = function() {
-                        this.onerror = null; // Prevent loop
+                        this.onerror = null; 
                         this.src = this.src.replace('.jpg', '.png').replace('.JPG', '.png');
                     };
                     sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo 1.jpg' : './assets/Important/Logo 2.jpg';
@@ -1304,11 +1304,9 @@
                         let isImageReq = false;
                         let category = '';
                         
-                        // FIX: Updated to match your exact folder capitalization
                         const imgCategories = ['Cats', 'Dogs', 'Capybaras', 'Memes'];
                         
                         for (let c of imgCategories) {
-                            // Check against lowercase query, but store the Capitalized folder name
                             let lowerC = c.toLowerCase();
                             if (q.includes(lowerC) || q.includes(lowerC.slice(0, -1))) { 
                                 isImageReq = true;
@@ -1324,7 +1322,10 @@
 
                         if (isImageReq) {
                             let rNum = Math.floor(Math.random() * 5) + 1;
-                            let imgPath = `./assets/${category}/${rNum}.jpg`;
+                            
+                            // FIX: Using singular category names for files (e.g., 'Cats' -> 'Cat 2.jpg')
+                            let singularName = category.slice(0, -1);
+                            let imgPath = `./assets/${category}/${singularName}%20${rNum}.jpg`;
                             
                             const seaLionSounds = [
                                 "*Arf! Arf!* Slides on belly.",
@@ -1335,7 +1336,7 @@
                             ];
                             let sound = seaLionSounds[Math.floor(Math.random() * seaLionSounds.length)];
                             
-                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
+                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${singularName}"></div>`;
                             cb.scrollTop = cb.scrollHeight;
                             return;
                         }
