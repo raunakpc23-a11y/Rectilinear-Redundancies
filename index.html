@@ -47,8 +47,14 @@
            2. GLOBAL STYLES & LAYOUT
            ========================================================= */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-        body { display: flex; height: 100vh; overflow: hidden; width: 100vw; color: var(--text-color); }
         
+        /* Mobile Scroll & Height Fixes */
+        body { display: flex; height: 100vh; height: 100dvh; overflow: hidden; width: 100vw; color: var(--text-color); }
+        
+        .book-list, .util-menu, .chat-body, .notes-area, #util-panel, .tt-list, .viewer-box, .syl-tracker, .modal-body {
+            -webkit-overflow-scrolling: touch;
+        }
+
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
         /* Custom Backgrounds */
@@ -119,7 +125,7 @@
 
         /* MODULE TABS */
         .module-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 20px 8px; }
-        .mod-tab { flex: 1; padding: 8px 4px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.8em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
+        .mod-tab { flex: 1; min-width: max-content; padding: 8px 12px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.8em; cursor: pointer; text-align: center; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.05em;}
         .mod-tab:hover { color: var(--text-color); background: var(--folder-bg); border-color: var(--border-color); }
         .mod-tab.active { background-color: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 12px var(--accent-glow); }
 
@@ -157,7 +163,13 @@
         .header-title-box h2 { font-size: 1.3em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .breadcrumb { color: var(--text-muted); font-size: 0.85em; font-family: monospace; margin-top: 4px; }
         
-        .header-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .header-actions { 
+            display: flex; gap: 4px; align-items: center; flex-shrink: 0; 
+            background: var(--folder-bg); padding: 4px 6px; border-radius: var(--radius-lg); 
+            border: 1px solid var(--border-color);
+        }
+        .action-divider { width: 1px; height: 20px; background: var(--border-color); margin: 0 4px; }
+        
         .primary-btn { background-color: var(--accent-color); color: white; font-weight: 600; font-size: 0.9em; padding: 10px 16px; border-radius: var(--radius-md); border: none; cursor: pointer; transition: 0.2s; display:flex; align-items:center; gap:8px;}
         .primary-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 12px var(--accent-glow); }
 
@@ -165,8 +177,8 @@
 
         .workspace-container { flex-grow: 1; display: flex; position: relative; padding: 20px; gap: 20px; height: calc(100vh - 85px); overflow:hidden;}
         
-        .viewer-box { width: 100%; height: 100%; background: #000; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); display: none; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .viewer-box { width: 100%; height: 100%; background: #000; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--card-shadow); display: none; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; }
 
         .split-resizer { width: 12px; cursor: col-resize; background: transparent; display: none; position: relative; z-index: 10; align-items:center; justify-content:center;}
         .split-resizer::after { content: ''; width: 4px; height: 40px; background: var(--border-color); border-radius: 2px; transition: 0.2s; }
@@ -234,6 +246,8 @@
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
         .audio-setting select:focus { border-color: var(--accent-color); }
+        #audio-iframe-box { position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 Aspect Ratio */ border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+        #audio-iframe-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
         /* =========================================================
            6. MODALS, CHAT & TOAST
@@ -293,6 +307,10 @@
             /* Typography & Spacing */
             .header-title-box h2 { font-size: 1.1em; }
             .workspace-container { padding: 10px; gap: 10px; }
+            
+            /* Tabs Overflow horizontally on small screens */
+            .module-tabs { flex-wrap: nowrap !important; overflow-x: auto; padding-bottom: 12px; }
+            .module-tabs::-webkit-scrollbar { display: none; }
             
             /* Split Screen override for portrait screens */
             #main-workspace[style*="flex-direction: row"] { flex-direction: column !important; }
@@ -436,8 +454,8 @@
                         <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.4">
                     </div>
                     <button class="primary-btn" id="audio-toggle" style="justify-content:center; padding:16px; font-size:1.1em;">▶ Start Audio</button>
-                    <div id="audio-iframe-box" style="display:none; margin-top:10px; border-radius:12px; overflow:hidden; border:1px solid var(--border-color);">
-                        <iframe id="audio-frame" width="100%" height="200" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"></iframe>
+                    <div id="audio-iframe-box" style="display:none; margin-top:10px;">
+                        <iframe id="audio-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen" frameborder="0"></iframe>
                     </div>
                 </div>
             </div>
@@ -448,11 +466,13 @@
             <div class="reader-header">
                 <button class="icon-btn" id="sidebar-toggle" title="Toggle Sidebar">☰</button>
                 <div class="header-title-box">
-                    <h2 id="current-title">Select a Module</h2>
+                    <h2 id="current-title">🚀 Welcome to Your Workspace</h2>
                     <div class="breadcrumb" id="current-path">Workspace > Welcome</div>
                     <select id="playlist-select" class="playlist-select" style="display:none;"></select>
                 </div>
                 <div class="header-actions">
+                    <button id="home-btn" class="icon-btn" title="Home">🏠</button>
+                    <div class="action-divider"></div>
                     <button id="split-btn" class="icon-btn" title="Split Screen">🔲</button>
                     <button id="notes-btn" class="icon-btn" title="Notes Drawer">📝</button>
                     <button id="fs-btn" class="icon-btn" title="Fullscreen">⛶</button>
@@ -474,9 +494,9 @@
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
 
-                <div class="viewer-box" id="viewer-1"><iframe id="frame-1"></iframe></div>
+                <div class="viewer-box" id="viewer-1"><iframe id="frame-1" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen"></iframe></div>
                 <div class="split-resizer" id="resizer"></div>
-                <div class="viewer-box" id="viewer-2"><iframe id="frame-2"></iframe></div>
+                <div class="viewer-box" id="viewer-2"><iframe id="frame-2" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen"></iframe></div>
                 
                 <div id="util-panel"></div>
             </div>
@@ -711,7 +731,12 @@
                     "Deep breath. Next problem.", "Discipline equals freedom.", "Stay hard!",
                     "Rome wasn't built in a day.", "Brick by brick.", "Keep pushing.",
                     "The magic you are looking for is in the work you're avoiding.",
-                    "Embrace the grind.", "Small steps, big mountain.", "Conquer the day."
+                    "Embrace the grind.", "Small steps, big mountain.", "Conquer the day.",
+                    "Sweat now, shine later.", "Do it for your future self.", "No zero days.",
+                    "Excuses don't build empires.", "Stay focused and extra sparkly.",
+                    "Your potential is endless.", "Make it happen. Shock everyone.",
+                    "Success is the sum of small efforts.", "Don't stop until you're proud.",
+                    "Great things never come from comfort zones.", "Dream it. Believe it. Build it."
                 ];
 
                 function updatePomoDisplay() {
@@ -1297,6 +1322,32 @@
                 // ==========================================
                 // 7. HEADER, SPLIT, CHAT & MODALS
                 // ==========================================
+                
+                // HOME BUTTON LOGIC
+                document.getElementById('home-btn')?.addEventListener('click', () => {
+                    document.getElementById('viewer-1').style.display = 'none';
+                    document.getElementById('viewer-2').style.display = 'none';
+                    document.getElementById('resizer').style.display = 'none';
+                    document.getElementById('util-panel').style.display = 'none';
+                    document.getElementById('placeholder-box').style.display = 'flex';
+                    document.getElementById('error-box').style.display = 'none';
+                    
+                    document.getElementById('current-title').textContent = '🚀 Welcome to Your Workspace';
+                    document.getElementById('current-path').textContent = 'Workspace > Welcome';
+                    document.getElementById('playlist-select').style.display = 'none';
+                    
+                    const f1 = document.getElementById('frame-1');
+                    const f2 = document.getElementById('frame-2');
+                    if (f1) f1.src = '';
+                    if (f2) f2.src = '';
+                    
+                    document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
+                    
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar')?.classList.remove('collapsed');
+                    }
+                });
+
                 document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
                     document.getElementById('sidebar')?.classList.toggle('collapsed');
                 });
