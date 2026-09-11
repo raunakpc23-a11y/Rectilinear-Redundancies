@@ -55,8 +55,8 @@
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
-        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background 4.jpg'); opacity: 1; }
-        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background 5.jpg'); opacity: 1; }
+        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background%204.jpg'); opacity: 1; }
+        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background%205.jpg'); opacity: 1; }
         
         /* New Dynamic Background Engine */
         .bg-dynamic { background: linear-gradient(-45deg, #0f172a, #1e293b, var(--accent-color), #09090b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; opacity: 0.6; }
@@ -291,14 +291,14 @@
 
     <!-- OFFLINE OVERLAY -->
     <div id="offline-overlay" class="fs-overlay">
-        <img src="assets/Important/Net 1.jpg" alt="No Internet" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="assets/Important/Net%201.jpg" alt="No Internet" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
         <h2>WIFI BEWAAFA HAI</h2>
         <p>You have lost connection to the matrix. Please check your internet connection to continue streaming lectures.</p>
     </div>
 
     <!-- BURNOUT / TOUCH GRASS OVERLAY -->
     <div id="burnout-overlay" class="fs-overlay">
-        <img src="assets/Important/Touch Grass 1.jpg" alt="Touch Grass" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="assets/Important/Touch%20Grass%201.jpg" alt="Touch Grass" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
         <h2 style="color: #10b981;">GO TOUCH GRASS</h2>
         <p>You've been studying hardcore for hours today. Your CPU is melting and your posture resembles a shrimp. Take a mandatory break!</p>
         <button class="primary-btn" id="burnout-close" style="padding: 14px 24px; font-size: 1.1em;">I Promise to Touch Grass</button>
@@ -308,7 +308,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><img id="sidebar-logo" src="assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
+                <h2><img id="sidebar-logo" src="assets/Important/Logo%202.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                 </div>
@@ -424,14 +424,14 @@
             <div class="workspace-container" id="main-workspace">
                 <!-- BORED EMPTY STATE -->
                 <div class="placeholder-box" id="placeholder-box">
-                    <img src="assets/Important/Background 1.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="assets/Important/Background%201.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
                     <h3>Yes, I was bored</h3>
                     <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
                 </div>
 
                 <!-- 404 ERROR STATE (Hidden by default) -->
                 <div class="placeholder-box" id="error-box" style="display: none; background: transparent; border: none; box-shadow: none;">
-                    <img src="assets/Important/Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="assets/Important/Error%20404%201.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
                     <h3 style="text-transform: uppercase;">Lost in the Sauce</h3>
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
@@ -541,8 +541,11 @@
                 // Logo Randomizer (90% Logo 2, 10% Logo 1)
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
-                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo 1.jpg' : 'assets/Important/Logo 2.jpg';
-                    sidebarLogo.onerror = () => { sidebarLogo.src = sidebarLogo.src.replace('.jpg', '.png'); };
+                    sidebarLogo.onerror = function() {
+                        this.onerror = null; // Prevent infinite loop if fallback image fails
+                        this.src = this.src.replace('.jpg', '.png');
+                    };
+                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo%201.jpg' : 'assets/Important/Logo%202.jpg';
                 }
 
                 // Offline State Handler
@@ -788,7 +791,7 @@
                     if(filtered.length === 0) { 
                         list.innerHTML = `
                         <div style="padding:40px 15px; text-align:center; opacity:0.8; display:flex; flex-direction:column; align-items:center;">
-                            <img src="assets/Important/Found Nothing 1.jpg" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
+                            <img src="assets/Important/Found%20Nothing%201.jpg" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
                             <h4 style="color:var(--text-color); font-size:1.1em; text-transform:uppercase; font-weight:800;">Found Literally Nothing</h4>
                             <p style="color:var(--text-muted); font-size:0.9em; margin-top:8px;">Try spelling it correctly this time.</p>
                         </div>`; 
