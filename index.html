@@ -255,7 +255,7 @@
         .notes-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size:1.1em;}
         .notes-area { flex-grow: 1; border: none; padding: 20px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
 
-        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 1.8em; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
         .chat-fab:hover { transform: scale(1.08); filter: brightness(1.1);}
         
         .chat-window { position: fixed; bottom: 95px; right: 24px; width: 380px; height: 500px; background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; z-index: 998; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.2s ease; overflow: hidden; }
@@ -450,11 +450,52 @@
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
             </div>
 
-            <!-- PERSONAL SEA LION -->
-            <button class="chat-fab" id="chat-fab" title="Personal Sea Lion">🦭</button>
+            <!-- PERSONAL SEA LION FAB -->
+            <button class="chat-fab" id="chat-fab" title="Personal Sea Lion">
+                <svg viewBox="0 0 100 100" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="40" fill="#475569" />
+                    <path d="M 12 40 Q 5 45 10 55" stroke="#475569" stroke-width="5" stroke-linecap="round" fill="none" />
+                    <path d="M 88 40 Q 95 45 90 55" stroke="#475569" stroke-width="5" stroke-linecap="round" fill="none" />
+                    <ellipse cx="50" cy="62" rx="22" ry="16" fill="#cbd5e1" />
+                    <ellipse cx="50" cy="54" rx="8" ry="6" fill="#0f172a" />
+                    <path d="M 40 64 Q 50 72 60 64" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
+                    <circle cx="34" cy="40" r="5" fill="#0f172a" />
+                    <circle cx="66" cy="40" r="5" fill="#0f172a" />
+                    <circle cx="32" cy="38" r="2" fill="#ffffff" />
+                    <circle cx="64" cy="38" r="2" fill="#ffffff" />
+                    <line x1="10" y1="58" x2="30" y2="62" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                    <line x1="8" y1="65" x2="30" y2="65" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                    <line x1="12" y1="72" x2="32" y2="68" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                    <line x1="90" y1="58" x2="70" y2="62" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                    <line x1="92" y1="65" x2="70" y2="65" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                    <line x1="88" y1="72" x2="68" y2="68" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+
+            <!-- CHAT WINDOW -->
             <div class="chat-window" id="chat-window">
                 <div class="modal-header">
-                    <span>🦭 Personal Sea Lion</span>
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 100 100" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="40" fill="#475569" />
+                            <path d="M 12 40 Q 5 45 10 55" stroke="#475569" stroke-width="5" stroke-linecap="round" fill="none" />
+                            <path d="M 88 40 Q 95 45 90 55" stroke="#475569" stroke-width="5" stroke-linecap="round" fill="none" />
+                            <ellipse cx="50" cy="62" rx="22" ry="16" fill="#cbd5e1" />
+                            <ellipse cx="50" cy="54" rx="8" ry="6" fill="#0f172a" />
+                            <path d="M 40 64 Q 50 72 60 64" stroke="#0f172a" stroke-width="3" stroke-linecap="round" fill="none" />
+                            <circle cx="34" cy="40" r="5" fill="#0f172a" />
+                            <circle cx="66" cy="40" r="5" fill="#0f172a" />
+                            <circle cx="32" cy="38" r="2" fill="#ffffff" />
+                            <circle cx="64" cy="38" r="2" fill="#ffffff" />
+                            <line x1="10" y1="58" x2="30" y2="62" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                            <line x1="8" y1="65" x2="30" y2="65" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                            <line x1="12" y1="72" x2="32" y2="68" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                            <line x1="90" y1="58" x2="70" y2="62" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                            <line x1="92" y1="65" x2="70" y2="65" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                            <line x1="88" y1="72" x2="68" y2="68" stroke="#e2e8f0" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                        Personal Sea Lion
+                    </span>
                     <button class="icon-btn" id="chat-close">✖</button>
                 </div>
                 <div class="chat-body" id="chat-body">
@@ -1323,7 +1364,6 @@
                         if (isImageReq) {
                             let rNum = Math.floor(Math.random() * 5) + 1;
                             
-                            // FIX: Using singular category names for files (e.g., 'Cats' -> 'Cat 2.jpg')
                             let singularName = category.slice(0, -1);
                             let imgPath = `./assets/${category}/${singularName}%20${rNum}.jpg`;
                             
