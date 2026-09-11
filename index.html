@@ -51,7 +51,7 @@
         /* Mobile Scroll & Height Fixes */
         body { display: flex; height: 100vh; height: 100dvh; overflow: hidden; width: 100vw; color: var(--text-color); }
         
-        .book-list, .util-menu, .chat-body, .notes-area, #util-panel, .tt-list, .viewer-box, .syl-tracker, .modal-body {
+        .book-list, .util-menu, .chat-body, .notes-area, #util-panel, .tt-list, .viewer-box, .syl-tracker, .modal-body, .audio-wrapper {
             -webkit-overflow-scrolling: touch;
         }
 
@@ -172,6 +172,8 @@
         
         .primary-btn { background-color: var(--accent-color); color: white; font-weight: 600; font-size: 0.9em; padding: 10px 16px; border-radius: var(--radius-md); border: none; cursor: pointer; transition: 0.2s; display:flex; align-items:center; gap:8px;}
         .primary-btn:hover { filter: brightness(1.1); box-shadow: 0 4px 12px var(--accent-glow); }
+        .outline-btn { background-color: var(--folder-bg); color: var(--text-color); border: 1px solid var(--border-color); font-weight: 600; font-size: 0.9em; padding: 10px 16px; border-radius: var(--radius-md); cursor: pointer; transition: 0.2s; display:flex; align-items:center; gap:8px;}
+        .outline-btn:hover { border-color: var(--accent-color); transform: translateY(-1px); }
 
         .playlist-select { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); font-weight: 600; font-size: 0.95em; width: 100%; max-width: 450px; outline: none; cursor:pointer;}
 
@@ -241,16 +243,8 @@
         .fc-front { background: var(--sidebar-bg); border: 2px solid var(--border-color); font-size: 1.5em; color: var(--text-color); }
         .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
-        /* Audio Module */
-        .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; margin: 20px; background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
-        .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
-        .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
-        .audio-setting select:focus { border-color: var(--accent-color); }
-        #audio-iframe-box { position: relative; width: 100%; height: 200px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: none; margin-top: 10px; }
-        #audio-iframe-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
         /* =========================================================
-           6. MODALS, CHAT & TOAST
+           6. MODALS, CHAT, DRAWERS & TOAST
            ========================================================= */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; backdrop-filter: blur(4px); justify-content: center; align-items: center; }
         .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
@@ -268,6 +262,14 @@
         .notes-panel.open { right: 0; }
         .notes-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size:1.1em;}
         .notes-area { flex-grow: 1; border: none; padding: 20px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
+
+        /* Audio Drawer Elements */
+        .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; background: transparent; }
+        .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
+        .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
+        .audio-setting select:focus { border-color: var(--accent-color); }
+        #audio-iframe-box { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: none; margin-top: 10px; background: #000; }
+        #audio-iframe-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;}
 
         .chat-fab { position: fixed; bottom: 24px; right: 24px; background: var(--accent-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
         .chat-fab:hover { transform: scale(1.08); filter: brightness(1.1);}
@@ -299,18 +301,26 @@
            7. MOBILE RESPONSIVENESS (The Master Upgrade)
            ========================================================= */
         @media (max-width: 768px) {
-            /* Sidebar Overlay */
+            /* Sidebar Overlay Fixes - ensures it stays fully solid, no bleed, hides on load */
             .sidebar { 
                 position: absolute; 
                 width: 100vw; 
                 min-width: 100vw; 
                 height: 100%; 
+                margin-left: -100vw; /* Hides by default on mobile cleanly */
                 left: 0; 
                 z-index: 2000; 
-                background: var(--sidebar-bg) !important; /* Forces solid background */
+                background: var(--primary-bg) !important; /* Forces solid background */
                 box-shadow: none; 
+                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
-            .sidebar.collapsed { margin-left: -100vw; box-shadow: none; }
+            .sidebar.mobile-open { margin-left: 0; }
+            
+            /* Enforce complete solid backgrounds per theme so no underlying content shows */
+            body.theme-amoled .sidebar { background-color: #09090b !important; }
+            body.theme-charcoal .sidebar { background-color: #1e1e24 !important; }
+            body.theme-slate .sidebar { background-color: #1e293b !important; }
+            
             .mobile-close-btn { display: flex !important; }
             
             /* Typography & Spacing */
@@ -413,7 +423,6 @@
                 <button class="mod-tab" data-tab="FILES">Files</button>
                 <button class="mod-tab" data-tab="SUPPORT">Support</button>
                 <button class="mod-tab" data-tab="UTILITIES">Utilities</button>
-                <button class="mod-tab" data-tab="AUDIO">Audio</button>
             </div>
 
             <!-- TAB VIEWS -->
@@ -432,42 +441,6 @@
                     <button class="util-card-btn" data-util="flashcards"><span class="icon">📇</span><div class="info"><h3>Flashcards</h3><p>High-yield quick review</p></div></button>
                 </div>
             </div>
-
-            <div id="view-audio" class="sidebar-view" style="padding: 0;">
-                <div class="audio-wrapper">
-                    <h3 style="font-size: 1.2em; text-align: center; color: var(--accent-color);">🎧 Focus Hub</h3>
-                    <div class="audio-setting">
-                        <label>Select Track / Generator:</label>
-                        <select id="audio-select">
-                            <optgroup label="Synthesized Ambient (Local)">
-                                <option value="brown">🌊 Brown Noise (Deep Focus)</option>
-                                <option value="pink">🌸 Pink Noise (Balanced Focus)</option>
-                                <option value="white">📻 White Noise (Isolate)</option>
-                                <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
-                            </optgroup>
-                            <optgroup label="Curated Mixes (YouTube)">
-                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
-                                <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
-                                <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
-                                <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
-                                <option value="tgOcmXil_jU">📚 Dark Academia Strings</option>
-                                <option value="nDq6TstdEi8">🌿 Studio Ghibli Piano</option>
-                                <option value="7NOSDKb0HlU">🌌 Hans Zimmer Epic Focus</option>
-                                <option value="DWcJFNfaw9c">🔥 Mario Kart Study Music (Intense)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div class="audio-setting" id="volume-container">
-                        <label>Synthesizer Volume:</label>
-                        <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.4">
-                    </div>
-                    <button class="primary-btn" id="audio-toggle" style="justify-content:center; padding:16px; font-size:1.1em;">▶ Start Audio</button>
-                    <div id="audio-iframe-box">
-                        <iframe id="audio-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen" frameborder="0"></iframe>
-                    </div>
-                    <button class="primary-btn" id="audio-to-main-btn" style="display: none; justify-content: center; padding: 12px; margin-top: 5px;">🖥️ Play on Main Screen</button>
-                </div>
-            </div>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -478,10 +451,15 @@
                     <h2 id="current-title" style="display: none;"></h2>
                     <div class="breadcrumb" id="current-path" style="display: none;"></div>
                     <select id="playlist-select" class="playlist-select" style="display:none;"></select>
-                    <button class="primary-btn" id="settings-btn-main" title="Settings" style="width: fit-content;">⚙️ Preferences & Settings</button>
+                    
+                    <!-- Settings Button replaces title initially -->
+                    <div id="home-title-area" style="display: flex; align-items: center;">
+                        <button class="outline-btn" id="settings-btn-main" title="Settings">⚙️ Workspace Settings</button>
+                    </div>
                 </div>
                 <div class="header-actions">
                     <button id="home-btn" class="icon-btn" title="Home">🏠</button>
+                    <button id="audio-btn" class="icon-btn" title="Audio Player">🎧</button>
                     <div class="action-divider"></div>
                     <button id="split-btn" class="icon-btn" title="Split Screen">🔲</button>
                     <button id="notes-btn" class="icon-btn" title="Notes Drawer">📝</button>
@@ -511,12 +489,54 @@
                 <div id="util-panel"></div>
             </div>
 
+            <!-- NOTES DRAWER -->
             <div class="notes-panel" id="notes-drawer">
                 <div class="notes-header">
                     <span id="notes-label">📝 Context Notes</span>
                     <button class="icon-btn" id="notes-close">✖</button>
                 </div>
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
+            </div>
+
+            <!-- AUDIO DRAWER -->
+            <div class="notes-panel" id="audio-drawer" style="z-index: 151;">
+                <div class="notes-header">
+                    <span id="audio-label">🎧 Focus Audio</span>
+                    <button class="icon-btn" id="audio-close">✖</button>
+                </div>
+                <div class="audio-wrapper">
+                    <div class="audio-setting">
+                        <label>Select Track / Generator:</label>
+                        <select id="audio-select">
+                            <optgroup label="Synthesized Ambient (Local)">
+                                <option value="brown">🌊 Brown Noise (Deep Focus)</option>
+                                <option value="pink">🌸 Pink Noise (Balanced Focus)</option>
+                                <option value="white">📻 White Noise (Isolate)</option>
+                                <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
+                            </optgroup>
+                            <optgroup label="Curated Mixes (YouTube)">
+                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="1ZYbU82GVz4">🌧️ Rain & Thunder in Forest</option>
+                                <option value="hBGbt2CRDpA">☕ Cozy Rain Cafe</option>
+                                <option value="lTRiuFIWV54">🎬 Blade Runner Synth</option>
+                                <option value="tgOcmXil_jU">📚 Dark Academia Strings</option>
+                                <option value="nDq6TstdEi8">🌿 Studio Ghibli Piano</option>
+                                <option value="7NOSDKb0HlU">🌌 Hans Zimmer Epic Focus</option>
+                                <option value="DWcJFNfaw9c">🔥 Mario Kart Study Music (Intense)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="audio-setting" id="volume-container">
+                        <label>Synthesizer Volume:</label>
+                        <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.4">
+                    </div>
+                    <button class="primary-btn" id="audio-toggle" style="justify-content:center; padding:16px; font-size:1.1em;">▶ Start Audio</button>
+                    <button class="outline-btn" id="audio-to-main-btn" style="display: none; justify-content: center; padding: 12px; margin-top: -8px;">🖥️ Play on Main Screen</button>
+                    
+                    <div id="audio-iframe-box">
+                        <iframe id="audio-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen" frameborder="0"></iframe>
+                    </div>
+                </div>
             </div>
 
             <!-- PERSONAL SEA LION FAB -->
@@ -657,12 +677,16 @@
                 }
 
                 // Mobile UX Auto-Collapse Handlers
-                if (window.innerWidth <= 768) {
-                    document.getElementById('sidebar')?.classList.add('collapsed');
-                }
-                
+                document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar')?.classList.toggle('mobile-open');
+                    } else {
+                        document.getElementById('sidebar')?.classList.toggle('collapsed');
+                    }
+                });
+
                 document.getElementById('mobile-sidebar-close')?.addEventListener('click', () => {
-                    document.getElementById('sidebar')?.classList.add('collapsed');
+                    document.getElementById('sidebar')?.classList.remove('mobile-open');
                 });
 
                 window.addEventListener('offline', () => document.getElementById('offline-overlay').classList.add('active'));
@@ -923,9 +947,9 @@
                     if (el) el.classList.add('active');
 
                     // Auto-collapse sidebar on mobile
-                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
+                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.remove('mobile-open');
 
-                    document.getElementById('settings-btn-main').style.display = 'none';
+                    document.getElementById('home-title-area').style.display = 'none';
                     document.getElementById('current-title').style.display = 'block';
                     document.getElementById('current-path').style.display = 'block';
 
@@ -984,8 +1008,6 @@
                         
                         if(activeModule === 'UTILITIES') {
                             document.getElementById('view-utilities')?.classList.add('active');
-                        } else if (activeModule === 'AUDIO') {
-                            document.getElementById('view-audio')?.classList.add('active');
                         } else {
                             document.getElementById('view-library')?.classList.add('active');
                             renderLibrary();
@@ -999,10 +1021,9 @@
                 });
 
                 function openUtility(type) {
-                    // Auto-collapse sidebar on mobile
-                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
+                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.remove('mobile-open');
 
-                    document.getElementById('settings-btn-main').style.display = 'none';
+                    document.getElementById('home-title-area').style.display = 'none';
                     document.getElementById('current-title').style.display = 'block';
                     document.getElementById('current-path').style.display = 'block';
 
@@ -1265,7 +1286,7 @@
                 }
 
                 // ==========================================
-                // 6. AUDIO HUB
+                // 6. AUDIO HUB (Moved to Drawer & Header)
                 // ==========================================
                 let synthNode = null;
                 let synthGain = null;
@@ -1279,8 +1300,9 @@
                     const val = e.target.value;
                     const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(val);
                     document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
-                    document.getElementById('audio-iframe-box').style.display = isSynth ? 'none' : 'block';
                     document.getElementById('audio-to-main-btn').style.display = isSynth ? 'none' : 'flex';
+                    
+                    document.getElementById('audio-iframe-box').style.display = 'none';
                     stopAllAudio();
                     const toggleBtn = document.getElementById('audio-toggle');
                     if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
@@ -1297,12 +1319,14 @@
                     if(e.target.textContent.includes('Stop')) {
                         stopAllAudio();
                         e.target.textContent = "▶ Start Audio";
+                        document.getElementById('audio-iframe-box').style.display = 'none';
                         return;
                     }
 
                     e.target.textContent = "⏹ Stop Audio";
                     
                     if(isSynth) {
+                        document.getElementById('audio-iframe-box').style.display = 'none';
                         const ctx = new (window.AudioContext || window.webkitAudioContext)();
                         synthGain = ctx.createGain();
                         synthGain.gain.value = parseFloat(document.getElementById('audio-volume').value);
@@ -1339,12 +1363,14 @@
                         }
                     } else {
                         document.getElementById('audio-iframe-box').style.display = 'block';
-                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}`;
+                        document.getElementById('audio-frame').src = `https://www.youtube.com/embed/${type}?autoplay=1`;
                     }
                 });
 
                 document.getElementById('audio-to-main-btn')?.addEventListener('click', () => {
-                    const type = document.getElementById('audio-select').value;
+                    const select = document.getElementById('audio-select');
+                    const type = select.value;
+                    const titleText = select.options[select.selectedIndex].text;
                     
                     document.getElementById('placeholder-box').style.display = 'none';
                     document.getElementById('error-box').style.display = 'none';
@@ -1357,13 +1383,24 @@
                     document.getElementById('current-title').style.display = 'block';
                     document.getElementById('current-path').style.display = 'block';
                     
-                    document.getElementById('current-title').textContent = 'Audio Focus Track';
-                    document.getElementById('current-path').textContent = 'Workspace > Audio';
+                    document.getElementById('current-title').textContent = titleText;
+                    document.getElementById('current-path').textContent = 'Workspace > Audio > ' + titleText;
                     
-                    document.getElementById('frame-1').src = `https://www.youtube.com/embed/${type}?autoplay=1&loop=1&playlist=${type}`;
+                    document.getElementById('frame-1').src = `https://www.youtube.com/embed/${type}?autoplay=1`;
+                    
+                    if(document.getElementById('viewer-2').style.display === 'block') {
+                        document.getElementById('frame-2').src = document.getElementById('frame-1').src;
+                    }
+
+                    stopAllAudio();
+                    const toggleBtn = document.getElementById('audio-toggle');
+                    if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
+                    document.getElementById('audio-iframe-box').style.display = 'none';
+                    
+                    document.getElementById('audio-drawer')?.classList.remove('open');
                     
                     if (window.innerWidth <= 768) {
-                        document.getElementById('sidebar')?.classList.add('collapsed');
+                        document.getElementById('sidebar')?.classList.remove('mobile-open');
                     }
                 });
 
@@ -1371,7 +1408,6 @@
                 // 7. HEADER, SPLIT, CHAT & MODALS
                 // ==========================================
                 
-                // HOME BUTTON LOGIC
                 document.getElementById('home-btn')?.addEventListener('click', () => {
                     document.getElementById('viewer-1').style.display = 'none';
                     document.getElementById('viewer-2').style.display = 'none';
@@ -1380,10 +1416,9 @@
                     document.getElementById('placeholder-box').style.display = 'flex';
                     document.getElementById('error-box').style.display = 'none';
                     
-                    // Toggle title vs settings
                     document.getElementById('current-title').style.display = 'none';
                     document.getElementById('current-path').style.display = 'none';
-                    document.getElementById('settings-btn-main').style.display = 'flex';
+                    document.getElementById('home-title-area').style.display = 'flex';
                     
                     document.getElementById('playlist-select').style.display = 'none';
                     
@@ -1395,20 +1430,26 @@
                     document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
                     
                     if (window.innerWidth <= 768) {
-                        document.getElementById('sidebar')?.classList.remove('collapsed');
+                        document.getElementById('sidebar')?.classList.remove('mobile-open');
                     }
                 });
 
-                document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-                    document.getElementById('sidebar')?.classList.toggle('collapsed');
-                });
-                
                 document.getElementById('fs-btn')?.addEventListener('click', () => {
                     try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e){}
                 });
 
-                document.getElementById('notes-btn')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.add('open'));
+                // Drawer handling
+                document.getElementById('notes-btn')?.addEventListener('click', () => {
+                    document.getElementById('audio-drawer')?.classList.remove('open');
+                    document.getElementById('notes-drawer')?.classList.add('open');
+                });
                 document.getElementById('notes-close')?.addEventListener('click', () => document.getElementById('notes-drawer')?.classList.remove('open'));
+
+                document.getElementById('audio-btn')?.addEventListener('click', () => {
+                    document.getElementById('notes-drawer')?.classList.remove('open');
+                    document.getElementById('audio-drawer')?.classList.add('open');
+                });
+                document.getElementById('audio-close')?.addEventListener('click', () => document.getElementById('audio-drawer')?.classList.remove('open'));
 
                 let isSplit = false;
                 document.getElementById('split-btn')?.addEventListener('click', () => {
@@ -1447,10 +1488,6 @@
                     document.getElementById('set-icon').value = pomoSettings.icon || '⚡';
                     document.querySelectorAll('.color-dot').forEach(d => { d.classList.remove('active'); if(d.getAttribute('data-color') === pomoSettings.accent) d.classList.add('active'); });
                     document.getElementById('settings-modal')?.classList.add('open');
-                });
-
-                document.getElementById('settings-btn')?.addEventListener('click', () => {
-                    document.getElementById('settings-btn-main')?.click();
                 });
                 
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
