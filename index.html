@@ -51,7 +51,7 @@
         
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
-        /* Custom Backgrounds with Local Paths */
+        /* Custom Backgrounds */
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
@@ -281,6 +281,43 @@
         .fs-overlay h2 { font-size: 2.5em; font-weight: 800; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
         .fs-overlay p { font-size: 1.1em; opacity: 0.8; max-width: 400px; line-height: 1.5; margin-bottom: 30px; }
 
+        /* =========================================================
+           7. MOBILE RESPONSIVENESS (The Master Upgrade)
+           ========================================================= */
+        @media (max-width: 768px) {
+            /* Sidebar Overlay */
+            .sidebar { position: absolute; width: 100vw; min-width: 100vw; height: 100%; left: 0; z-index: 2000; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            .sidebar.collapsed { margin-left: -100vw; box-shadow: none; }
+            .mobile-close-btn { display: flex !important; }
+            
+            /* Typography & Spacing */
+            .header-title-box h2 { font-size: 1.1em; }
+            .workspace-container { padding: 10px; gap: 10px; }
+            
+            /* Split Screen override for portrait screens */
+            #main-workspace[style*="flex-direction: row"] { flex-direction: column !important; }
+            #viewer-1, #viewer-2 { width: 100% !important; height: 100% !important; }
+            #resizer { display: none !important; }
+            
+            /* Utilities specific fixes */
+            .util-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+            .stat-box { padding: 15px; }
+            .tt-form { flex-direction: column; }
+            .syl-grid { grid-template-columns: 1fr; }
+            .syl-tabs { flex-direction: column; }
+            .fc-card { height: 250px; }
+            .fc-front, .fc-back { padding: 20px; font-size: 1.1em; }
+            
+            /* Charts wrap (Analytics subject mastery fix) */
+            .util-workspace-inner > div[style*="display:flex"] { flex-wrap: wrap; padding: 15px !important; }
+            
+            /* Floating Elements */
+            .chat-window { width: 90vw; right: 5vw; bottom: 95px; height: 60vh; }
+            .notes-panel { width: 100vw; right: -100vw; }
+            .modal-content { width: 95vw; margin: 0 auto; }
+            .fs-overlay img { max-width: 200px; }
+            .fs-overlay h2 { font-size: 1.8em; }
+        }
     </style>
 </head>
 <body class="theme-amoled font-medium">
@@ -310,6 +347,8 @@
                 <h2><img id="sidebar-logo" src="./assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
+                    <!-- Mobile Close Toggle -->
+                    <button class="icon-btn mobile-close-btn" id="mobile-sidebar-close" style="display:none;" title="Close Sidebar">✖</button>
                 </div>
             </div>
 
@@ -587,6 +626,11 @@
                     sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo 1.jpg' : './assets/Important/Logo 2.jpg';
                 }
 
+                // Mobile UX Auto-Collapse Handlers
+                document.getElementById('mobile-sidebar-close')?.addEventListener('click', () => {
+                    document.getElementById('sidebar')?.classList.add('collapsed');
+                });
+
                 window.addEventListener('offline', () => document.getElementById('offline-overlay').classList.add('active'));
                 window.addEventListener('online', () => document.getElementById('offline-overlay').classList.remove('active'));
 
@@ -839,6 +883,9 @@
                     document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
                     if (el) el.classList.add('active');
 
+                    // Auto-collapse sidebar on mobile
+                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
+
                     document.getElementById('placeholder-box').style.display = 'none';
                     document.getElementById('error-box').style.display = 'none';
                     document.getElementById('util-panel').style.display = 'none';
@@ -909,6 +956,9 @@
                 });
 
                 function openUtility(type) {
+                    // Auto-collapse sidebar on mobile
+                    if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
+
                     document.getElementById('placeholder-box').style.display = 'none';
                     document.getElementById('error-box').style.display = 'none';
                     document.getElementById('viewer-1').style.display = 'none';
@@ -973,7 +1023,7 @@
                                     <div class="stat-box"><h3 style="color:var(--success);">${((total*pomoSettings.focusTime)/60).toFixed(1)}</h3><p>Hours</p></div>
                                 </div>
                                 <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Subject Mastery</h3>
-                                <div style="display:flex; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
+                                <div style="display:flex; flex-wrap:wrap; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
                                     ${chartHtml}
                                 </div>
                             </div>`;
