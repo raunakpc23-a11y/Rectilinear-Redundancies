@@ -159,7 +159,7 @@
         body.theme-slate .main-content { background-color: rgba(15, 23, 42, 0.8); }
 
         .reader-header { padding: 16px 24px; background-color: transparent; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 16px; backdrop-filter: blur(10px); }
-        .header-title-box { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; }
+        .header-title-box { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; justify-content: center; }
         .header-title-box h2 { font-size: 1.3em; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .breadcrumb { color: var(--text-muted); font-size: 0.85em; font-family: monospace; margin-top: 4px; }
         
@@ -246,7 +246,7 @@
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
         .audio-setting select:focus { border-color: var(--accent-color); }
-        #audio-iframe-box { position: relative; width: 100%; padding-bottom: 56.25%; /* 16:9 Aspect Ratio */ border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+        #audio-iframe-box { position: relative; width: 100%; height: 200px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); display: none; margin-top: 10px; }
         #audio-iframe-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
         /* =========================================================
@@ -300,7 +300,16 @@
            ========================================================= */
         @media (max-width: 768px) {
             /* Sidebar Overlay */
-            .sidebar { position: absolute; width: 100vw; min-width: 100vw; height: 100%; left: 0; z-index: 2000; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            .sidebar { 
+                position: absolute; 
+                width: 100vw; 
+                min-width: 100vw; 
+                height: 100%; 
+                left: 0; 
+                z-index: 2000; 
+                background: var(--sidebar-bg) !important; /* Forces solid background */
+                box-shadow: none; 
+            }
             .sidebar.collapsed { margin-left: -100vw; box-shadow: none; }
             .mobile-close-btn { display: flex !important; }
             
@@ -364,7 +373,6 @@
             <div class="sidebar-header">
                 <h2><img id="sidebar-logo" src="./assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
-                    <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                     <!-- Mobile Close Toggle -->
                     <button class="icon-btn mobile-close-btn" id="mobile-sidebar-close" style="display:none;" title="Close Sidebar">✖</button>
                 </div>
@@ -454,9 +462,10 @@
                         <input type="range" id="audio-volume" min="0" max="1" step="0.05" value="0.4">
                     </div>
                     <button class="primary-btn" id="audio-toggle" style="justify-content:center; padding:16px; font-size:1.1em;">▶ Start Audio</button>
-                    <div id="audio-iframe-box" style="display:none; margin-top:10px;">
+                    <div id="audio-iframe-box">
                         <iframe id="audio-frame" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; fullscreen" frameborder="0"></iframe>
                     </div>
+                    <button class="primary-btn" id="audio-to-main-btn" style="display: none; justify-content: center; padding: 12px; margin-top: 5px;">🖥️ Play on Main Screen</button>
                 </div>
             </div>
         </aside>
@@ -466,9 +475,10 @@
             <div class="reader-header">
                 <button class="icon-btn" id="sidebar-toggle" title="Toggle Sidebar">☰</button>
                 <div class="header-title-box">
-                    <h2 id="current-title">🚀 Welcome to Your Workspace</h2>
-                    <div class="breadcrumb" id="current-path">Workspace > Welcome</div>
+                    <h2 id="current-title" style="display: none;"></h2>
+                    <div class="breadcrumb" id="current-path" style="display: none;"></div>
                     <select id="playlist-select" class="playlist-select" style="display:none;"></select>
+                    <button class="primary-btn" id="settings-btn-main" title="Settings" style="width: fit-content;">⚙️ Preferences & Settings</button>
                 </div>
                 <div class="header-actions">
                     <button id="home-btn" class="icon-btn" title="Home">🏠</button>
@@ -480,11 +490,11 @@
             </div>
 
             <div class="workspace-container" id="main-workspace">
-                <!-- BORED EMPTY STATE -->
+                <!-- EMPTY STATE (Home) -->
                 <div class="placeholder-box" id="placeholder-box">
                     <img src="./assets/Important/Background 1.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');">
-                    <h3>Yes, I was bored</h3>
-                    <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
+                    <h3>Ready to Learn?</h3>
+                    <p>Select a module from the sidebar, or configure your settings above to personalize your study space.</p>
                 </div>
 
                 <!-- 404 ERROR STATE -->
@@ -647,6 +657,10 @@
                 }
 
                 // Mobile UX Auto-Collapse Handlers
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar')?.classList.add('collapsed');
+                }
+                
                 document.getElementById('mobile-sidebar-close')?.addEventListener('click', () => {
                     document.getElementById('sidebar')?.classList.add('collapsed');
                 });
@@ -911,6 +925,10 @@
                     // Auto-collapse sidebar on mobile
                     if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
 
+                    document.getElementById('settings-btn-main').style.display = 'none';
+                    document.getElementById('current-title').style.display = 'block';
+                    document.getElementById('current-path').style.display = 'block';
+
                     document.getElementById('placeholder-box').style.display = 'none';
                     document.getElementById('error-box').style.display = 'none';
                     document.getElementById('util-panel').style.display = 'none';
@@ -983,6 +1001,10 @@
                 function openUtility(type) {
                     // Auto-collapse sidebar on mobile
                     if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.add('collapsed');
+
+                    document.getElementById('settings-btn-main').style.display = 'none';
+                    document.getElementById('current-title').style.display = 'block';
+                    document.getElementById('current-path').style.display = 'block';
 
                     document.getElementById('placeholder-box').style.display = 'none';
                     document.getElementById('error-box').style.display = 'none';
@@ -1258,6 +1280,7 @@
                     const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(val);
                     document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
                     document.getElementById('audio-iframe-box').style.display = isSynth ? 'none' : 'block';
+                    document.getElementById('audio-to-main-btn').style.display = isSynth ? 'none' : 'flex';
                     stopAllAudio();
                     const toggleBtn = document.getElementById('audio-toggle');
                     if(toggleBtn) toggleBtn.textContent = "▶ Start Audio";
@@ -1315,7 +1338,32 @@
                             synthNode = node;
                         }
                     } else {
-                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}&modestbranding=1`;
+                        document.getElementById('audio-iframe-box').style.display = 'block';
+                        document.getElementById('audio-frame').src = `https://www.youtube-nocookie.com/embed/${type}?autoplay=1&loop=1&playlist=${type}`;
+                    }
+                });
+
+                document.getElementById('audio-to-main-btn')?.addEventListener('click', () => {
+                    const type = document.getElementById('audio-select').value;
+                    
+                    document.getElementById('placeholder-box').style.display = 'none';
+                    document.getElementById('error-box').style.display = 'none';
+                    document.getElementById('util-panel').style.display = 'none';
+                    
+                    document.getElementById('viewer-1').style.display = 'block';
+                    document.getElementById('split-btn').style.display = 'flex';
+                    
+                    document.getElementById('settings-btn-main').style.display = 'none';
+                    document.getElementById('current-title').style.display = 'block';
+                    document.getElementById('current-path').style.display = 'block';
+                    
+                    document.getElementById('current-title').textContent = 'Audio Focus Track';
+                    document.getElementById('current-path').textContent = 'Workspace > Audio';
+                    
+                    document.getElementById('frame-1').src = `https://www.youtube.com/embed/${type}?autoplay=1&loop=1&playlist=${type}`;
+                    
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar')?.classList.add('collapsed');
                     }
                 });
 
@@ -1332,8 +1380,11 @@
                     document.getElementById('placeholder-box').style.display = 'flex';
                     document.getElementById('error-box').style.display = 'none';
                     
-                    document.getElementById('current-title').textContent = '🚀 Welcome to Your Workspace';
-                    document.getElementById('current-path').textContent = 'Workspace > Welcome';
+                    // Toggle title vs settings
+                    document.getElementById('current-title').style.display = 'none';
+                    document.getElementById('current-path').style.display = 'none';
+                    document.getElementById('settings-btn-main').style.display = 'flex';
+                    
                     document.getElementById('playlist-select').style.display = 'none';
                     
                     const f1 = document.getElementById('frame-1');
@@ -1388,7 +1439,7 @@
                 });
                 document.addEventListener('mouseup', () => { if(isRes) { isRes=false; document.getElementById('resizer')?.classList.remove('dragging'); document.body.style.cursor='default'; }});
 
-                document.getElementById('settings-btn')?.addEventListener('click', () => {
+                document.getElementById('settings-btn-main')?.addEventListener('click', () => {
                     document.getElementById('set-theme').value = pomoSettings.theme || 'theme-amoled';
                     document.getElementById('set-bg').value = pomoSettings.bg || 'bg-none';
                     document.getElementById('set-pomo-theme').value = pomoSettings.pomoTheme || 'plant';
@@ -1396,6 +1447,10 @@
                     document.getElementById('set-icon').value = pomoSettings.icon || '⚡';
                     document.querySelectorAll('.color-dot').forEach(d => { d.classList.remove('active'); if(d.getAttribute('data-color') === pomoSettings.accent) d.classList.add('active'); });
                     document.getElementById('settings-modal')?.classList.add('open');
+                });
+
+                document.getElementById('settings-btn')?.addEventListener('click', () => {
+                    document.getElementById('settings-btn-main')?.click();
                 });
                 
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
