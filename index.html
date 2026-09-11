@@ -51,14 +51,14 @@
         
         #ambient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-size: cover; background-position: center; transition: opacity 0.5s ease; }
         
-        /* Custom Backgrounds with Updated Paths */
+        /* Custom Backgrounds with Local Paths */
         .bg-none { background: var(--primary-bg); }
         .bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?q=80&w=1920'); opacity: 0.15; }
         .bg-space { background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1920'); opacity: 0.25; }
-        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('assets/Important/Background%204.jpg'); opacity: 1; }
-        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('assets/Important/Background%205.jpg'); opacity: 1; }
+        .bg-lofi { background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('./assets/Important/Background 4.jpg'); opacity: 1; }
+        .bg-topo { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('./assets/Important/Background 5.jpg'); opacity: 1; }
         
-        /* New Dynamic Background Engine */
+        /* Dynamic Background Engine */
         .bg-dynamic { background: linear-gradient(-45deg, #0f172a, #1e293b, var(--accent-color), #09090b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; opacity: 0.6; }
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
 
@@ -90,7 +90,6 @@
         .icon-btn { background: transparent; border: 1px solid transparent; color: var(--text-color); font-size: 1.3em; cursor: pointer; padding: 6px; border-radius: var(--radius-md); transition: 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background: var(--folder-bg); border-color: var(--border-color); }
 
-        /* OPTIMIZED POMODORO (+10% Scaled Up as Requested) */
         .pomo-container { padding: 18px 20px; border-bottom: 1px solid var(--border-color); }
         .pomo-card { background: var(--sidebar-bg); border: 2px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: var(--card-shadow); transition: all 0.3s ease; position: relative; overflow: hidden; }
         .pomo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--border-color); transition: 0.3s; }
@@ -230,7 +229,7 @@
         .fc-front { background: var(--sidebar-bg); border: 2px solid var(--border-color); font-size: 1.5em; color: var(--text-color); }
         .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
-        /* Audio Module Overhaul */
+        /* Audio Module */
         .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; margin: 20px; background: var(--sidebar-bg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
         .audio-setting { display: flex; flex-direction: column; gap: 8px; font-size: 0.95em; font-weight: 600; }
         .audio-setting select, .audio-setting input { padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--folder-bg); color: var(--text-color); outline: none; font-size: 1em; }
@@ -291,14 +290,14 @@
 
     <!-- OFFLINE OVERLAY -->
     <div id="offline-overlay" class="fs-overlay">
-        <img src="assets/Important/Net%201.jpg" alt="No Internet" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="./assets/Important/Net 1.jpg" alt="No Internet" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');">
         <h2>WIFI BEWAAFA HAI</h2>
         <p>You have lost connection to the matrix. Please check your internet connection to continue streaming lectures.</p>
     </div>
 
     <!-- BURNOUT / TOUCH GRASS OVERLAY -->
     <div id="burnout-overlay" class="fs-overlay">
-        <img src="assets/Important/Touch%20Grass%201.jpg" alt="Touch Grass" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+        <img src="./assets/Important/Touch Grass 1.jpg" alt="Touch Grass" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');">
         <h2 style="color: #10b981;">GO TOUCH GRASS</h2>
         <p>You've been studying hardcore for hours today. Your CPU is melting and your posture resembles a shrimp. Take a mandatory break!</p>
         <button class="primary-btn" id="burnout-close" style="padding: 14px 24px; font-size: 1.1em;">I Promise to Touch Grass</button>
@@ -308,7 +307,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <h2><img id="sidebar-logo" src="assets/Important/Logo%202.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
+                <h2><img id="sidebar-logo" src="./assets/Important/Logo 2.jpg" class="sidebar-logo" alt="Logo"> Dashboard</h2>
                 <div class="header-controls">
                     <button class="icon-btn" id="settings-btn" title="Settings">⚙️</button>
                 </div>
@@ -424,14 +423,14 @@
             <div class="workspace-container" id="main-workspace">
                 <!-- BORED EMPTY STATE -->
                 <div class="placeholder-box" id="placeholder-box">
-                    <img src="assets/Important/Background%201.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="./assets/Important/Background 1.jpg" alt="Bored Robot" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');">
                     <h3>Yes, I was bored</h3>
                     <p>Even our servers are snoozing. Select a module from the sidebar before the tumbleweeds take over.</p>
                 </div>
 
-                <!-- 404 ERROR STATE (Hidden by default) -->
+                <!-- 404 ERROR STATE -->
                 <div class="placeholder-box" id="error-box" style="display: none; background: transparent; border: none; box-shadow: none;">
-                    <img src="assets/Important/Error%20404%201.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');">
+                    <img src="./assets/Important/Error 404 1.jpg" alt="404 Not Found" style="max-width: 350px;" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');">
                     <h3 style="text-transform: uppercase;">Lost in the Sauce</h3>
                     <p>The requested file or video could not be loaded. It may be private or deleted.</p>
                 </div>
@@ -531,28 +530,25 @@
         </div>
     </div>
 
-    <!-- MAIN SCRIPT (Native Objects & Event Delegation for 100% Stability) -->
+    <!-- MAIN SCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             try {
                 // ==========================================
                 // 0. BRANDING & SYSTEM EVENTS
                 // ==========================================
-                // Logo Randomizer (90% Logo 2, 10% Logo 1)
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
                     sidebarLogo.onerror = function() {
-                        this.onerror = null; // Prevent infinite loop if fallback image fails
-                        this.src = this.src.replace('.jpg', '.png');
+                        this.onerror = null; // Prevent loop
+                        this.src = this.src.replace('.jpg', '.png').replace('.JPG', '.png');
                     };
-                    sidebarLogo.src = Math.random() < 0.1 ? 'assets/Important/Logo%201.jpg' : 'assets/Important/Logo%202.jpg';
+                    sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo 1.jpg' : './assets/Important/Logo 2.jpg';
                 }
 
-                // Offline State Handler
                 window.addEventListener('offline', () => document.getElementById('offline-overlay').classList.add('active'));
                 window.addEventListener('online', () => document.getElementById('offline-overlay').classList.remove('active'));
 
-                // Safe Toast
                 window.showToast = (msg) => {
                     const container = document.getElementById('toast-container');
                     if(!container) return;
@@ -568,12 +564,10 @@
                 };
 
                 // ==========================================
-                // 1. DATA INGESTION (From data.js)
+                // 1. DATA INGESTION
                 // ==========================================
                 const rawLecturesData = window.rawLectures || [];
                 const rawFilesData = window.rawFiles || [];
-
-                // Master Filtering Logic: Strips out Class 10 AND ALL Nucleus Modules
                 const safeFiles = rawFilesData.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10') || f.toUpperCase().includes('NUCLEUS')));
 
                 window.libraryData = {
@@ -614,7 +608,7 @@
                 applySettings();
 
                 // ==========================================
-                // 3. POMODORO TIMER & CUSTOM THEMES
+                // 3. POMODORO TIMER
                 // ==========================================
                 let pomoSeconds = pomoSettings.focusTime * 60;
                 let pomoInterval = null;
@@ -646,7 +640,6 @@
                     const prog = document.getElementById('pomo-progress-fill');
                     if(prog) prog.style.width = `${pct}%`;
                     
-                    // Dynamic Theme Evolution
                     let currentThemeArr = growthThemes[pomoSettings.pomoTheme] || growthThemes.plant;
                     let icon = currentThemeArr[0]; 
                     if (pct > 25) icon = currentThemeArr[1]; 
@@ -661,7 +654,6 @@
                     }
                 }
 
-                // Burnout Logic (Check for >4 hours / ~8 sessions)
                 function checkBurnout() {
                     let todaySessions = studyStats[todayStr] || 0;
                     let hoursStudied = (todaySessions * pomoSettings.focusTime) / 60;
@@ -731,7 +723,7 @@
                 updatePomoDisplay();
 
                 // ==========================================
-                // 4. RECURSIVE FOLDER TREE RENDERER
+                // 4. FOLDER TREE RENDERER
                 // ==========================================
                 function buildTree(books) {
                     const root = { _files: [] };
@@ -739,7 +731,6 @@
                         let current = root;
                         let paths = [...(b.folders||[])];
                         
-                        // Strict Truncation Rules
                         if (activeModule === 'LECTURES' && paths[0] === 'LECTURES') paths.shift();
                         if (activeModule === 'FILES' && paths[0] === 'IIT-JEE') paths.shift();
                         if (activeModule === 'SUPPORT') {
@@ -787,11 +778,10 @@
 
                     let filtered = data.filter(b => (b.title + " " + (b.folders||[]).join(" ")).toLowerCase().includes(query.toLowerCase()));
                     
-                    // Humorous Zero Search State
                     if(filtered.length === 0) { 
                         list.innerHTML = `
                         <div style="padding:40px 15px; text-align:center; opacity:0.8; display:flex; flex-direction:column; align-items:center;">
-                            <img src="assets/Important/Found%20Nothing%201.jpg" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
+                            <img src="./assets/Important/Found Nothing 1.jpg" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');" style="max-width:180px; border-radius:16px; margin-bottom:20px; animation:float 3s infinite ease-in-out;">
                             <h4 style="color:var(--text-color); font-size:1.1em; text-transform:uppercase; font-weight:800;">Found Literally Nothing</h4>
                             <p style="color:var(--text-muted); font-size:0.9em; margin-top:8px;">Try spelling it correctly this time.</p>
                         </div>`; 
@@ -822,7 +812,6 @@
                     const frame1 = document.getElementById('frame-1');
                     const frame2 = document.getElementById('frame-2');
                     
-                    // Basic 404 Fallback logic for iFrames
                     frame1.onerror = () => { 
                         document.getElementById('viewer-1').style.display = 'none'; 
                         document.getElementById('error-box').style.display = 'flex'; 
@@ -852,7 +841,7 @@
                 }
 
                 // ==========================================
-                // 5. TABS & UTILITIES (Event Delegation)
+                // 5. TABS & UTILITIES
                 // ==========================================
                 document.getElementById('module-tabs')?.addEventListener('click', (e) => {
                     if(e.target.classList.contains('mod-tab')) {
@@ -875,10 +864,7 @@
 
                 document.getElementById('view-utilities')?.addEventListener('click', (e) => {
                     const btn = e.target.closest('.util-card-btn');
-                    if(btn) {
-                        const type = btn.getAttribute('data-util');
-                        openUtility(type);
-                    }
+                    if(btn) openUtility(btn.getAttribute('data-util'));
                 });
 
                 function openUtility(type) {
@@ -914,26 +900,22 @@
                                     </div>
                                     <span style="font-size:0.85em; font-weight:bold; color:var(--text-muted);">${s}</span>
                                     <span style="font-size:0.8em; font-family:monospace;">${h.toFixed(1)}h</span>
-                                </div>
-                            `;
+                                </div>`;
                         });
 
-                        // 30-Day Rolling Heatmap Builder
                         let heatmapHtml = '<div class="heatmap-container">';
                         let hd = new Date();
                         for(let i = 29; i >= 0; i--) {
                             let iterDate = new Date(hd);
                             iterDate.setDate(iterDate.getDate() - i);
                             let dStr = iterDate.toISOString().split('T')[0];
-                            let count = studyStats[dStr] || 0;
-                            let hours = count * (pomoSettings.focusTime / 60);
+                            let hours = (studyStats[dStr] || 0) * (pomoSettings.focusTime / 60);
                             
-                            // Color Intensity Logic
-                            let blockColor = 'var(--folder-bg)'; // Empty state
+                            let blockColor = 'var(--folder-bg)';
                             if (hours > 0 && hours <= 1.5) blockColor = 'rgba(59, 130, 246, 0.3)';
                             else if (hours > 1.5 && hours <= 3.5) blockColor = 'rgba(59, 130, 246, 0.6)';
                             else if (hours > 3.5 && hours <= 5.5) blockColor = 'rgba(59, 130, 246, 0.9)';
-                            else if (hours > 5.5) blockColor = 'var(--accent-color)'; // Fully saturated
+                            else if (hours > 5.5) blockColor = 'var(--accent-color)';
 
                             heatmapHtml += `<div class="heatmap-block" style="background: ${blockColor};" title="${dStr}: ${hours.toFixed(1)} hrs"></div>`;
                         }
@@ -942,10 +924,8 @@
                         up.innerHTML = `
                             <div class="util-workspace-inner" style="padding:30px; max-width:1000px; margin:0 auto;">
                                 <h2 style="font-size:2em; margin-bottom:30px; text-align:center;">📊 Analytics Dashboard</h2>
-                                
                                 <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">30-Day Consistency Heatmap</h3>
                                 ${heatmapHtml}
-
                                 <div class="util-grid">
                                     <div class="stat-box"><h3>${total}</h3><p>Sessions</p></div>
                                     <div class="stat-box"><h3 style="color:var(--danger);">${streak} 🔥</h3><p>Streak</p></div>
@@ -1147,7 +1127,7 @@
                 }
 
                 // ==========================================
-                // 6. AUDIO HUB (Stable, No overlapping)
+                // 6. AUDIO HUB
                 // ==========================================
                 let synthNode = null;
                 let synthGain = null;
@@ -1226,8 +1206,6 @@
                 // ==========================================
                 // 7. HEADER, SPLIT, CHAT & MODALS
                 // ==========================================
-                
-                // Functional Sidebar Toggle
                 document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
                     document.getElementById('sidebar')?.classList.toggle('collapsed');
                 });
@@ -1280,7 +1258,6 @@
                 
                 document.getElementById('settings-close')?.addEventListener('click', () => document.getElementById('settings-modal')?.classList.remove('open'));
                 
-                // Close modal when clicking outside overlay
                 document.getElementById('settings-modal')?.addEventListener('click', (e) => {
                     if(e.target === document.getElementById('settings-modal')) {
                         document.getElementById('settings-modal').classList.remove('open');
@@ -1323,34 +1300,32 @@
                     cb.innerHTML += `<div class="chat-msg user-msg">${qRaw}</div>`;
                     inp.value = '';
                     
-                    // Trigger delayed response
                     setTimeout(() => {
-                        // 1. Image / Category Request Logic
                         let isImageReq = false;
                         let category = '';
-                        const imgCategories = ['cats', 'dogs', 'capybaras', 'memes'];
                         
-                        // Check if a specific animal/meme is requested
+                        // FIX: Updated to match your exact folder capitalization
+                        const imgCategories = ['Cats', 'Dogs', 'Capybaras', 'Memes'];
+                        
                         for (let c of imgCategories) {
-                            if (q.includes(c) || q.includes(c.slice(0, -1))) { 
+                            // Check against lowercase query, but store the Capitalized folder name
+                            let lowerC = c.toLowerCase();
+                            if (q.includes(lowerC) || q.includes(lowerC.slice(0, -1))) { 
                                 isImageReq = true;
-                                category = c;
+                                category = c; 
                                 break;
                             }
                         }
                         
-                        // Check if a general picture is requested
                         if (!isImageReq && (q.includes('picture') || q.includes('image') || q.includes('random') || q.includes('show me something'))) {
                             isImageReq = true;
                             category = imgCategories[Math.floor(Math.random() * imgCategories.length)];
                         }
 
                         if (isImageReq) {
-                            // Generate random image number 1 to 5
                             let rNum = Math.floor(Math.random() * 5) + 1;
-                            let imgPath = `assets/${category}/${rNum}.jpg`;
+                            let imgPath = `./assets/${category}/${rNum}.jpg`;
                             
-                            // Random Sea Lion Noises
                             const seaLionSounds = [
                                 "*Arf! Arf!* Slides on belly.",
                                 "*Happy flipper slaps!*",
@@ -1360,12 +1335,11 @@
                             ];
                             let sound = seaLionSounds[Math.floor(Math.random() * seaLionSounds.length)];
                             
-                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png');" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
+                            cb.innerHTML += `<div class="chat-msg bot-msg">${sound}<br><img src="${imgPath}" onerror="this.onerror=null; this.src=this.src.replace('.jpg', '.png').replace('.JPG', '.png');" style="max-width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border-color);" alt="${category}"></div>`;
                             cb.scrollTop = cb.scrollHeight;
                             return;
                         }
 
-                        // 2. Fallback Library Search Logic
                         let matchesHtml = '';
                         masterList.forEach((b, i) => {
                             if(b.title && b.title.toLowerCase().includes(q)) {
@@ -1392,7 +1366,6 @@
                     }
                 });
 
-                // INITIALIZE
                 renderLibrary();
 
             } catch (err) {
