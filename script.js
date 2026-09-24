@@ -1,8 +1,27 @@
 function initApp() {
     try {
         // ==========================================
-        // 0. BRANDING & SYSTEM EVENTS
+        // 0. AUTHENTICATION & BRANDING
         // ==========================================
+        const authOverlay = document.getElementById('auth-overlay');
+        const authBtn = document.getElementById('auth-btn');
+        
+        if (authOverlay && authBtn) {
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                authOverlay.style.display = 'none';
+            }
+            authBtn.addEventListener('click', () => {
+                const pass = document.getElementById('auth-pass').value;
+                const user = document.getElementById('auth-user').value;
+                if (pass === 'Huh' && user.trim() !== '') {
+                    sessionStorage.setItem('authenticated', 'true');
+                    authOverlay.style.display = 'none';
+                } else {
+                    document.getElementById('auth-error').style.display = 'block';
+                }
+            });
+        }
+
         try {
             const sidebarLogo = document.getElementById('sidebar-logo');
             if (sidebarLogo) {
