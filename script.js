@@ -174,21 +174,26 @@ function initApp() {
             if(!tbody) return;
             
             const mockUsers = [
-                { id: "USR-001X", ip: "192.168.1.102", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB" },
-                { id: "USR-089A", ip: "10.0.0.45", status: "IDLE", uptime: "02:11:05", data: "350 MB" },
-                { id: "USR-442C", ip: "172.16.254.1", status: "ONLINE", uptime: "00:05:40", data: "12 MB" },
-                { id: "USR-991D", ip: "192.168.1.200", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB" }
+                { id: "USR-001X", username: "admin_master", password: "enc_***_889", ip: "192.168.1.102", device: "Mac OS / Safari", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB", lastLogin: "2026-09-24 14:00", loginDates: "09-24, 09-23, 09-20" },
+                { id: "USR-089A", username: "guest_student", password: "student123", ip: "10.0.0.45", device: "Windows 11 / Edge", status: "IDLE", uptime: "02:11:05", data: "350 MB", lastLogin: "2026-09-24 09:30", loginDates: "09-24" },
+                { id: "USR-442C", username: "test_bot_5", password: "bot_secure99", ip: "172.16.254.1", device: "Linux / Chrome", status: "ONLINE", uptime: "00:05:40", data: "12 MB", lastLogin: "2026-09-24 17:55", loginDates: "09-24, 09-24, 09-24" },
+                { id: "USR-991D", username: "night_owl", password: "pwd_xyz_44", ip: "192.168.1.200", device: "iOS 18 / Safari", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB", lastLogin: "2026-09-23 22:15", loginDates: "09-23, 09-21, 09-18" }
             ];
 
             let html = '';
             mockUsers.forEach((u, i) => {
                 html += `<tr id="user-row-${i}">
                     <td>${u.id}</td>
+                    <td>${u.username}</td>
+                    <td style="font-family: monospace; color: #f43f5e;">${u.password}</td>
                     <td>${u.ip}</td>
+                    <td>${u.device}</td>
                     <td>${u.data}</td>
                     <td id="status-${i}">${u.status}</td>
                     <td>${u.uptime}</td>
-                    <td>
+                    <td>${u.lastLogin}</td>
+                    <td><small>${u.loginDates}</small></td>
+                    <td style="display: flex; gap: 4px; flex-wrap: wrap;">
                         <button class="btn-terminate" onclick="terminateUser(${i})">TERMINATE</button>
                         <button class="btn-suspend" onclick="suspendUser(${i})">SUSPEND</button>
                         <button class="btn-impersonate" onclick="impersonateUser(${i})">IMPERSONATE</button>
