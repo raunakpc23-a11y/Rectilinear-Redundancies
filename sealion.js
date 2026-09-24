@@ -17,6 +17,18 @@ function initSealion() {
         cb.innerHTML += `<div class="chat-msg user-msg">${qRaw}</div>`;
         inp.value = '';
         
+        // Admin Terminal Activation Check
+        if (q === "enable admin mode") {
+            if (window.adminUnlockStage === 1) {
+                window.adminUnlockStage = 2;
+                cb.innerHTML += `<div class="chat-msg bot-msg" style="color:#10b981; font-family:monospace; font-weight:bold;">[SYSTEM] Authorization recognized. Awaiting physical confirmation. Tap the logo 5 more times.</div>`;
+            } else {
+                cb.innerHTML += `<div class="chat-msg bot-msg">*Confused Arf!* I don't know what that means or you don't have clearance!</div>`;
+            }
+            cb.scrollTop = cb.scrollHeight;
+            return;
+        }
+
         setTimeout(() => {
             let isImageReq = false;
             let category = '';
