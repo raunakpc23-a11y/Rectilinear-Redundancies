@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initSealion() {
     // ==========================================
     // PERSONAL SEA LION (Chatbot)
     // ==========================================
@@ -7,10 +7,13 @@ document.addEventListener("DOMContentLoaded", () => {
     
     document.getElementById('chat-send')?.addEventListener('click', () => {
         const inp = document.getElementById('chat-input');
+        if(!inp) return;
         const qRaw = inp.value.trim();
         if(!qRaw) return;
         const q = qRaw.toLowerCase();
         const cb = document.getElementById('chat-body');
+        if(!cb) return;
+        
         cb.innerHTML += `<div class="chat-msg user-msg">${qRaw}</div>`;
         inp.value = '';
         
@@ -56,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let matchesHtml = '';
             
-            // Search through the globally exported masterList
             if (window.masterList) {
                 window.masterList.forEach((b, i) => {
                     if(b.title && b.title.toLowerCase().includes(q)) {
@@ -87,4 +89,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-});
+}
+
+// Assured Execution Wrapper
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSealion);
+} else {
+    initSealion();
+}
