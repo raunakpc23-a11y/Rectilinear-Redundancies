@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         let activeModule = 'LECTURES';
-        window.masterList = []; // Exposed globally for Sea Lion logic
+        window.masterList = [];
         for(let k in window.libraryData) window.masterList.push(...window.libraryData[k]);
 
         // ==========================================
@@ -246,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     let item = document.createElement('div');
                     item.className = 'book-item';
                     item.innerHTML = `<span>${book.title}</span>`;
-                    item.onclick = () => window.loadResource(book, item);
+                    item.onclick = () => loadResource(book, item);
                     container.appendChild(item);
                 });
             }
@@ -278,10 +278,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById('search-bar')?.addEventListener('input', (e) => renderLibrary(e.target.value));
 
-        window.loadResource = function(book, el) { // Exposed globally
+        function loadResource(book, el) {
             document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
             if (el) el.classList.add('active');
 
+            // Auto-collapse sidebar on mobile
             if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.remove('mobile-open');
 
             document.getElementById('home-title-area').style.display = 'none';
@@ -328,7 +329,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 notesArea.value = localStorage.getItem('notes_' + book.title) || '';
                 notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
             }
-        };
+        }
+        window.loadResource = loadResource;
 
         // ==========================================
         // 5. TABS & UTILITIES
@@ -621,7 +623,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // ==========================================
-        // 6. AUDIO HUB
+        // 6. AUDIO HUB (Moved to Drawer & Header)
         // ==========================================
         let synthNode = null;
         let synthGain = null;
@@ -740,8 +742,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // ==========================================
-        // 7. HEADER, SPLIT & MODALS
+        // 7. HEADER, SPLIT, CHAT & MODALS
         // ==========================================
+        
         document.getElementById('home-btn')?.addEventListener('click', () => {
             document.getElementById('viewer-1').style.display = 'none';
             document.getElementById('viewer-2').style.display = 'none';
@@ -853,7 +856,6 @@ document.addEventListener("DOMContentLoaded", () => {
             window.showToast("Settings applied successfully!");
         });
 
-        // Initialize view
         renderLibrary();
 
     } catch (err) {
