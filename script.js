@@ -121,7 +121,7 @@ function initApp() {
         applySettings();
 
         // ==========================================
-        // 3. POMODORO TIMER
+        // 3. POMODORO TIMER & ADMIN MODE
         // ==========================================
         let pomoSeconds = pomoSettings.focusTime * 60;
         let pomoInterval = null;
@@ -141,6 +141,30 @@ function initApp() {
             "The magic you are looking for is in the work you're avoiding.",
             "Embrace the grind.", "Small steps, big mountain.", "Conquer the day."
         ];
+
+        // Admin Mode Activation Tracker
+        let logoClicks = 0;
+        let logoClickTimer = null;
+        document.getElementById('sidebar-logo')?.addEventListener('click', () => {
+            // Check if timer is between 4 mins (240s) and 4.5 mins (270s)
+            if (pomoSeconds >= 240 && pomoSeconds <= 270) {
+                logoClicks++;
+                clearTimeout(logoClickTimer);
+                logoClickTimer = setTimeout(() => { logoClicks = 0; }, 1500);
+                
+                if (logoClicks >= 10) {
+                    document.getElementById('admin-overlay')?.classList.add('active');
+                    if (window.showToast) window.showToast("Admin Mode Activated!");
+                    logoClicks = 0;
+                }
+            } else {
+                logoClicks = 0;
+            }
+        });
+
+        document.getElementById('admin-close')?.addEventListener('click', () => {
+            document.getElementById('admin-overlay')?.classList.remove('active');
+        });
 
         function updatePomoDisplay() {
             let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
@@ -683,7 +707,7 @@ function initApp() {
 
         document.getElementById('audio-select')?.addEventListener('change', (e) => {
             const val = e.target.value;
-            const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(val);
+            const isSynth = ['brown', 'pink', 'white', 'green', 'binaural'].includes(val);
             document.getElementById('volume-container').style.display = isSynth ? 'flex' : 'none';
             document.getElementById('audio-to-main-btn').style.display = isSynth ? 'none' : 'flex';
             
@@ -699,7 +723,7 @@ function initApp() {
 
         document.getElementById('audio-toggle')?.addEventListener('click', (e) => {
             const type = document.getElementById('audio-select').value;
-            const isSynth = ['brown', 'pink', 'white', 'binaural'].includes(type);
+            const isSynth = ['brown', 'pink', 'white', 'green', 'binaural'].includes(type);
             
             if(e.target.textContent.includes('Stop')) {
                 stopAllAudio();
@@ -735,6 +759,11 @@ function initApp() {
                         let w = Math.random()*2-1;
                         if(type==='white') { out[i] = w * 0.1; }
                         else if(type==='brown') { last = (last + (0.02 * w)) / 1.02; out[i] = last * 1.5; }
+                        else if(type==='green') {
+                            b0 = 0.99 * b0 + w * 0.01;
+                            b1 = 0.99 * b1 + b0 * 0.01;
+                            out[i] = b1 * 4.0; 
+                        }
                         else if(type==='pink') {
                             b0 = 0.99886 * b0 + w * 0.0555179; b1 = 0.99332 * b1 + w * 0.0750759;
                             b2 = 0.96900 * b2 + w * 0.1538520; b3 = 0.86650 * b3 + w * 0.3104856;
