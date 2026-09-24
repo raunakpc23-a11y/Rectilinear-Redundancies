@@ -257,7 +257,7 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
 /* =========================================================
-   6. MODALS, CHAT, DRAWERS & TOAST
+   6. MODALS, CHAT, DRAWERS, ADMIN UI & TOAST
    ========================================================= */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; backdrop-filter: blur(4px); justify-content: center; align-items: center; }
 .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
@@ -275,6 +275,19 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .notes-panel.open { right: 0; }
 .notes-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size:1.1em;}
 .notes-area { flex-grow: 1; border: none; padding: 20px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
+
+/* Admin UI */
+.admin-terminal { width: 95%; max-width: 1100px; background: #050505; border: 1px solid #0f0; box-shadow: 0 0 30px rgba(0,255,0,0.15); padding: 40px; border-radius: 12px; }
+.admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #0f0; padding-bottom: 20px; margin-bottom: 30px; }
+.admin-table { width: 100%; border-collapse: collapse; color: #0f0; text-align: left; }
+.admin-table th, .admin-table td { padding: 16px; border-bottom: 1px solid rgba(0, 255, 0, 0.2); }
+.admin-table th { text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em; opacity: 0.8; }
+.admin-table td { font-size: 1.05em; font-weight: 600; }
+.btn-terminate { background: transparent; color: #f43f5e; border: 1px solid #f43f5e; padding: 8px 16px; cursor: pointer; border-radius: 4px; font-family: monospace; font-weight: bold; font-size: 1em; transition: 0.2s; }
+.btn-terminate:hover { background: #f43f5e; color: #000; box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
+.btn-suspend { background: transparent; color: #eab308; border: 1px solid #eab308; padding: 8px 16px; cursor: pointer; border-radius: 4px; font-family: monospace; font-weight: bold; font-size: 1em; margin-left: 10px; transition: 0.2s; }
+.btn-suspend:hover { background: #eab308; color: #000; box-shadow: 0 0 10px rgba(234, 179, 8, 0.5); }
+.terminated-row { opacity: 0.4; text-decoration: line-through; color: #f43f5e; }
 
 /* Audio Drawer Elements */
 .audio-wrapper { display: flex; flex-direction: column; gap: 20px; padding: 24px; background: transparent; }
