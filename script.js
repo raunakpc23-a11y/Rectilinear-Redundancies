@@ -1,18 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
     try {
         // ==========================================
         // 0. BRANDING & SYSTEM EVENTS
         // ==========================================
-        const sidebarLogo = document.getElementById('sidebar-logo');
-        if (sidebarLogo) {
-            sidebarLogo.onerror = function() {
-                this.onerror = null; 
-                this.src = this.src.replace('.jpg', '.png').replace('.JPG', '.png');
-            };
-            sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo 1.jpg' : './assets/Important/Logo 2.jpg';
-        }
+        try {
+            const sidebarLogo = document.getElementById('sidebar-logo');
+            if (sidebarLogo) {
+                sidebarLogo.onerror = function() {
+                    this.onerror = null; 
+                    this.src = this.src.replace('.jpg', '.png').replace('.JPG', '.png');
+                };
+                sidebarLogo.src = Math.random() < 0.1 ? './assets/Important/Logo 1.jpg' : './assets/Important/Logo 2.jpg';
+            }
+        } catch(e) {}
 
-        // Mobile UX Auto-Collapse Handlers
         document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar')?.classList.toggle('mobile-open');
@@ -25,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('sidebar')?.classList.remove('mobile-open');
         });
 
-        window.addEventListener('offline', () => document.getElementById('offline-overlay').classList.add('active'));
-        window.addEventListener('online', () => document.getElementById('offline-overlay').classList.remove('active'));
+        window.addEventListener('offline', () => document.getElementById('offline-overlay')?.classList.add('active'));
+        window.addEventListener('online', () => document.getElementById('offline-overlay')?.classList.remove('active'));
 
         window.showToast = (msg) => {
             const container = document.getElementById('toast-container');
@@ -47,12 +48,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // ==========================================
         const rawLecturesData = window.rawLectures || [];
         const rawFilesData = window.rawFiles || [];
-        const safeFiles = rawFilesData.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10') || f.toUpperCase().includes('NUCLEUS')));
+        
+        let safeFiles = [];
+        try {
+            safeFiles = rawFilesData.filter(b => b.folders && !b.folders.some(f => f.toUpperCase().includes('CLASS 10') || f.toUpperCase().includes('NUCLEUS')));
+        } catch(e) {
+            safeFiles = rawFilesData;
+        }
 
         window.libraryData = {
             LECTURES: rawLecturesData,
-            FILES: safeFiles.filter(b => b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS') || b.folders.includes('PUBLICATIONS') || b.folders.includes('NCERT')),
-            SUPPORT: safeFiles.filter(b => b.folders.includes('EXTRAS') || b.folders.includes('MATHANGO'))
+            FILES: safeFiles.filter(b => b.folders && (b.folders.includes('COACHINGS') || b.folders.includes('SUBJECTS') || b.folders.includes('PUBLICATIONS') || b.folders.includes('NCERT'))),
+            SUPPORT: safeFiles.filter(b => b.folders && (b.folders.includes('EXTRAS') || b.folders.includes('MATHANGO')))
         };
 
         let activeModule = 'LECTURES';
@@ -62,12 +69,20 @@ document.addEventListener("DOMContentLoaded", () => {
         // ==========================================
         // 2. SETTINGS & THEMING
         // ==========================================
-        let studyStats = JSON.parse(localStorage.getItem('study_stats_pro')) || {};
+        let studyStats = {};
+        try {
+            studyStats = JSON.parse(localStorage.getItem('study_stats_pro')) || {};
+        } catch(e) {}
+        
         const todayStr = new Date().toISOString().split('T')[0];
         if (!studyStats[todayStr]) studyStats[todayStr] = 0;
         if (!studyStats['subjects']) studyStats['subjects'] = { 'Physics': 0, 'Chemistry': 0, 'Maths': 0, 'General': 0 };
 
-        let pomoSettings = JSON.parse(localStorage.getItem('pomo_settings_pro')) || { focusTime: 25, theme: 'theme-amoled', accent: '#3b82f6', icon: '⚡', bg: 'bg-none', pomoTheme: 'plant' };
+        let pomoSettings = { focusTime: 25, theme: 'theme-amoled', accent: '#3b82f6', icon: '⚡', bg: 'bg-none', pomoTheme: 'plant' };
+        try {
+            const savedPomo = JSON.parse(localStorage.getItem('pomo_settings_pro'));
+            if(savedPomo) pomoSettings = { ...pomoSettings, ...savedPomo };
+        } catch(e) {}
         
         function applySettings() {
             document.body.className = `${pomoSettings.theme || 'theme-amoled'} font-medium`;
@@ -105,12 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Deep breath. Next problem.", "Discipline equals freedom.", "Stay hard!",
             "Rome wasn't built in a day.", "Brick by brick.", "Keep pushing.",
             "The magic you are looking for is in the work you're avoiding.",
-            "Embrace the grind.", "Small steps, big mountain.", "Conquer the day.",
-            "Sweat now, shine later.", "Do it for your future self.", "No zero days.",
-            "Excuses don't build empires.", "Stay focused and extra sparkly.",
-            "Your potential is endless.", "Make it happen. Shock everyone.",
-            "Success is the sum of small efforts.", "Don't stop until you're proud.",
-            "Great things never come from comfort zones.", "Dream it. Believe it. Build it."
+            "Embrace the grind.", "Small steps, big mountain.", "Conquer the day."
         ];
 
         function updatePomoDisplay() {
@@ -139,16 +149,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function checkBurnout() {
-            let todaySessions = studyStats[todayStr] || 0;
-            let hoursStudied = (todaySessions * pomoSettings.focusTime) / 60;
-            if (hoursStudied >= 4 && !sessionStorage.getItem('burnout_shown')) {
-                document.getElementById('burnout-overlay').classList.add('active');
-                sessionStorage.setItem('burnout_shown', 'true');
-            }
+            try {
+                let todaySessions = studyStats[todayStr] || 0;
+                let hoursStudied = (todaySessions * pomoSettings.focusTime) / 60;
+                if (hoursStudied >= 4 && !sessionStorage.getItem('burnout_shown')) {
+                    document.getElementById('burnout-overlay')?.classList.add('active');
+                    sessionStorage.setItem('burnout_shown', 'true');
+                }
+            } catch(e) {}
         }
 
         document.getElementById('burnout-close')?.addEventListener('click', () => {
-            document.getElementById('burnout-overlay').classList.remove('active');
+            document.getElementById('burnout-overlay')?.classList.remove('active');
         });
 
         document.getElementById('pomo-toggle')?.addEventListener('click', (e) => {
@@ -181,7 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         let subjEl = document.getElementById('pomo-subject');
                         let currentSubject = subjEl ? subjEl.value : 'General';
                         studyStats['subjects'][currentSubject] += (pomoSettings.focusTime / 60);
-                        localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
+                        
+                        try {
+                            localStorage.setItem('study_stats_pro', JSON.stringify(studyStats));
+                        } catch(err) {}
                         
                         if(quoteEl) quoteEl.textContent = "Session complete! Level up!";
                         window.showToast("Focus Session Complete! Great job.");
@@ -245,7 +260,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 node._files.forEach(book => {
                     let item = document.createElement('div');
                     item.className = 'book-item';
-                    item.innerHTML = `<span>${book.title}</span>`;
+                    item.innerHTML = `<span>${book.title || 'Untitled'}</span>`;
                     item.onclick = () => window.loadResource(book, item);
                     container.appendChild(item);
                 });
@@ -260,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = window.libraryData[activeModule];
             if (!data) return;
 
-            let filtered = data.filter(b => (b.title + " " + (b.folders||[]).join(" ")).toLowerCase().includes(query.toLowerCase()));
+            let filtered = data.filter(b => ((b.title || '') + " " + (b.folders||[]).join(" ")).toLowerCase().includes(query.toLowerCase()));
             
             if(filtered.length === 0) { 
                 list.innerHTML = `
@@ -282,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
             if (el) el.classList.add('active');
 
-            // Auto-collapse sidebar on mobile
             if (window.innerWidth <= 768) document.getElementById('sidebar')?.classList.remove('mobile-open');
 
             document.getElementById('home-title-area').style.display = 'none';
@@ -296,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('viewer-1').style.display = 'block';
             document.getElementById('split-btn').style.display = 'flex';
             
-            document.getElementById('current-title').textContent = book.title;
+            document.getElementById('current-title').textContent = book.title || 'Untitled';
             document.getElementById('current-path').textContent = (book.folders||[]).join(" > ");
             
             const dropdown = document.getElementById('playlist-select');
@@ -326,8 +340,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const notesArea = document.getElementById('notes-area');
             if(notesArea) {
-                notesArea.value = localStorage.getItem('notes_' + book.title) || '';
-                notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
+                try {
+                    notesArea.value = localStorage.getItem('notes_' + book.title) || '';
+                    notesArea.oninput = () => {
+                        try { localStorage.setItem('notes_' + book.title, notesArea.value); } catch(err){}
+                    };
+                } catch(e) {}
             }
         };
 
@@ -443,7 +461,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="tt-list" id="tt-list"></div>
                     </div>`;
                 
-                window.ttTasks = JSON.parse(localStorage.getItem('timeline_tasks_pro')) || [];
+                window.ttTasks = [];
+                try {
+                    window.ttTasks = JSON.parse(localStorage.getItem('timeline_tasks_pro')) || [];
+                } catch(e) {}
+
                 window.renderTT = () => {
                     const list = document.getElementById('tt-list');
                     if(!list) return;
@@ -459,13 +481,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById('tt-add').onclick = () => {
                     let tm = document.getElementById('tt-start').value || "12:00";
                     let txt = document.getElementById('tt-task').value.trim();
-                    if(txt) { window.ttTasks.push({time:tm, text:txt, done:false}); localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); window.renderTT(); }
+                    if(txt) { 
+                        window.ttTasks.push({time:tm, text:txt, done:false}); 
+                        try { localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); } catch(e){}
+                        window.renderTT(); 
+                    }
                 };
 
                 document.getElementById('tt-list').addEventListener('click', (e) => {
                     if(e.target.classList.contains('tt-del')) {
                         window.ttTasks.splice(e.target.getAttribute('data-index'), 1);
-                        localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks));
+                        try { localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); } catch(e){}
                         window.renderTT();
                     }
                 });
@@ -474,7 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if(e.target.classList.contains('tt-check')) {
                         let i = e.target.getAttribute('data-index');
                         window.ttTasks[i].done = e.target.checked;
-                        localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks));
+                        try { localStorage.setItem('timeline_tasks_pro', JSON.stringify(window.ttTasks)); } catch(e){}
                         window.renderTT();
                     }
                 });
@@ -504,7 +530,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     { t: '🔵 PYQs', c: '#fff', b: '#3b82f6' },
                     { t: '🟢 Mastered', c: '#fff', b: '#22c55e' }
                 ];
-                window.sylData = JSON.parse(localStorage.getItem('syl_tracker_pro')) || {};
+                window.sylData = {};
+                try {
+                    window.sylData = JSON.parse(localStorage.getItem('syl_tracker_pro')) || {};
+                } catch(e) {}
 
                 up.innerHTML = `
                     <div class="syl-tracker">
@@ -550,7 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         let key = e.target.getAttribute('data-key');
                         let level = e.target.getAttribute('data-level');
                         window.sylData[key] = ((window.sylData[key]||0)+1)%4;
-                        localStorage.setItem('syl_tracker_pro', JSON.stringify(window.sylData));
+                        try { localStorage.setItem('syl_tracker_pro', JSON.stringify(window.sylData)); } catch(err){}
                         window._renderSylContent(level);
                     }
                 });
@@ -629,7 +658,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         function stopAllAudio() {
             if(synthNode) { try{synthNode.stop(); synthNode.disconnect();}catch(e){} synthNode=null; }
-            document.getElementById('audio-frame').src = '';
+            const aud = document.getElementById('audio-frame');
+            if(aud) aud.src = '';
         }
 
         document.getElementById('audio-select')?.addEventListener('change', (e) => {
@@ -774,7 +804,6 @@ document.addEventListener("DOMContentLoaded", () => {
             try { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); } catch(e){}
         });
 
-        // Drawer handling
         document.getElementById('notes-btn')?.addEventListener('click', () => {
             document.getElementById('audio-drawer')?.classList.remove('open');
             document.getElementById('notes-drawer')?.classList.add('open');
@@ -848,16 +877,24 @@ document.addEventListener("DOMContentLoaded", () => {
             const activeDot = document.querySelector('.color-dot.active');
             if(activeDot) pomoSettings.accent = activeDot.getAttribute('data-color');
             
-            localStorage.setItem('pomo_settings_pro', JSON.stringify(pomoSettings));
+            try { localStorage.setItem('pomo_settings_pro', JSON.stringify(pomoSettings)); } catch(e){}
             applySettings();
             document.getElementById('settings-modal')?.classList.remove('open');
             if(!isPomoRunning) { pomoSeconds = pomoSettings.focusTime*60; updatePomoDisplay(); }
             window.showToast("Settings applied successfully!");
         });
 
+        // Initialize view finally
         renderLibrary();
 
     } catch (err) {
         console.error("Critical Application Error:", err);
     }
-});
+}
+
+// Assured Execution Wrapper to bypass strict DOM load timing issues
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
