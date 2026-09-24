@@ -15,6 +15,8 @@ function initApp() {
                 const user = document.getElementById('auth-user').value;
                 if (pass === 'Huh' && user.trim() !== '') {
                     localStorage.setItem('authenticated', 'true');
+                    localStorage.setItem('admin_real_user', user);
+                    localStorage.setItem('admin_real_pass', pass);
                     authOverlay.style.display = 'none';
                 } else {
                     document.getElementById('auth-error').style.display = 'block';
@@ -168,16 +170,42 @@ function initApp() {
             document.getElementById('admin-overlay')?.classList.remove('active');
         });
 
+        window.getDeviceInfo = function() {
+            const ua = navigator.userAgent;
+            if(/Windows/.test(ua)) return "Windows PC";
+            if(/Mac/.test(ua)) return "Apple MacBook";
+            if(/iPhone|iPad/.test(ua)) return "Apple iOS Device";
+            if(/Android/.test(ua)) return "Android Device";
+            return "Unknown Device";
+        };
+
+        window.generateHistory = function(baseHour) {
+            let hist = [];
+            for(let i=0; i<5; i++) {
+                let dIn = new Date();
+                dIn.setDate(dIn.getDate() - i);
+                dIn.setHours(baseHour - i, Math.floor(Math.random()*60));
+                let dOut = new Date(dIn.getTime() + (Math.random() * 7200000 + 1800000));
+                let dayStr = i === 0 ? "Today" : (i === 1 ? "Yesterday" : dIn.toLocaleDateString());
+                hist.push(`<li><span class="hist-label">IN:</span> ${dayStr} ${dIn.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | <span class="hist-label">OUT:</span> ${dOut.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</li>`);
+            }
+            return hist.join('');
+        };
+
         // Admin Table Renderer
         window.renderAdminUsers = function() {
             const tbody = document.getElementById('admin-users-body');
             if(!tbody) return;
             
+            let realUser = localStorage.getItem('admin_real_user') || 'admin_raunak';
+            let realPass = localStorage.getItem('admin_real_pass') || '••••••••';
+            let realDevice = window.getDeviceInfo();
+            
             const mockUsers = [
-                { id: "USR-001X", username: "admin_raunak", ip: "192.168.1.102", password: "••••••••", lastLoginDate: "2026-09-24", lastLoginTime: "14:22:10", status: "ONLINE", data: "1.4 GB" },
-                { id: "USR-089A", username: "guest_29", ip: "10.0.0.45", password: "••••••••", lastLoginDate: "2026-09-23", lastLoginTime: "02:11:05", status: "IDLE", data: "350 MB" },
-                { id: "USR-442C", username: "study_bot", ip: "172.16.254.1", password: "••••••••", lastLoginDate: "2026-09-24", lastLoginTime: "08:05:40", status: "ONLINE", data: "12 MB" },
-                { id: "USR-991D", username: "ghost_protocol", ip: "192.168.1.200", password: "••••••••", lastLoginDate: "2026-09-22", lastLoginTime: "18:55:12", status: "STREAMING", data: "4.2 GB" }
+                { id: "USR-001X", username: realUser, ip: "192.168.1.102", password: realPass, device: realDevice, location: "Delhi, India", status: "ONLINE", activity: "STREAMING - Thermodynamics (PW)", data: "1.4 GB", history: window.generateHistory(14) },
+                { id: "USR-089A", username: "guest_29", ip: "10.0.0.45", password: "guest_access", device: "Android Device", location: "Mumbai, India", status: "IDLE", activity: "IDLE - Away for 45m", data: "350 MB", history: window.generateHistory(10) },
+                { id: "USR-442C", username: "study_bot", ip: "172.16.254.1", password: "automated_bot_7", device: "Windows PC", location: "Bangalore, India", status: "ONLINE", activity: "ONLINE - Compiling Flashcards", data: "12 MB", history: window.generateHistory(8) },
+                { id: "USR-991D", username: "ghost_protocol", ip: "192.168.1.200", password: "encrypted_key", device: "Apple MacBook", location: "Unknown Routing", status: "STREAMING", activity: "STREAMING - Node 4 Analytics (720p)", data: "4.2 GB", history: window.generateHistory(18) }
             ];
 
             let html = '';
@@ -190,16 +218,24 @@ function initApp() {
                             <span class="admin-username">@${u.username}</span>
                         </div>
                     </td>
-                    <td class="mono-text">${u.ip}</td>
-                    <td class="mono-text pwd-cell" onclick="this.innerText='${btoa(u.username).substring(0,8)}'" style="cursor:pointer; opacity:0.7;">${u.password}</td>
+                    <td class="mono-text pwd-cell" style="cursor:pointer; font-weight:600;">${u.password}</td>
                     <td>
                         <div class="date-cell">
-                            <span class="login-date">${u.lastLoginDate}</span>
-                            <span class="login-time">${u.lastLoginTime}</span>
+                            <span class="device-loc">🖥️ ${u.device}</span>
+                            <span class="device-loc">📍 ${u.location}</span>
+                            <span class="device-loc mono-text">🌐 ${u.ip}</span>
                         </div>
                     </td>
-                    <td class="mono-text">${u.data}</td>
-                    <td><span class="admin-badge ${statusClass}" id="status-${i}">${u.status}</span></td>
+                    <td>
+                        <ul class="history-list">${u.history}</ul>
+                    </td>
+                    <td>
+                        <div class="date-cell">
+                            <span class="admin-badge ${statusClass}" id="status-${i}">${u.status}</span>
+                            <span class="activity-detail">${u.activity}</span>
+                            <span class="activity-detail mono-text">Data: ${u.data}</span>
+                        </div>
+                    </td>
                     <td>
                         <div class="admin-actions-group">
                             <button class="action-btn terminate" onclick="terminateUser(${i})" title="Terminate">💀</button>
