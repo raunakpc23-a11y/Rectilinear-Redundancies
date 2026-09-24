@@ -1,7 +1,7 @@
-// ==========================================
-// PERSONAL SEA LION (Chatbot Feature)
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // ==========================================
+    // 8. PERSONAL SEA LION (Chatbot)
+    // ==========================================
     document.getElementById('chat-fab')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.add('open'));
     document.getElementById('chat-close')?.addEventListener('click', () => document.getElementById('chat-window')?.classList.remove('open'));
     
@@ -55,13 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             let matchesHtml = '';
-            if (window.masterList) {
-                window.masterList.forEach((b, i) => {
-                    if(b.title && b.title.toLowerCase().includes(q)) {
-                        matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
-                    }
-                });
-            }
+            // Access the exposed masterList from script.js
+            window.masterList.forEach((b, i) => {
+                if(b.title && b.title.toLowerCase().includes(q)) {
+                    matchesHtml += `<button class="chat-match-btn" data-index="${i}">📄 ${b.title}</button>`;
+                }
+            });
             
             if(matchesHtml === '') {
                 matchesHtml = "*Sad Arf...* I couldn't find any resources for that. Want to see a capybara instead?";
@@ -77,9 +76,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('chat-body')?.addEventListener('click', (e) => {
         if(e.target.classList.contains('chat-match-btn')) {
             const idx = e.target.getAttribute('data-index');
-            if (window.loadResource && window.masterList) {
+            // Access loadResource from script.js
+            if(typeof window.loadResource === 'function' && window.masterList) {
                 window.loadResource(window.masterList[idx], null);
-                if (window.showToast) window.showToast("Resource Loaded!");
+                if (typeof window.showToast === 'function') {
+                    window.showToast("Resource Loaded!");
+                }
             }
         }
     });
