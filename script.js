@@ -143,28 +143,78 @@ function initApp() {
         ];
 
         // Admin Mode Activation Tracker
-        let logoClicks = 0;
-        let logoClickTimer = null;
+        window.adminUnlockStage = 0;
+        window.adminLogoClicks = 0;
+        window.logoClickTimer = null;
+
         document.getElementById('sidebar-logo')?.addEventListener('click', () => {
-            // Check if timer is between 4 mins (240s) and 4.5 mins (270s)
-            if (pomoSeconds >= 240 && pomoSeconds <= 270) {
-                logoClicks++;
-                clearTimeout(logoClickTimer);
-                logoClickTimer = setTimeout(() => { logoClicks = 0; }, 1500);
-                
-                if (logoClicks >= 10) {
-                    document.getElementById('admin-overlay')?.classList.add('active');
-                    if (window.showToast) window.showToast("Admin Mode Activated!");
-                    logoClicks = 0;
-                }
-            } else {
-                logoClicks = 0;
+            window.adminLogoClicks++;
+            clearTimeout(window.logoClickTimer);
+            window.logoClickTimer = setTimeout(() => { window.adminLogoClicks = 0; }, 2000);
+            
+            if (window.adminUnlockStage === 0 && window.adminLogoClicks >= 10) {
+                window.adminUnlockStage = 1;
+                window.adminLogoClicks = 0;
+                if (window.showToast) window.showToast("System diagnostic mode ready. Awaiting terminal command.");
+            } else if (window.adminUnlockStage === 2 && window.adminLogoClicks >= 5) {
+                document.getElementById('admin-overlay')?.classList.add('active');
+                if (window.showToast) window.showToast("Root Access Granted.");
+                window.adminUnlockStage = 0; // reset
+                window.adminLogoClicks = 0;
+                renderAdminUsers();
             }
         });
 
         document.getElementById('admin-close')?.addEventListener('click', () => {
             document.getElementById('admin-overlay')?.classList.remove('active');
         });
+
+        // Admin Table Renderer
+        window.renderAdminUsers = function() {
+            const tbody = document.getElementById('admin-users-body');
+            if(!tbody) return;
+            
+            const mockUsers = [
+                { id: "USR-001X", ip: "192.168.1.102", status: "ONLINE", uptime: "14:22:10" },
+                { id: "USR-089A", ip: "10.0.0.45", status: "IDLE", uptime: "02:11:05" },
+                { id: "USR-442C", ip: "172.16.254.1", status: "ONLINE", uptime: "00:05:40" },
+                { id: "USR-991D", ip: "192.168.1.200", status: "STREAMING", uptime: "05:55:12" }
+            ];
+
+            let html = '';
+            mockUsers.forEach((u, i) => {
+                html += `<tr id="user-row-${i}">
+                    <td>${u.id}</td>
+                    <td>${u.ip}</td>
+                    <td id="status-${i}">${u.status}</td>
+                    <td>${u.uptime}</td>
+                    <td>
+                        <button class="btn-terminate" onclick="terminateUser(${i})">TERMINATE</button>
+                        <button class="btn-suspend" onclick="suspendUser(${i})">SUSPEND</button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        };
+
+        window.terminateUser = function(idx) {
+            const row = document.getElementById(`user-row-${idx}`);
+            if(row) {
+                row.classList.add('terminated-row');
+                document.getElementById(`status-${idx}`).innerText = "TERMINATED";
+                row.querySelectorAll('button').forEach(b => b.disabled = true);
+                if(window.showToast) window.showToast(`Target USR-${idx} eliminated from the matrix.`);
+            }
+        };
+        
+        window.suspendUser = function(idx) {
+            const row = document.getElementById(`user-row-${idx}`);
+            if(row && !row.classList.contains('terminated-row')) {
+                row.style.opacity = '0.6';
+                document.getElementById(`status-${idx}`).innerText = "SUSPENDED";
+                if(window.showToast) window.showToast(`Target USR-${idx} suspended.`);
+            }
+        };
 
         function updatePomoDisplay() {
             let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
