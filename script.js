@@ -168,33 +168,45 @@ function initApp() {
             document.getElementById('admin-overlay')?.classList.remove('active');
         });
 
-        // Admin Table Renderer with advanced user details
+        // Admin Table Renderer
         window.renderAdminUsers = function() {
             const tbody = document.getElementById('admin-users-body');
             if(!tbody) return;
             
             const mockUsers = [
-                { id: "USR-001X", username: "admin_root", pass: "********", ip: "192.168.1.102", lastLogin: "Today, 14:02", history: "42", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB" },
-                { id: "USR-089A", username: "scholar_23", pass: "********", ip: "10.0.0.45", lastLogin: "Yesterday, 09:15", history: "18", status: "IDLE", uptime: "02:11:05", data: "350 MB" },
-                { id: "USR-442C", username: "guest_user", pass: "********", ip: "172.16.254.1", lastLogin: "Today, 11:30", history: "8", status: "ONLINE", uptime: "00:05:40", data: "12 MB" },
-                { id: "USR-991D", username: "power_coder", pass: "********", ip: "192.168.1.200", lastLogin: "2 days ago", history: "140", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB" }
+                { id: "USR-001X", username: "admin_raunak", ip: "192.168.1.102", password: "••••••••", lastLoginDate: "2026-09-24", lastLoginTime: "14:22:10", status: "ONLINE", data: "1.4 GB" },
+                { id: "USR-089A", username: "guest_29", ip: "10.0.0.45", password: "••••••••", lastLoginDate: "2026-09-23", lastLoginTime: "02:11:05", status: "IDLE", data: "350 MB" },
+                { id: "USR-442C", username: "study_bot", ip: "172.16.254.1", password: "••••••••", lastLoginDate: "2026-09-24", lastLoginTime: "08:05:40", status: "ONLINE", data: "12 MB" },
+                { id: "USR-991D", username: "ghost_protocol", ip: "192.168.1.200", password: "••••••••", lastLoginDate: "2026-09-22", lastLoginTime: "18:55:12", status: "STREAMING", data: "4.2 GB" }
             ];
 
             let html = '';
             mockUsers.forEach((u, i) => {
+                let statusClass = u.status === 'ONLINE' ? 'status-green' : (u.status === 'IDLE' ? 'status-yellow' : 'status-blue');
                 html += `<tr id="user-row-${i}">
-                    <td>${u.id}</td>
-                    <td>${u.username}</td>
-                    <td>${u.pass}</td>
-                    <td>${u.ip}</td>
-                    <td>${u.lastLogin}</td>
-                    <td>${u.history}</td>
-                    <td>${u.data}</td>
-                    <td id="status-${i}">${u.status}</td>
-                    <td>${u.uptime}</td>
-                    <td style="display:flex; gap:8px;">
-                        <button class="btn-terminate" onclick="terminateUser(${i})">TERMINATE</button>
-                        <button class="btn-suspend" onclick="suspendUser(${i})">SUSPEND</button>
+                    <td>
+                        <div class="user-id-cell">
+                            <strong>${u.id}</strong>
+                            <span class="admin-username">@${u.username}</span>
+                        </div>
+                    </td>
+                    <td class="mono-text">${u.ip}</td>
+                    <td class="mono-text pwd-cell" onclick="this.innerText='${btoa(u.username).substring(0,8)}'" style="cursor:pointer; opacity:0.7;">${u.password}</td>
+                    <td>
+                        <div class="date-cell">
+                            <span class="login-date">${u.lastLoginDate}</span>
+                            <span class="login-time">${u.lastLoginTime}</span>
+                        </div>
+                    </td>
+                    <td class="mono-text">${u.data}</td>
+                    <td><span class="admin-badge ${statusClass}" id="status-${i}">${u.status}</span></td>
+                    <td>
+                        <div class="admin-actions-group">
+                            <button class="action-btn terminate" onclick="terminateUser(${i})" title="Terminate">💀</button>
+                            <button class="action-btn suspend" onclick="suspendUser(${i})" title="Suspend">⏸️</button>
+                            <button class="action-btn impersonate" onclick="impersonateUser(${i}, '${u.username}')" title="Impersonate">🎭</button>
+                            <button class="action-btn wipe" onclick="wipeUser(${i})" title="Wipe">🗑️</button>
+                        </div>
                     </td>
                 </tr>`;
             });
@@ -218,6 +230,17 @@ function initApp() {
                 document.getElementById(`status-${idx}`).innerText = "SUSPENDED";
                 if(window.showToast) window.showToast(`Target USR-${idx} suspended.`);
             }
+        };
+
+        window.impersonateUser = function(idx, username) {
+            if(window.showToast) window.showToast(`Impersonating @${username} (USR-${idx}). Loading external context...`);
+            setTimeout(() => {
+                document.getElementById('admin-overlay')?.classList.remove('active');
+            }, 1000);
+        };
+
+        window.wipeUser = function(idx) {
+            if(window.showToast) window.showToast(`Data wiped for USR-${idx}. Overwritten with zeroes.`);
         };
 
         // System Nuke Protocol
@@ -369,7 +392,7 @@ function initApp() {
             if (node._files && node._files.length > 0) {
                 node._files.forEach(book => {
                     let item = document.createElement('div');
-                    item.className = 'book-item glass-interactive';
+                    item.className = 'book-item';
                     item.innerHTML = `<span>${book.title || 'Untitled'}</span>`;
                     item.onclick = () => window.loadResource(book, item);
                     container.appendChild(item);
@@ -518,8 +541,8 @@ function initApp() {
                     let pct = (h / maxHours) * 100;
                     chartHtml += `
                         <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
-                            <div style="height:140px; width:45px; background:var(--folder-bg); border-radius:8px; display:flex; align-items:flex-end; border:1px solid var(--border-color); overflow:hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
-                                <div style="width:100%; height:${pct}%; background:var(--accent-color); transition:height 1s ease-out; box-shadow: 0 0 10px var(--accent-glow);"></div>
+                            <div style="height:140px; width:45px; background:var(--folder-bg); border-radius:8px; display:flex; align-items:flex-end; border:1px solid var(--border-color); overflow:hidden;">
+                                <div style="width:100%; height:${pct}%; background:var(--accent-color); transition:height 1s ease-out;"></div>
                             </div>
                             <span style="font-size:0.85em; font-weight:bold; color:var(--text-muted);">${s}</span>
                             <span style="font-size:0.8em; font-family:monospace;">${h.toFixed(1)}h</span>
@@ -555,7 +578,7 @@ function initApp() {
                             <div class="stat-box"><h3 style="color:var(--success);">${((total*pomoSettings.focusTime)/60).toFixed(1)}</h3><p>Hours</p></div>
                         </div>
                         <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Subject Mastery</h3>
-                        <div class="glass-panel" style="display:flex; flex-wrap:wrap; gap:30px; padding:30px; border-radius:var(--radius-lg); justify-content:space-around; width:100%;">
+                        <div style="display:flex; flex-wrap:wrap; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
                             ${chartHtml}
                         </div>
                     </div>`;
@@ -563,9 +586,9 @@ function initApp() {
                 up.innerHTML = `
                     <div class="tt-layout">
                         <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📅 Timeline</h2>
-                        <div class="tt-form glass-panel">
-                            <input type="time" id="tt-start" class="glass-input">
-                            <input type="text" id="tt-task" placeholder="Task description..." class="glass-input">
+                        <div class="tt-form">
+                            <input type="time" id="tt-start">
+                            <input type="text" id="tt-task" placeholder="Task description...">
                             <button class="primary-btn" id="tt-add">Add Task</button>
                         </div>
                         <div class="tt-list" id="tt-list"></div>
@@ -580,7 +603,7 @@ function initApp() {
                     const list = document.getElementById('tt-list');
                     if(!list) return;
                     list.innerHTML = window.ttTasks.sort((a,b)=>a.time.localeCompare(b.time)).map((t, i) => `
-                        <div class="tt-item glass-interactive ${t.done ? 'done':''}">
+                        <div class="tt-item ${t.done ? 'done':''}">
                             <input type="checkbox" class="tt-check" data-index="${i}" ${t.done?'checked':''}>
                             <span class="tt-time">${t.time}</span>
                             <span style="flex-grow:1; font-weight:600; font-size:1.1em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
@@ -648,8 +671,8 @@ function initApp() {
                 up.innerHTML = `
                     <div class="syl-tracker">
                         <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📑 Syllabus Mastery</h2>
-                        <div class="syl-tabs glass-panel" style="display:flex; gap:10px; padding:8px; border-radius:12px;">
-                            <button class="syl-tab active" data-target="Class12" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:var(--accent-color); color:white; box-shadow:var(--card-shadow); transition:0.2s;">Class 12 Boards</button>
+                        <div class="syl-tabs" style="display:flex; gap:10px; background:var(--folder-bg); padding:8px; border-radius:12px; border:1px solid var(--border-color);">
+                            <button class="syl-tab active" data-target="Class12" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:var(--sidebar-bg); color:var(--accent-color); box-shadow:var(--card-shadow); transition:0.2s;">Class 12 Boards</button>
                             <button class="syl-tab" data-target="JEEMains" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Mains</button>
                             <button class="syl-tab" data-target="JEEAdv" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Advanced</button>
                         </div>
@@ -664,7 +687,7 @@ function initApp() {
                     let total=0, done=0;
                     const data = deepSyllabus[level];
                     Object.keys(data).forEach(subj => {
-                        html += `<details class="syl-subject-card glass-panel" open><summary>${subj}</summary><div class="syl-grid">`;
+                        html += `<details class="syl-subject-card" open><summary>${subj}</summary><div class="syl-grid">`;
                         data[subj].forEach(chap => {
                             total++;
                             let key = `${level}_${subj}_${chap}`;
@@ -706,8 +729,8 @@ function initApp() {
                             t.style.boxShadow = 'none';
                         });
                         e.target.classList.add('active');
-                        e.target.style.background = 'var(--accent-color)';
-                        e.target.style.color = 'white';
+                        e.target.style.background = 'var(--sidebar-bg)';
+                        e.target.style.color = 'var(--accent-color)';
                         e.target.style.boxShadow = 'var(--card-shadow)';
                         currentSylTab = e.target.getAttribute('data-target');
                         window._renderSylContent(currentSylTab);
