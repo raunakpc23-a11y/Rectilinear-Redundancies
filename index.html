@@ -51,12 +51,13 @@
                 <h2 style="color: #0f0; text-transform: uppercase;">Root Terminal - System Users</h2>
                 <button class="primary-btn" id="admin-close" style="background: #0f0; color: #000; padding: 10px 20px; font-family: monospace;">Exit Matrix</button>
             </div>
-            <div style="overflow-x: auto;">
+            <div style="overflow-x: auto; margin-bottom: 30px;">
                 <table class="admin-table" id="admin-users-table">
                     <thead>
                         <tr>
                             <th>User ID</th>
                             <th>IP Address</th>
+                            <th>Data</th>
                             <th>Status</th>
                             <th>Uptime</th>
                             <th>Actions</th>
@@ -66,6 +67,14 @@
                         <!-- Populated dynamically by script.js -->
                     </tbody>
                 </table>
+            </div>
+            <div style="padding: 20px; border: 1px solid #f43f5e; border-radius: 8px; background: rgba(244, 63, 94, 0.05);">
+                <h3 style="color: #f43f5e; margin-bottom: 15px; font-size: 1.2em; display:flex; align-items:center; gap:10px;">⚠️ SYSTEM NUKE OVERRIDE</h3>
+                <p style="color: #f43f5e; margin-bottom: 15px; font-size: 0.9em; opacity: 0.8;">Warning: This action will obliterate all local storage and configurations across the active environment.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="password" id="nuke-code" placeholder="Enter Secret Code" style="background: #000; color: #f43f5e; border: 1px solid #f43f5e; padding: 10px 14px; border-radius: 4px; outline: none; flex-grow: 1;">
+                    <button class="btn-terminate" id="btn-nuke" style="padding: 10px 20px; font-size: 1.1em;">EXECUTE NUKE</button>
+                </div>
             </div>
         </div>
     </div>
@@ -209,14 +218,14 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="4xDzrUhVKVA">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Static Mix)</option>
                                 <option value="mPZkdNFkNps">🌧️ Rain & Thunder in Forest</option>
                                 <option value="c9pQYOGIWM8">☕ Cozy Rain Cafe</option>
                                 <option value="DWcJFNfaw9c">🎬 Blade Runner Synth (Lofi Edit)</option>
-                                <option value="V3crEwM_4c">📚 Dark Academia Strings</option>
-                                <option value="5qap5aO4i9A">🌿 Studio Ghibli Piano</option>
-                                <option value="1z7r0L9PZ0w">🌌 Hans Zimmer Epic Focus</option>
-                                <option value="8r31DmacpI4">🔥 Mario Kart Study Music (Intense)</option>
+                                <option value="11xVht5lXg8">📚 Dark Academia Strings</option>
+                                <option value="b_n8h2QzGf0">🌿 Studio Ghibli Piano</option>
+                                <option value="yiaBv5d064k">🌌 Hans Zimmer Epic Focus</option>
+                                <option value="c0mX-5OkdM0">🔥 Mario Kart Study Music (Intense)</option>
                             </optgroup>
                         </select>
                     </div>
