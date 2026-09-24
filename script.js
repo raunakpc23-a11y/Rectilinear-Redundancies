@@ -56,11 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         let activeModule = 'LECTURES';
-        let masterList = [];
-        for(let k in window.libraryData) masterList.push(...window.libraryData[k]);
-        
-        // Export for Sealion feature accessibility
-        window.masterList = masterList;
+        window.masterList = [];
+        for(let k in window.libraryData) window.masterList.push(...window.libraryData[k]);
 
         // ==========================================
         // 2. SETTINGS & THEMING
@@ -249,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     let item = document.createElement('div');
                     item.className = 'book-item';
                     item.innerHTML = `<span>${book.title}</span>`;
-                    item.onclick = () => loadResource(book, item);
+                    item.onclick = () => window.loadResource(book, item);
                     container.appendChild(item);
                 });
             }
@@ -281,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById('search-bar')?.addEventListener('input', (e) => renderLibrary(e.target.value));
 
-        function loadResource(book, el) {
+        window.loadResource = function(book, el) {
             document.querySelectorAll('.book-item').forEach(i => i.classList.remove('active'));
             if (el) el.classList.add('active');
 
@@ -332,10 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 notesArea.value = localStorage.getItem('notes_' + book.title) || '';
                 notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
             }
-        }
-        
-        // Export loadResource for Sealion file interaction
-        window.loadResource = loadResource;
+        };
 
         // ==========================================
         // 5. TABS & UTILITIES
