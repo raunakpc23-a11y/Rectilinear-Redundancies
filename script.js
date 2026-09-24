@@ -56,8 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         let activeModule = 'LECTURES';
-        window.masterList = [];
-        for(let k in window.libraryData) window.masterList.push(...window.libraryData[k]);
+        let masterList = [];
+        for(let k in window.libraryData) masterList.push(...window.libraryData[k]);
+        
+        // Export for Sealion feature accessibility
+        window.masterList = masterList;
 
         // ==========================================
         // 2. SETTINGS & THEMING
@@ -330,6 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 notesArea.oninput = () => localStorage.setItem('notes_' + book.title, notesArea.value);
             }
         }
+        
+        // Export loadResource for Sealion file interaction
         window.loadResource = loadResource;
 
         // ==========================================
@@ -742,7 +747,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // ==========================================
-        // 7. HEADER, SPLIT, CHAT & MODALS
+        // 7. HEADER, SPLIT, & MODALS
         // ==========================================
         
         document.getElementById('home-btn')?.addEventListener('click', () => {
