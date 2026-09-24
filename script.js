@@ -168,16 +168,16 @@ function initApp() {
             document.getElementById('admin-overlay')?.classList.remove('active');
         });
 
-        // Admin Table Renderer
+        // Admin Table Renderer with advanced user details
         window.renderAdminUsers = function() {
             const tbody = document.getElementById('admin-users-body');
             if(!tbody) return;
             
             const mockUsers = [
-                { id: "USR-001X", username: "admin_master", password: "enc_***_889", ip: "192.168.1.102", device: "Mac OS / Safari", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB", lastLogin: "2026-09-24 14:00", loginDates: "09-24, 09-23, 09-20" },
-                { id: "USR-089A", username: "guest_student", password: "student123", ip: "10.0.0.45", device: "Windows 11 / Edge", status: "IDLE", uptime: "02:11:05", data: "350 MB", lastLogin: "2026-09-24 09:30", loginDates: "09-24" },
-                { id: "USR-442C", username: "test_bot_5", password: "bot_secure99", ip: "172.16.254.1", device: "Linux / Chrome", status: "ONLINE", uptime: "00:05:40", data: "12 MB", lastLogin: "2026-09-24 17:55", loginDates: "09-24, 09-24, 09-24" },
-                { id: "USR-991D", username: "night_owl", password: "pwd_xyz_44", ip: "192.168.1.200", device: "iOS 18 / Safari", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB", lastLogin: "2026-09-23 22:15", loginDates: "09-23, 09-21, 09-18" }
+                { id: "USR-001X", username: "admin_root", pass: "********", ip: "192.168.1.102", lastLogin: "Today, 14:02", history: "42", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB" },
+                { id: "USR-089A", username: "scholar_23", pass: "********", ip: "10.0.0.45", lastLogin: "Yesterday, 09:15", history: "18", status: "IDLE", uptime: "02:11:05", data: "350 MB" },
+                { id: "USR-442C", username: "guest_user", pass: "********", ip: "172.16.254.1", lastLogin: "Today, 11:30", history: "8", status: "ONLINE", uptime: "00:05:40", data: "12 MB" },
+                { id: "USR-991D", username: "power_coder", pass: "********", ip: "192.168.1.200", lastLogin: "2 days ago", history: "140", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB" }
             ];
 
             let html = '';
@@ -185,19 +185,16 @@ function initApp() {
                 html += `<tr id="user-row-${i}">
                     <td>${u.id}</td>
                     <td>${u.username}</td>
-                    <td style="font-family: monospace; color: #f43f5e;">${u.password}</td>
+                    <td>${u.pass}</td>
                     <td>${u.ip}</td>
-                    <td>${u.device}</td>
+                    <td>${u.lastLogin}</td>
+                    <td>${u.history}</td>
                     <td>${u.data}</td>
                     <td id="status-${i}">${u.status}</td>
                     <td>${u.uptime}</td>
-                    <td>${u.lastLogin}</td>
-                    <td><small>${u.loginDates}</small></td>
-                    <td style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <td style="display:flex; gap:8px;">
                         <button class="btn-terminate" onclick="terminateUser(${i})">TERMINATE</button>
                         <button class="btn-suspend" onclick="suspendUser(${i})">SUSPEND</button>
-                        <button class="btn-impersonate" onclick="impersonateUser(${i})">IMPERSONATE</button>
-                        <button class="btn-wipe" onclick="wipeUser(${i})">WIPE DATA</button>
                     </td>
                 </tr>`;
             });
@@ -221,17 +218,6 @@ function initApp() {
                 document.getElementById(`status-${idx}`).innerText = "SUSPENDED";
                 if(window.showToast) window.showToast(`Target USR-${idx} suspended.`);
             }
-        };
-
-        window.impersonateUser = function(idx) {
-            if(window.showToast) window.showToast(`Impersonating USR-${idx}. Loading external context...`);
-            setTimeout(() => {
-                document.getElementById('admin-overlay')?.classList.remove('active');
-            }, 1000);
-        };
-
-        window.wipeUser = function(idx) {
-            if(window.showToast) window.showToast(`Data wiped for USR-${idx}. Overwritten with zeroes.`);
         };
 
         // System Nuke Protocol
@@ -383,7 +369,7 @@ function initApp() {
             if (node._files && node._files.length > 0) {
                 node._files.forEach(book => {
                     let item = document.createElement('div');
-                    item.className = 'book-item';
+                    item.className = 'book-item glass-interactive';
                     item.innerHTML = `<span>${book.title || 'Untitled'}</span>`;
                     item.onclick = () => window.loadResource(book, item);
                     container.appendChild(item);
@@ -532,8 +518,8 @@ function initApp() {
                     let pct = (h / maxHours) * 100;
                     chartHtml += `
                         <div style="display:flex; flex-direction:column; gap:8px; align-items:center;">
-                            <div style="height:140px; width:45px; background:var(--folder-bg); border-radius:8px; display:flex; align-items:flex-end; border:1px solid var(--border-color); overflow:hidden;">
-                                <div style="width:100%; height:${pct}%; background:var(--accent-color); transition:height 1s ease-out;"></div>
+                            <div style="height:140px; width:45px; background:var(--folder-bg); border-radius:8px; display:flex; align-items:flex-end; border:1px solid var(--border-color); overflow:hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                <div style="width:100%; height:${pct}%; background:var(--accent-color); transition:height 1s ease-out; box-shadow: 0 0 10px var(--accent-glow);"></div>
                             </div>
                             <span style="font-size:0.85em; font-weight:bold; color:var(--text-muted);">${s}</span>
                             <span style="font-size:0.8em; font-family:monospace;">${h.toFixed(1)}h</span>
@@ -569,7 +555,7 @@ function initApp() {
                             <div class="stat-box"><h3 style="color:var(--success);">${((total*pomoSettings.focusTime)/60).toFixed(1)}</h3><p>Hours</p></div>
                         </div>
                         <h3 style="font-size:1.3em; margin-bottom:15px; text-align:center;">Subject Mastery</h3>
-                        <div style="display:flex; flex-wrap:wrap; gap:30px; padding:30px; background:var(--sidebar-bg); border-radius:var(--radius-lg); border:1px solid var(--border-color); box-shadow:var(--card-shadow); justify-content:space-around; width:100%;">
+                        <div class="glass-panel" style="display:flex; flex-wrap:wrap; gap:30px; padding:30px; border-radius:var(--radius-lg); justify-content:space-around; width:100%;">
                             ${chartHtml}
                         </div>
                     </div>`;
@@ -577,9 +563,9 @@ function initApp() {
                 up.innerHTML = `
                     <div class="tt-layout">
                         <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📅 Timeline</h2>
-                        <div class="tt-form">
-                            <input type="time" id="tt-start">
-                            <input type="text" id="tt-task" placeholder="Task description...">
+                        <div class="tt-form glass-panel">
+                            <input type="time" id="tt-start" class="glass-input">
+                            <input type="text" id="tt-task" placeholder="Task description..." class="glass-input">
                             <button class="primary-btn" id="tt-add">Add Task</button>
                         </div>
                         <div class="tt-list" id="tt-list"></div>
@@ -594,7 +580,7 @@ function initApp() {
                     const list = document.getElementById('tt-list');
                     if(!list) return;
                     list.innerHTML = window.ttTasks.sort((a,b)=>a.time.localeCompare(b.time)).map((t, i) => `
-                        <div class="tt-item ${t.done ? 'done':''}">
+                        <div class="tt-item glass-interactive ${t.done ? 'done':''}">
                             <input type="checkbox" class="tt-check" data-index="${i}" ${t.done?'checked':''}>
                             <span class="tt-time">${t.time}</span>
                             <span style="flex-grow:1; font-weight:600; font-size:1.1em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
@@ -662,8 +648,8 @@ function initApp() {
                 up.innerHTML = `
                     <div class="syl-tracker">
                         <h2 style="font-size:1.8em; margin-bottom:10px; text-align:center;">📑 Syllabus Mastery</h2>
-                        <div class="syl-tabs" style="display:flex; gap:10px; background:var(--folder-bg); padding:8px; border-radius:12px; border:1px solid var(--border-color);">
-                            <button class="syl-tab active" data-target="Class12" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:var(--sidebar-bg); color:var(--accent-color); box-shadow:var(--card-shadow); transition:0.2s;">Class 12 Boards</button>
+                        <div class="syl-tabs glass-panel" style="display:flex; gap:10px; padding:8px; border-radius:12px;">
+                            <button class="syl-tab active" data-target="Class12" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:var(--accent-color); color:white; box-shadow:var(--card-shadow); transition:0.2s;">Class 12 Boards</button>
                             <button class="syl-tab" data-target="JEEMains" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Mains</button>
                             <button class="syl-tab" data-target="JEEAdv" style="flex:1; padding:12px; font-weight:bold; border-radius:8px; border:none; cursor:pointer; background:transparent; color:var(--text-muted); transition:0.2s;">JEE Advanced</button>
                         </div>
@@ -678,7 +664,7 @@ function initApp() {
                     let total=0, done=0;
                     const data = deepSyllabus[level];
                     Object.keys(data).forEach(subj => {
-                        html += `<details class="syl-subject-card" open><summary>${subj}</summary><div class="syl-grid">`;
+                        html += `<details class="syl-subject-card glass-panel" open><summary>${subj}</summary><div class="syl-grid">`;
                         data[subj].forEach(chap => {
                             total++;
                             let key = `${level}_${subj}_${chap}`;
@@ -720,8 +706,8 @@ function initApp() {
                             t.style.boxShadow = 'none';
                         });
                         e.target.classList.add('active');
-                        e.target.style.background = 'var(--sidebar-bg)';
-                        e.target.style.color = 'var(--accent-color)';
+                        e.target.style.background = 'var(--accent-color)';
+                        e.target.style.color = 'white';
                         e.target.style.boxShadow = 'var(--card-shadow)';
                         currentSylTab = e.target.getAttribute('data-target');
                         window._renderSylContent(currentSylTab);
