@@ -276,8 +276,32 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .notes-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size:1.1em;}
 .notes-area { flex-grow: 1; border: none; padding: 20px; width: 100%; resize: none; background: transparent; color: var(--text-color); outline: none; font-size: 0.95em; line-height: 1.6; }
 
-/* Refactored Glassmorphic Premium Admin Terminal */
-.admin-terminal { width: 95%; max-width: 1400px; background: rgba(10, 15, 20, 0.95); border: 1px solid rgba(0, 255, 128, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 128, 0.05); padding: 30px; border-radius: 16px; backdrop-filter: blur(15px); color: #e2e8f0; font-family: 'Inter', system-ui, sans-serif; display: flex; flex-direction: column; gap: 24px; }
+/* Refactored Glassmorphic Premium Admin Terminal (Now properly slidable) */
+.admin-terminal { 
+    width: 95%; 
+    max-width: 1400px; 
+    max-height: 90vh; /* Enables vertical sliding */
+    overflow-y: auto; 
+    background: rgba(10, 15, 20, 0.95); 
+    border: 1px solid rgba(0, 255, 128, 0.3); 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 128, 0.05); 
+    padding: 30px; 
+    border-radius: 16px; 
+    backdrop-filter: blur(15px); 
+    color: #e2e8f0; 
+    font-family: 'Inter', system-ui, sans-serif; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 24px; 
+    transform: translateY(30px);
+    opacity: 0;
+    animation: adminSlideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; /* Adds an entrance slide */
+}
+
+@keyframes adminSlideIn {
+    to { transform: translateY(0); opacity: 1; }
+}
+
 .admin-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(0, 255, 128, 0.2); padding-bottom: 16px; }
 .admin-title-group { display: flex; flex-direction: column; gap: 4px; }
 .admin-title { color: #10b981; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; font-size: 1.4em; display:flex; align-items:center; gap:8px;}
@@ -291,10 +315,21 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .admin-stat-card p { font-size: 0.8em; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;}
 .status-optimal { text-shadow: 0 0 10px #10b981; }
 
-.admin-table-wrapper { background: rgba(0, 0, 0, 0.4); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.05); overflow-x: auto; }
+.admin-table-wrapper { 
+    background: rgba(0, 0, 0, 0.4); 
+    border-radius: 12px; 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    overflow-x: auto; /* Enables horizontal sliding */
+    -webkit-overflow-scrolling: touch; 
+}
 .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
 .admin-table th { background: rgba(0, 255, 128, 0.05); padding: 14px 16px; color: #10b981; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid rgba(0, 255, 128, 0.2); white-space: nowrap; }
-.admin-table td { padding: 14px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); vertical-align: top; }
+.admin-table td { 
+    padding: 14px 16px; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+    vertical-align: top; 
+    white-space: nowrap; /* Forces wide content to activate sliding */
+}
 .admin-table tr:hover td { background: rgba(0, 255, 128, 0.02); }
 
 .user-id-cell { display: flex; flex-direction: column; gap: 2px; }
@@ -305,11 +340,26 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .date-cell { display: flex; flex-direction: column; gap: 4px; }
 .device-loc { font-size: 0.8em; color: #cbd5e1; }
 
-.history-list { font-size: 0.75em; color: #94a3b8; list-style: none; padding: 0; margin: 0; font-family: monospace; }
+.history-list { 
+    font-size: 0.75em; 
+    color: #94a3b8; 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    font-family: monospace; 
+    max-height: 100px; 
+    overflow-y: auto; 
+}
 .history-list li { margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .history-list li:last-child { border-bottom: none; }
 .hist-label { font-weight: 700; }
 .activity-detail { font-size: 0.75em; color: #94a3b8; margin-top: 4px; font-weight: 600; }
+
+/* Custom Sliders for the Admin Panel Overflow Elements */
+.admin-terminal::-webkit-scrollbar, .admin-table-wrapper::-webkit-scrollbar, .history-list::-webkit-scrollbar { width: 8px; height: 8px; }
+.admin-terminal::-webkit-scrollbar-track, .admin-table-wrapper::-webkit-scrollbar-track, .history-list::-webkit-scrollbar-track { background: rgba(0, 255, 128, 0.05); border-radius: 4px; }
+.admin-terminal::-webkit-scrollbar-thumb, .admin-table-wrapper::-webkit-scrollbar-thumb, .history-list::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 4px; }
+.admin-terminal::-webkit-scrollbar-thumb:hover, .admin-table-wrapper::-webkit-scrollbar-thumb:hover, .history-list::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.8); }
 
 .admin-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 700; letter-spacing: 1px; display: inline-block; width: max-content; }
 .status-green { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
