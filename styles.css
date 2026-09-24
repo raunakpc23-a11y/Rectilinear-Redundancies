@@ -1,6 +1,6 @@
 /* =========================================================
-    1. CSS VARIABLES & THEMES 
-    ========================================================= */
+   1. CSS VARIABLES & THEMES 
+   ========================================================= */
 :root { 
     --primary-bg: #f8fafc; --sidebar-bg: #ffffff; --sidebar-text: #334155; 
     --text-color: #0f172a; --text-muted: #64748b; --header-bg: #ffffff; 
@@ -35,8 +35,8 @@ body.theme-slate {
 body.font-small { font-size: 13px; } body.font-medium { font-size: 15px; } body.font-large { font-size: 17px; }
 
 /* =========================================================
-    2. GLOBAL STYLES & LAYOUT
-    ========================================================= */
+   2. GLOBAL STYLES & LAYOUT
+   ========================================================= */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
 
 /* Mobile Scroll & Height Fixes */
@@ -70,8 +70,8 @@ body { display: flex; height: 100vh; height: 100dvh; overflow: hidden; width: 10
 @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
 /* =========================================================
-    3. SIDEBAR & POMODORO
-    ========================================================= */
+   3. SIDEBAR & POMODORO
+   ========================================================= */
 .sidebar { width: 380px; min-width: 380px; background-color: rgba(var(--sidebar-bg-rgb, 255,255,255), 0.95); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 100; flex-shrink: 0; height: 100%; transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .sidebar.collapsed { margin-left: -380px; }
 
@@ -142,8 +142,8 @@ details[open] > summary::before { content: "📂"; opacity: 1; }
 .book-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
 
 /* =========================================================
-    4. MAIN CONTENT & WORKSPACE
-    ========================================================= */
+   4. MAIN CONTENT & WORKSPACE
+   ========================================================= */
 .main-content { flex-grow: 1; display: flex; flex-direction: column; background-color: rgba(var(--reader-bg-rgb, 241, 245, 249), 0.8); position: relative; overflow: hidden; }
 body.theme-amoled .main-content { background-color: rgba(0, 0, 0, 0.8); }
 body.theme-charcoal .main-content { background-color: rgba(18, 18, 18, 0.8); }
@@ -184,8 +184,8 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .placeholder-box p { color: var(--text-muted); font-size: 1.05em; line-height: 1.5; }
 
 /* =========================================================
-    5. UTILITIES & MODULES
-    ========================================================= */
+   5. UTILITIES & MODULES
+   ========================================================= */
 #util-panel { display:none; width:100%; height:100%; background:var(--reader-bg); overflow-y:auto; border-radius:var(--radius-lg); border:1px solid var(--border-color);}
 
 .util-menu { padding: 20px; display: flex; flex-direction: column; gap: 12px; overflow-y:auto; }
@@ -235,8 +235,8 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .fc-back { background: var(--accent-color); color: white; font-size: 1.3em; transform: rotateY(180deg); line-height: 1.5; }
 
 /* =========================================================
-    6. MODALS, CHAT, DRAWERS & TOAST
-    ========================================================= */
+   6. MODALS, CHAT, DRAWERS & TOAST
+   ========================================================= */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 3000; backdrop-filter: blur(4px); justify-content: center; align-items: center; }
 .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease-out; }
 .modal-content { background: var(--sidebar-bg); border: 1px solid var(--border-color); width: 480px; max-width: 90%; border-radius: var(--radius-lg); box-shadow: 0 20px 40px rgba(0,0,0,0.4); display: flex; flex-direction: column; overflow: hidden; }
@@ -289,8 +289,8 @@ iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; le
 .fs-overlay p { font-size: 1.1em; opacity: 0.8; max-width: 400px; line-height: 1.5; margin-bottom: 30px; }
 
 /* =========================================================
-    7. MOBILE RESPONSIVENESS (The Master Upgrade)
-    ========================================================= */
+   7. MOBILE RESPONSIVENESS (The Master Upgrade)
+   ========================================================= */
 @media (max-width: 768px) {
     /* Sidebar Overlay Fixes - ensures it stays fully solid, no bleed, hides on load */
     .sidebar { 
