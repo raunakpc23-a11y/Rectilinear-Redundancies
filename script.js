@@ -7,14 +7,14 @@ function initApp() {
         const authBtn = document.getElementById('auth-btn');
         
         if (authOverlay && authBtn) {
-            if (sessionStorage.getItem('authenticated') === 'true') {
+            if (localStorage.getItem('authenticated') === 'true') {
                 authOverlay.style.display = 'none';
             }
             authBtn.addEventListener('click', () => {
                 const pass = document.getElementById('auth-pass').value;
                 const user = document.getElementById('auth-user').value;
                 if (pass === 'Huh' && user.trim() !== '') {
-                    sessionStorage.setItem('authenticated', 'true');
+                    localStorage.setItem('authenticated', 'true');
                     authOverlay.style.display = 'none';
                 } else {
                     document.getElementById('auth-error').style.display = 'block';
@@ -155,7 +155,6 @@ function initApp() {
             if (window.adminUnlockStage === 0 && window.adminLogoClicks >= 10) {
                 window.adminUnlockStage = 1;
                 window.adminLogoClicks = 0;
-                if (window.showToast) window.showToast("System diagnostic mode ready. Awaiting terminal command.");
             } else if (window.adminUnlockStage === 2 && window.adminLogoClicks >= 5) {
                 document.getElementById('admin-overlay')?.classList.add('active');
                 if (window.showToast) window.showToast("Root Access Granted.");
@@ -175,10 +174,10 @@ function initApp() {
             if(!tbody) return;
             
             const mockUsers = [
-                { id: "USR-001X", ip: "192.168.1.102", status: "ONLINE", uptime: "14:22:10" },
-                { id: "USR-089A", ip: "10.0.0.45", status: "IDLE", uptime: "02:11:05" },
-                { id: "USR-442C", ip: "172.16.254.1", status: "ONLINE", uptime: "00:05:40" },
-                { id: "USR-991D", ip: "192.168.1.200", status: "STREAMING", uptime: "05:55:12" }
+                { id: "USR-001X", ip: "192.168.1.102", status: "ONLINE", uptime: "14:22:10", data: "1.4 GB" },
+                { id: "USR-089A", ip: "10.0.0.45", status: "IDLE", uptime: "02:11:05", data: "350 MB" },
+                { id: "USR-442C", ip: "172.16.254.1", status: "ONLINE", uptime: "00:05:40", data: "12 MB" },
+                { id: "USR-991D", ip: "192.168.1.200", status: "STREAMING", uptime: "05:55:12", data: "4.2 GB" }
             ];
 
             let html = '';
@@ -186,11 +185,14 @@ function initApp() {
                 html += `<tr id="user-row-${i}">
                     <td>${u.id}</td>
                     <td>${u.ip}</td>
+                    <td>${u.data}</td>
                     <td id="status-${i}">${u.status}</td>
                     <td>${u.uptime}</td>
                     <td>
                         <button class="btn-terminate" onclick="terminateUser(${i})">TERMINATE</button>
                         <button class="btn-suspend" onclick="suspendUser(${i})">SUSPEND</button>
+                        <button class="btn-impersonate" onclick="impersonateUser(${i})">IMPERSONATE</button>
+                        <button class="btn-wipe" onclick="wipeUser(${i})">WIPE DATA</button>
                     </td>
                 </tr>`;
             });
@@ -215,6 +217,30 @@ function initApp() {
                 if(window.showToast) window.showToast(`Target USR-${idx} suspended.`);
             }
         };
+
+        window.impersonateUser = function(idx) {
+            if(window.showToast) window.showToast(`Impersonating USR-${idx}. Loading external context...`);
+            setTimeout(() => {
+                document.getElementById('admin-overlay')?.classList.remove('active');
+            }, 1000);
+        };
+
+        window.wipeUser = function(idx) {
+            if(window.showToast) window.showToast(`Data wiped for USR-${idx}. Overwritten with zeroes.`);
+        };
+
+        // System Nuke Protocol
+        document.getElementById('btn-nuke')?.addEventListener('click', () => {
+            const code = document.getElementById('nuke-code').value;
+            if(code === 'YUWannaKnow') {
+                localStorage.clear();
+                sessionStorage.clear();
+                if(window.showToast) window.showToast("SYSTEM NUKED. Wiping local data...");
+                setTimeout(() => window.location.reload(), 1500);
+            } else {
+                if(window.showToast) window.showToast("Access Denied: Invalid Code");
+            }
+        });
 
         function updatePomoDisplay() {
             let m = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
