@@ -324,6 +324,9 @@
             .mobile-close-btn { display: flex !important; }
             
             /* Typography & Spacing */
+            .reader-header { padding: 12px 16px; gap: 8px; }
+            .header-actions { padding: 6px 8px; gap: 6px; }
+            .icon-btn { font-size: 1.2em; padding: 8px; }
             .header-title-box h2 { font-size: 1.1em; }
             .workspace-container { padding: 10px; gap: 10px; }
             
@@ -358,6 +361,17 @@
     </style>
 </head>
 <body class="theme-amoled font-medium">
+
+    <!-- LOGIN OVERLAY -->
+    <div id="login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--primary-bg); z-index:99999; display:flex; justify-content:center; align-items:center; flex-direction:column; backdrop-filter:blur(10px);">
+        <div class="modal-content" style="padding: 40px; text-align:center; max-width: 400px; box-shadow: var(--card-shadow);">
+            <h2 style="margin-bottom: 20px;">Welcome Back</h2>
+            <input type="text" id="login-user" placeholder="Username" style="padding:12px; width:100%; border-radius:var(--radius-md); border:1px solid var(--border-color); background:var(--folder-bg); color:var(--text-color); margin-bottom: 12px; font-size: 1em; outline: none;">
+            <input type="password" id="login-pass" placeholder="Site Password" style="padding:12px; width:100%; border-radius:var(--radius-md); border:1px solid var(--border-color); background:var(--folder-bg); color:var(--text-color); font-size: 1em; outline: none;">
+            <button class="primary-btn" id="login-btn" style="margin-top:20px; width:100%; justify-content:center; padding: 14px; font-size: 1.1em;">Login</button>
+            <p id="login-error" style="color:var(--danger); display:none; margin-top:12px; font-weight: 600;">Incorrect Site Password.</p>
+        </div>
+    </div>
 
     <div id="ambient-bg" class="bg-none"></div>
     <div id="toast-container"></div>
@@ -454,7 +468,7 @@
                     
                     <!-- Settings Button replaces title initially -->
                     <div id="home-title-area" style="display: flex; align-items: center;">
-                        <button class="outline-btn" id="settings-btn-main" title="Settings">⚙️ Workspace Settings</button>
+                        <button class="outline-btn" id="settings-btn-main" title="Workspace Settings">⚙️</button>
                     </div>
                 </div>
                 <div class="header-actions">
@@ -493,7 +507,7 @@
             <div class="notes-panel" id="notes-drawer">
                 <div class="notes-header">
                     <span id="notes-label">📝 Context Notes</span>
-                    <button class="icon-btn" id="notes-close">✖</button>
+                    <button class="icon-btn" id="notes-close" title="Close Notes">✖</button>
                 </div>
                 <textarea class="notes-area" id="notes-area" placeholder="Type notes here... They auto-save locally!"></textarea>
             </div>
@@ -502,7 +516,7 @@
             <div class="notes-panel" id="audio-drawer" style="z-index: 151;">
                 <div class="notes-header">
                     <span id="audio-label">🎧 Focus Audio</span>
-                    <button class="icon-btn" id="audio-close">✖</button>
+                    <button class="icon-btn" id="audio-close" title="Close Audio">✖</button>
                 </div>
                 <div class="audio-wrapper">
                     <div class="audio-setting">
@@ -585,14 +599,14 @@
                         </svg>
                         Personal Sea Lion
                     </span>
-                    <button class="icon-btn" id="chat-close">✖</button>
+                    <button class="icon-btn" id="chat-close" title="Close Chat">✖</button>
                 </div>
                 <div class="chat-body" id="chat-body">
                     <div class="chat-msg bot-msg">*Arf arf!* Flaps flippers excitedly. Type a topic to search, or ask me for a picture of a cat, dog, capybara, or meme!</div>
                 </div>
                 <div class="chat-footer">
                     <input type="text" id="chat-input" placeholder="Ask Sea Lion...">
-                    <button class="primary-btn" id="chat-send">Ask</button>
+                    <button class="primary-btn" id="chat-send" title="Send Request">Ask</button>
                 </div>
             </div>
         </main>
@@ -601,7 +615,7 @@
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><span>⚙️ Preferences</span><button class="icon-btn" id="settings-close">✖</button></div>
+            <div class="modal-header"><span>⚙️ Preferences</span><button class="icon-btn" id="settings-close" title="Close Settings">✖</button></div>
             <div class="modal-body">
                 <div class="setting-row">
                     <label>Theme Shade:</label>
@@ -634,11 +648,11 @@
                 <div class="setting-row">
                     <label>Accent Color:</label>
                     <div class="color-picker-group">
-                        <div class="color-dot active" data-color="#3b82f6" style="background:#3b82f6;"></div>
-                        <div class="color-dot" data-color="#10b981" style="background:#10b981;"></div>
-                        <div class="color-dot" data-color="#f43f5e" style="background:#f43f5e;"></div>
-                        <div class="color-dot" data-color="#8b5cf6" style="background:#8b5cf6;"></div>
-                        <div class="color-dot" data-color="#f59e0b" style="background:#f59e0b;"></div>
+                        <div class="color-dot active" data-color="#3b82f6" style="background:#3b82f6;" title="Blue"></div>
+                        <div class="color-dot" data-color="#10b981" style="background:#10b981;" title="Green"></div>
+                        <div class="color-dot" data-color="#f43f5e" style="background:#f43f5e;" title="Rose"></div>
+                        <div class="color-dot" data-color="#8b5cf6" style="background:#8b5cf6;" title="Violet"></div>
+                        <div class="color-dot" data-color="#f59e0b" style="background:#f59e0b;" title="Amber"></div>
                     </div>
                 </div>
                 <div class="setting-row">
@@ -655,7 +669,7 @@
                         <option value="⏱️">⏱️ Timer</option>
                     </select>
                 </div>
-                <button class="primary-btn" id="save-settings" style="margin-top:10px; justify-content:center; padding:14px; font-size:1.1em;">Save & Apply</button>
+                <button class="primary-btn" id="save-settings" style="margin-top:10px; justify-content:center; padding:14px; font-size:1.1em;" title="Save Settings">Save & Apply</button>
             </div>
         </div>
     </div>
@@ -665,8 +679,17 @@
         document.addEventListener("DOMContentLoaded", () => {
             try {
                 // ==========================================
-                // 0. BRANDING & SYSTEM EVENTS
+                // 0. BRANDING & SYSTEM EVENTS & LOGIN
                 // ==========================================
+                document.getElementById('login-btn').addEventListener('click', () => {
+                    const pass = document.getElementById('login-pass').value;
+                    if (pass === 'Huh') {
+                        document.getElementById('login-overlay').style.display = 'none';
+                    } else {
+                        document.getElementById('login-error').style.display = 'block';
+                    }
+                });
+
                 const sidebarLogo = document.getElementById('sidebar-logo');
                 if (sidebarLogo) {
                     sidebarLogo.onerror = function() {
@@ -1102,7 +1125,7 @@
                                 <div class="tt-form">
                                     <input type="time" id="tt-start">
                                     <input type="text" id="tt-task" placeholder="Task description...">
-                                    <button class="primary-btn" id="tt-add">Add Task</button>
+                                    <button class="primary-btn" id="tt-add" title="Add Timeline Task">Add Task</button>
                                 </div>
                                 <div class="tt-list" id="tt-list"></div>
                             </div>`;
@@ -1116,7 +1139,7 @@
                                     <input type="checkbox" class="tt-check" data-index="${i}" ${t.done?'checked':''}>
                                     <span class="tt-time">${t.time}</span>
                                     <span style="flex-grow:1; font-weight:600; font-size:1.1em; ${t.done?'text-decoration:line-through':''}">${t.text}</span>
-                                    <button class="icon-btn tt-del" data-index="${i}" style="color:var(--danger);">✖</button>
+                                    <button class="icon-btn tt-del" data-index="${i}" style="color:var(--danger);" title="Delete Task">✖</button>
                                 </div>`).join('');
                         };
                         
@@ -1262,8 +1285,8 @@
                                     </div>
                                 </div>
                                 <div style="display:flex; gap:20px;">
-                                    <button class="pomo-btn-sec" id="fc-prev">◀ Prev</button>
-                                    <button class="primary-btn" id="fc-next">Next ▶</button>
+                                    <button class="pomo-btn-sec" id="fc-prev" title="Previous Card">◀ Prev</button>
+                                    <button class="primary-btn" id="fc-next" title="Next Card">Next ▶</button>
                                 </div>
                             </div>`;
 
@@ -1558,6 +1581,7 @@
                             let rNum = Math.floor(Math.random() * 5) + 1;
                             
                             let singularName = category.slice(0, -1);
+                            // Encoded path to handle spaces safely
                             let imgPath = `./assets/${category}/${singularName}%20${rNum}.jpg`;
                             
                             const seaLionSounds = [
