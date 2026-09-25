@@ -45,7 +45,7 @@
     </div>
 
     <!-- ADMIN MODE OVERLAY -->
-    <div id="admin-overlay" class="fs-overlay" style="background: rgba(0,0,0,0.9); font-family: 'Inter', sans-serif; align-items: center; justify-content: center; padding: 20px;">
+    <div id="admin-overlay" class="fs-overlay" style="background: rgba(0,0,0,0.95); font-family: 'Inter', sans-serif; align-items: center; justify-content: center; padding: 20px;">
         <div class="admin-terminal">
             <div class="admin-header">
                 <div class="admin-title-group">
@@ -65,11 +65,11 @@
                 <table class="admin-table" id="admin-users-table">
                     <thead>
                         <tr>
-                            <th>User ID / Username</th>
-                            <th>Credentials</th>
-                            <th>System & Location</th>
-                            <th>Session History (Last 5)</th>
-                            <th>Status & Activity</th>
+                            <th>User ID & Exact Username</th>
+                            <th>Credentials & Security</th>
+                            <th>System & Geo-Location</th>
+                            <th>Precise Session Logs (Last 5)</th>
+                            <th>Detailed Status & Activity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -167,12 +167,12 @@
                     <div class="breadcrumb" id="current-path" style="display: none;"></div>
                     <select id="playlist-select" class="playlist-select" style="display:none;"></select>
                     
-                    <!-- Settings Button replaces title initially -->
-                    <div id="home-title-area" style="display: flex; align-items: center;">
-                        <button class="icon-btn" id="settings-btn-main" title="Settings">⚙️</button>
+                    <div id="home-title-area" style="display: flex; align-items: center; color: var(--text-muted); font-weight: bold; font-size: 1.1em;">
+                        Welcome to Workspace
                     </div>
                 </div>
                 <div class="header-actions">
+                    <button id="settings-btn-main" class="icon-btn" title="Settings">⚙️</button>
                     <button id="home-btn" class="icon-btn" title="Home">🏠</button>
                     <button id="audio-btn" class="icon-btn" title="Audio Player">🎧</button>
                     <div class="action-divider"></div>
@@ -231,14 +231,14 @@
                                 <option value="binaural">🎧 Binaural Beats (40Hz Gamma)</option>
                             </optgroup>
                             <optgroup label="Curated Mixes (YouTube)">
-                                <option value="5qap5aO4i9A">🎧 Lofi Beats (Static Mix)</option>
+                                <option value="jfKfPfyJRdk">🎧 Lofi Beats (Lofi Girl Radio)</option>
+                                <option value="oT_5l_u30O0">🎬 Blade Runner Synth (Ambient)</option>
+                                <option value="1-xGerv5FOk">📚 Dark Academia Strings</option>
+                                <option value="8nOswEELJbA">🌿 Studio Ghibli Piano Collection</option>
+                                <option value="yJ6C1Gq7N-I">🌌 Hans Zimmer Epic Focus</option>
+                                <option value="XbTq6jCqPDU">🔥 Mario Kart Study Music (Intense)</option>
+                                <option value="4xDzrUhVKVA">🌃 Cyberpunk Synthwave</option>
                                 <option value="mPZkdNFkNps">🌧️ Rain & Thunder in Forest</option>
-                                <option value="c9pQYOGIWM8">☕ Cozy Rain Cafe</option>
-                                <option value="DWcJFNfaw9c">🎬 Blade Runner Synth (Lofi Edit)</option>
-                                <option value="aVjmXGbiF_Q">📚 Dark Academia Strings</option>
-                                <option value="9qRj2lBsz4Y">🌿 Studio Ghibli Piano</option>
-                                <option value="vD0ZzE25X18">🌌 Hans Zimmer Epic Focus</option>
-                                <option value="u0qPqDq6bCg">🔥 Mario Kart Study Music (Intense)</option>
                             </optgroup>
                         </select>
                     </div>
