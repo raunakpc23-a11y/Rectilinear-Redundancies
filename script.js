@@ -179,20 +179,29 @@ function initApp() {
             return "Unknown Device";
         };
 
+        // Generates extremely precise timings
         window.generateHistory = function(baseHour) {
             let hist = [];
             for(let i=0; i<5; i++) {
                 let dIn = new Date();
                 dIn.setDate(dIn.getDate() - i);
-                dIn.setHours(baseHour - i, Math.floor(Math.random()*60));
-                let dOut = new Date(dIn.getTime() + (Math.random() * 7200000 + 1800000));
+                // Exact login seconds
+                dIn.setHours(baseHour - i, Math.floor(Math.random()*60), Math.floor(Math.random()*60));
+                
+                // Session length varied specifically (ms)
+                let sessionDuration = Math.random() * 7200000 + 1800000;
+                let dOut = new Date(dIn.getTime() + sessionDuration);
                 let dayStr = i === 0 ? "Today" : (i === 1 ? "Yesterday" : dIn.toLocaleDateString());
-                hist.push(`<li><span class="hist-label">IN:</span> ${dayStr} ${dIn.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | <span class="hist-label">OUT:</span> ${dOut.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</li>`);
+                
+                hist.push(`<li>
+                    <span class="hist-label" style="color:var(--success);">LOGON:</span> ${dayStr} ${dIn.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})} <br>
+                    <span class="hist-label" style="color:var(--danger);">LOGOFF:</span> ${dayStr} ${dOut.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                </li>`);
             }
             return hist.join('');
         };
 
-        // Admin Table Renderer
+        // Admin Table Renderer with enriched statuses
         window.renderAdminUsers = function() {
             const tbody = document.getElementById('admin-users-body');
             if(!tbody) return;
@@ -202,10 +211,10 @@ function initApp() {
             let realDevice = window.getDeviceInfo();
             
             const mockUsers = [
-                { id: "USR-001X", username: realUser, ip: "192.168.1.102", password: realPass, device: realDevice, location: "Delhi, India", status: "ONLINE", activity: "STREAMING - Thermodynamics (PW)", data: "1.4 GB", history: window.generateHistory(14) },
-                { id: "USR-089A", username: "guest_29", ip: "10.0.0.45", password: "guest_access", device: "Android Device", location: "Mumbai, India", status: "IDLE", activity: "IDLE - Away for 45m", data: "350 MB", history: window.generateHistory(10) },
-                { id: "USR-442C", username: "study_bot", ip: "172.16.254.1", password: "automated_bot_7", device: "Windows PC", location: "Bangalore, India", status: "ONLINE", activity: "ONLINE - Compiling Flashcards", data: "12 MB", history: window.generateHistory(8) },
-                { id: "USR-991D", username: "ghost_protocol", ip: "192.168.1.200", password: "encrypted_key", device: "Apple MacBook", location: "Unknown Routing", status: "STREAMING", activity: "STREAMING - Node 4 Analytics (720p)", data: "4.2 GB", history: window.generateHistory(18) }
+                { id: "USR-001X", username: realUser, ip: "192.168.1.102", password: realPass, device: realDevice, location: "Delhi, India", status: "ONLINE", activity: "STREAMING - Thermodynamics (PW - 1080p) - Buffer: 12ms", data: "1.4 GB", history: window.generateHistory(14) },
+                { id: "USR-089A", username: "guest_29", ip: "10.0.0.45", password: "guest_access", device: "Android Device", location: "Mumbai, India", status: "IDLE", activity: "IDLE - Window out of focus for 45m 12s", data: "350 MB", history: window.generateHistory(10) },
+                { id: "USR-442C", username: "study_bot", ip: "172.16.254.1", password: "automated_bot_7", device: "Windows PC", location: "Bangalore, India", status: "ONLINE", activity: "ONLINE - Compiling Flashcards (Module 4)", data: "12 MB", history: window.generateHistory(8) },
+                { id: "USR-991D", username: "ghost_protocol", ip: "192.168.1.200", password: "encrypted_key", device: "Apple MacBook", location: "Unknown Routing", status: "STREAMING", activity: "STREAMING - Node 4 Analytics Sync (720p)", data: "4.2 GB", history: window.generateHistory(18) }
             ];
 
             let html = '';
@@ -215,7 +224,7 @@ function initApp() {
                     <td>
                         <div class="user-id-cell">
                             <strong>${u.id}</strong>
-                            <span class="admin-username">@${u.username}</span>
+                            <span class="admin-username" style="font-weight:bold; font-size: 1.1em;">@${u.username}</span>
                         </div>
                     </td>
                     <td class="mono-text pwd-cell" style="cursor:pointer; font-weight:600;">${u.password}</td>
@@ -233,7 +242,7 @@ function initApp() {
                         <div class="date-cell">
                             <span class="admin-badge ${statusClass}" id="status-${i}">${u.status}</span>
                             <span class="activity-detail">${u.activity}</span>
-                            <span class="activity-detail mono-text">Data: ${u.data}</span>
+                            <span class="activity-detail mono-text">Bandwidth: ${u.data}</span>
                         </div>
                     </td>
                     <td>
@@ -919,7 +928,6 @@ function initApp() {
             document.getElementById('viewer-1').style.display = 'block';
             document.getElementById('split-btn').style.display = 'flex';
             
-            document.getElementById('settings-btn-main').style.display = 'none';
             document.getElementById('current-title').style.display = 'block';
             document.getElementById('current-path').style.display = 'block';
             
@@ -1009,15 +1017,39 @@ function initApp() {
             }
         });
 
+        // Fixed dragging glitch logic utilizing pointerEvents
         let isRes = false;
-        document.getElementById('resizer')?.addEventListener('mousedown', () => { isRes=true; document.getElementById('resizer').classList.add('dragging'); document.body.style.cursor='col-resize'; });
+        document.getElementById('resizer')?.addEventListener('mousedown', () => { 
+            isRes=true; 
+            document.getElementById('resizer').classList.add('dragging'); 
+            document.body.style.cursor='col-resize'; 
+            
+            // This prevents iframes from eating up the mouse dragging inputs
+            document.getElementById('viewer-1').style.pointerEvents = 'none';
+            document.getElementById('viewer-2').style.pointerEvents = 'none';
+        });
+        
         document.addEventListener('mousemove', (e) => {
             if(!isRes) return;
             const rect = document.getElementById('main-workspace').getBoundingClientRect();
             let pct = ((e.clientX - rect.left) / rect.width)*100;
-            if(pct>20 && pct<80) { document.getElementById('viewer-1').style.width=`${pct}%`; document.getElementById('viewer-2').style.width=`${100-pct}%`; }
+            if(pct>15 && pct<85) { 
+                document.getElementById('viewer-1').style.width=`${pct}%`; 
+                document.getElementById('viewer-2').style.width=`${100-pct}%`; 
+            }
         });
-        document.addEventListener('mouseup', () => { if(isRes) { isRes=false; document.getElementById('resizer')?.classList.remove('dragging'); document.body.style.cursor='default'; }});
+        
+        document.addEventListener('mouseup', () => { 
+            if(isRes) { 
+                isRes=false; 
+                document.getElementById('resizer')?.classList.remove('dragging'); 
+                document.body.style.cursor='default'; 
+                
+                // Returns standard interactivity to the iframes
+                document.getElementById('viewer-1').style.pointerEvents = 'auto';
+                document.getElementById('viewer-2').style.pointerEvents = 'auto';
+            }
+        });
 
         document.getElementById('settings-btn-main')?.addEventListener('click', () => {
             document.getElementById('set-theme').value = pomoSettings.theme || 'theme-amoled';
