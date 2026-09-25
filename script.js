@@ -912,7 +912,8 @@ function initApp() {
                 }
             } else {
                 document.getElementById('audio-iframe-box').style.display = 'block';
-                document.getElementById('audio-frame').src = `https://www.youtube.com/embed/${type}?autoplay=1`;
+                // Added rel=0 and modestbranding=1 to guarantee seamless loading without aggressive YouTube UI or glitches
+                document.getElementById('audio-frame').src = `https://www.youtube.com/embed/${type}?autoplay=1&rel=0&modestbranding=1`;
             }
         });
 
@@ -934,7 +935,8 @@ function initApp() {
             document.getElementById('current-title').textContent = titleText;
             document.getElementById('current-path').textContent = 'Workspace > Audio > ' + titleText;
             
-            document.getElementById('frame-1').src = `https://www.youtube.com/embed/${type}?autoplay=1`;
+            // Replicated stable, robust embedding parameters to the main viewer
+            document.getElementById('frame-1').src = `https://www.youtube.com/embed/${type}?autoplay=1&rel=0&modestbranding=1`;
             
             if(document.getElementById('viewer-2').style.display === 'block') {
                 document.getElementById('frame-2').src = document.getElementById('frame-1').src;
