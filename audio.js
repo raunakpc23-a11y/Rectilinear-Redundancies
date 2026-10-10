@@ -290,6 +290,10 @@
       <input type="text" id="aud-filter" placeholder="Search ${LAYERS.length} sounds…">
       <div id="aud-layers">${GROUPS.map((g, gi) => `<div class="au3-g"><h6>${g}</h6><div class="au3-grid">${LAYERS.filter(l => l[4] === gi).map(l => `<div class="au3-l" data-id="${l[0]}" data-name="${l[2].toLowerCase()}"><button class="au3-t" data-t="${l[0]}"><span>${l[1]}</span>${l[2]}</button><input type="range" min="0.05" max="1" step="0.01" data-v="${l[0]}"></div>`).join('')}</div></div>`).join('')}</div>
       <div class="au3-row" id="aud-binrow"><label for="aud-bin">🎧 Beat frequency</label><select id="aud-bin">${Object.keys(BIN).map(k => `<option value="${k}">${BIN[k][0]}</option>`).join('')}</select></div>
+      <h5>🎵 Music videos <small class="muted">(YouTube)</small></h5>
+      <div id="yt-box"></div>
+      <div class="au3-row"><input type="text" id="yt-url" placeholder="Paste a YouTube link or ID…" style="flex:1;min-width:0"><button class="outline-btn" id="yt-add">➕ Add</button></div>
+      <div class="au3-chips" id="yt-list"></div>
       <p class="muted" style="font-size:.78em;margin:2px 0 8px">Every sound is generated live in your browser: loops seamlessly, works offline, uses no data. Binaural beats need stereo headphones.</p>
     </div>`;
     $('aud-master').value = st.master; $('aud-sleep').value = String(st.sleep); $('aud-auto').checked = !!st.auto; $('aud-bin').value = st.bin;
@@ -347,10 +351,42 @@
   window.RRA = {
     play: name => { if (PRESETS[name] || st.custom[name]) return applyPreset(name); const l = find(name); if (!l) return false; const s = {}; s[l[0]] = l[3]; setMix(s, null, ''); return l[2]; },
     add: name => { const l = find(name); if (!l) return false; if (st.sel[l[0]] == null) st.sel[l[0]] = l[3]; st.last = ''; save(); if (playing) startLayer(l[0]); paint(); return l[2]; },
-    stop, toggle, playing: () => playing, random: randomMix, mix: () => Object.assign({}, st.sel),
+    yt: id => { const v = ytId(id); if (v) ytPlay(v); return !!v; }, stop, toggle, playing: () => playing, random: randomMix, mix: () => Object.assign({}, st.sel),
     presets: () => Object.keys(PRESETS).concat(Object.keys(st.custom)), layers: () => IDS.slice(),
     setSleep: m => { st.sleep = +m || 0; save(); const s = $('aud-sleep'); if (s) s.value = String(st.sleep); armSleep(); }, names: () => LAYERS.map(l => [l[0], l[2]])
   };
-  const go = () => { buildUI(); bind(); };
+
+  /* ---- YouTube music videos ---- */
+  const YT0 = [['jfKfPfyJRdk', '☕ Lofi Girl – beats to study'], ['5yx6BWlEVcY', '🎷 Chillhop Radio'], ['4xDzrJKXOOY', '🌆 Synthwave Radio'], ['rUxyKA_-grg', '🌙 Lofi sleep'], ['5qap5aO4i9A', '📚 Lofi study']];
+  let ytc = []; try { ytc = JSON.parse(localStorage.getItem('aud_yt_custom') || '[]'); } catch (e) {}
+  let ytNow = null;
+  const ytId = v => { v = String(v || '').trim(); const m = v.match(/(?:v=|youtu\.be\/|embed\/|live\/|shorts\/)([\w-]{11})/); return m ? m[1] : /^[\w-]{11}$/.test(v) ? v : null; };
+  function ytPaint() {
+    const L = $('yt-list'), B = $('yt-box'); if (!L || !B) return;
+    const all = YT0.map(x => ({ id: x[0], t: x[1] })).concat(ytc.map(x => ({ id: x[0], t: x[1], c: 1 })));
+    L.innerHTML = all.map(v => `<button class="chip${ytNow === v.id ? ' active' : ''}" data-yt="${v.id}">${v.t.replace(/</g, '&lt;')}${v.c ? `<b data-ytdel="${v.id}">×</b>` : ''}</button>`).join('');
+    if (!ytNow) { B.innerHTML = ''; return; }
+    if (!B.querySelector('iframe[data-id="' + ytNow + '"]')) B.innerHTML = `<div class="yt-frame"><iframe data-id="${ytNow}" src="https://www.youtube.com/embed/${ytNow}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><div class="au3-row"><button class="outline-btn" id="yt-stop">⏹ Stop video</button><a class="outline-btn" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=${ytNow}">Open on YouTube ↗</a></div><small class="muted" id="yt-warn"></small>`;
+  }
+  function ytPlay(id) {
+    if (ytNow === id) return; ytNow = id; if (playing) stop(); ytPaint();
+    if (window.RRX && RRX.checkId) RRX.checkId(id).then(r => { const w = $('yt-warn'); if (w && ytNow === id && r && r.s && r.s !== 'ok') w.textContent = '⚠ This video may be unavailable. Try another, or paste your own link.'; }).catch(() => {});
+  }
+  const ytCss = document.createElement('style'); ytCss.id = 'au3-yt-css';
+  ytCss.textContent = '.yt-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;margin-bottom:8px}.yt-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}#yt-list{margin-bottom:10px}';
+  document.head.appendChild(ytCss);
+  document.addEventListener('click', e => {
+    const d = $('audio-drawer'); if (!d || !d.contains(e.target)) return;
+    const del = e.target.closest('[data-ytdel]'), p = e.target.closest('[data-yt]');
+    if (del) { ytc = ytc.filter(x => x[0] !== del.dataset.ytdel); try { localStorage.setItem('aud_yt_custom', JSON.stringify(ytc)); } catch (_) {} if (ytNow === del.dataset.ytdel) ytNow = null; $('yt-box').innerHTML = ''; ytPaint(); }
+    else if (p) { ytNow === p.dataset.yt ? (ytNow = null, $('yt-box').innerHTML = '', ytPaint()) : ytPlay(p.dataset.yt); }
+    else if (e.target.closest('#yt-stop')) { ytNow = null; $('yt-box').innerHTML = ''; ytPaint(); }
+    else if (e.target.closest('#yt-add')) {
+      const id = ytId($('yt-url').value); if (!id) { window.showToast && showToast('Not a valid YouTube link'); return; }
+      if (!ytc.some(x => x[0] === id) && !YT0.some(x => x[0] === id)) { ytc.push([id, '🎬 ' + id]); try { localStorage.setItem('aud_yt_custom', JSON.stringify(ytc)); } catch (_) {} }
+      $('yt-url').value = ''; ytPlay(id); ytPaint();
+    }
+  });
+  const go = () => { buildUI(); bind(); ytPaint(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 })();
