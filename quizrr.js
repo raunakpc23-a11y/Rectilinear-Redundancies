@@ -49,9 +49,9 @@
       const r = mkRow(c[i], c[i + 1], ct.join(' '), c[j], c[j + 1], c[j + 2] || '', c[j + 3]);
       if (ct.length > 1) { r.chapter = ct[0]; r.topic = ct.slice(1).join(' '); } rows.push(r);
     });
-    if (!rows.length) {
+    {
       const re = new RegExp('(?:^|\\s)(\\d{1,3})\\s+(' + SUBJ + ')\\s+(.+?)\\s+(Easy|Moderate|Medium|Tough|Hard|Difficult)\\s+((?:\\d+h\\s*)?(?:\\d+m\\s*)?(?:\\d+s))\\s+(Not Answered|Answered|Not Visited|Marked for Review)\\s*(Perfect|Wasted|Overtime|Confused|-)?', 'gi');
-      let x; while ((x = re.exec(flat))) rows.push(mkRow(x[1], x[2], x[3], x[4], x[5], x[6], x[7]));
+      let x; while ((x = re.exec(flat))) { const r = mkRow(x[1], x[2], x[3], x[4], x[5], x[6], x[7]); if (!rows.some(z => z.n === r.n)) rows.push(r); }
     }
     const seen = {}; rows = rows.filter(r => r.n > 0 && r.n <= 300 && !seen[r.n] && (seen[r.n] = 1)).sort((a, b) => a.n - b.n);
     return { meta, ov, rows };
@@ -141,7 +141,7 @@
   let pdfP;
   const loadPdf = () => window.pdfjsLib ? Promise.resolve(window.pdfjsLib) : pdfP || (pdfP = new Promise((res, rej) => {
     const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-    s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; res(window.pdfjsLib); };
+    s.onload = () => { const W = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; try { window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob(['importScripts("' + W + '");'], { type: 'text/javascript' })); } catch (e) { window.pdfjsLib.GlobalWorkerOptions.workerSrc = W; } res(window.pdfjsLib); };
     s.onerror = () => { pdfP = null; rej(new Error('Could not load the PDF reader (are you offline?). Use "Paste text" instead.')); }; document.head.appendChild(s);
   }));
   async function pdfToText(file) {
@@ -196,7 +196,7 @@
     <div class="card"><h4>Question map</h4><div class="qz-strip">${rep.rows.map(r => `<div class="qz-q ${r.res}" title="Q${r.n} · ${esc(r.diff)} · ${fmt(r.secs)} · ${r.res}">${r.n}<small>${esc(r.diff[0] || '')} ${fmt(r.secs)}</small></div>`).join('')}</div><div style="margin-top:12px">${timeChart(A, rep.rows)}</div></div>
     <div class="two"><div class="card"><h4>By difficulty</h4>${dd.map(d => bar(d.name, stackBars(d, d.n), d.corr + '/' + d.n)).join('')}</div><div class="card"><h4>By chapter</h4>${Object.values(A.byChap).map(c => bar(c.name.slice(0, 14), stackBars(c, c.n), c.corr + '/' + c.n)).join('')}</div></div>`;
     if (mistakes.length) h += `<div class="card"><h4>📝 Error log <span class="muted">(tag the cause; it feeds your patterns)</span></h4>${mistakes.map(r => `<div class="qz-mist"><b>Q${r.n}</b><span class="muted">${esc(r.chapter)} · ${esc(r.diff)} · ${fmt(r.secs)} · ${r.res === 'wrong' ? 'wrong' : 'not answered'}</span><select data-tag="${r.n}"><option value="">Cause?</option>${TAGS.map(t => `<option ${entry.tags[r.n] === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>`).join('')}</div>`;
-    h += `<div class="card qz-plan"><h4>✅ Your next 7 days</h4><ol>${A.plan.map(p => `<li>${esc(p.t)} <small>(~${p.m} min)</small></li>`).join('')}</ol><div class="row"><button class="primary-btn" data-qa="tt">📅 Add today's tasks to Timetable</button><button class="outline-btn" data-qa="copy">📋 Copy report</button></div></div>`;
+    h += `<div class="card qz-plan"><h4>✅ Your next 7 days</h4><ol>${A.plan.map(p => `<li>${esc(p.t)} <small>(~${p.m} min)</small></li>`).join('')}</ol><div class="row"><button class="primary-btn" data-qa="tt">📅 Add today's tasks to Timetable</button><button class="outline-btn" data-qa="mock">➕ Save to Mock Tests</button><button class="outline-btn" data-qa="copy">📋 Copy report</button></div></div>`;
     return h;
   }
   function historyHTML() {
@@ -223,7 +223,7 @@
       <div class="qz-drop" id="qz-drop"><b>${busy ? '⏳ Reading…' : '📄 Drop Quizrr PDF(s) here or click to choose'}</b><span class="muted">Also works with pasted text. Reports are saved on this device for trends.</span><input type="file" id="qz-file" accept=".pdf,.txt" multiple hidden></div>
       <details><summary>Paste text instead / try the sample</summary><textarea class="qz-paste" id="qz-text" placeholder="Paste the text of the report…"></textarea><div class="row"><button class="outline-btn" data-qa="parse">Analyze pasted text</button><button class="outline-btn" data-qa="sample">Load sample report</button></div></details>
       ${msg ? `<p class="qz-err">${esc(msg)}</p>` : ''}${cur ? viewHTML(cur) : ''}${historyHTML()}</div>`;
-      const dz = $('qz-drop'); dz.onclick = () => $('qz-file').click();
+      const dz = $('qz-drop'); dz.onclick = e => { if (e.target.id !== 'qz-file') $('qz-file').click(); }; $('qz-file').onclick = e => e.stopPropagation();
       dz.ondragover = e => { e.preventDefault(); dz.classList.add('over'); }; dz.ondragleave = () => dz.classList.remove('over');
       dz.ondrop = e => { e.preventDefault(); dz.classList.remove('over'); handle([...e.dataTransfer.files]); };
     };
@@ -245,6 +245,14 @@
       const a = b.dataset.qa;
       if (a === 'parse') { show($('qz-text').value, 'the pasted text'); draw(); }
       else if (a === 'sample') { show(SAMPLE, 'the sample'); draw(); }
+      else if (a === 'mock') {
+        if (!window.RRX || !RRX.addMock) { window.showToast && showToast('Mock Tests not available'); return; }
+        const A = cur.A, M = cur.rep.meta, o = { id: 'qz-' + cur.entry.id, name: (M.title || 'Quizrr test').slice(0, 60), date: new Date(M.ts || Date.now()).toISOString().slice(0, 10), exam: /neet/i.test(M.series || '') ? 'NEET' : 'JEE Main', mode: 'Topic test', P: null, C: null, M: null, max: A.max, cor: A.corr, wr: A.wrong, un: A.skip + A.unseen, time: Math.round(A.secs / 60), rank: null, pctl: null, notes: 'Imported from Quizrr', mist: { concept: 0, silly: 0, calc: 0, time: 0, guess: 0 } };
+        const key = { Physics: 'P', Chemistry: 'C', Mathematics: 'M' };
+        cur.rep.rows.forEach(r => { const k = key[r.subject]; if (k) o[k] = (o[k] || 0) + (r.res === 'correct' ? A.plus : r.res === 'wrong' ? -A.minus : 0); });
+        const map = { 'Concept gap': 'concept', 'Calculation slip': 'calc', 'Time pressure': 'time', 'Guess': 'guess' };
+        Object.values(cur.entry.tags || {}).forEach(t => { const k = map[t] || 'silly'; o.mist[k]++; });
+        RRX.addMock(o); window.showToast && showToast('Saved to Mock Tests'); }
       else if (a === 'copy') { const t = reportText(cur); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => window.showToast && showToast('Report copied'), () => window.prompt('Copy report:', t)); }
       else if (a === 'tt') {
         const X = window.RR && window.RR.x; if (!X || !X.addTT) { window.showToast && showToast('Timetable not available'); return; }
