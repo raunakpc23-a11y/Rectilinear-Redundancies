@@ -209,7 +209,8 @@
     else if (k === 'scan') { t.disabled = true; scan((d, n) => { t.textContent = 'Checking ' + d + '/' + n + '…'; }).then(() => { renderHome(); reviewModal(); }); }
   });
 
-  window.RRX = { home: renderHome, mocks, onPlay, checkId, mockSummary, examDays, todayPlan, health, review: reviewModal, scan, trunc };
+  function addMock(o) { const L = cur(); const i = L.findIndex(z => z.id === o.id); if (i >= 0) L[i] = o; else L.push(o); msave(); }
+  window.RRX = { addMock, home: renderHome, mocks, onPlay, checkId, mockSummary, examDays, todayPlan, health, review: reviewModal, scan, trunc };
   const boot = () => { const x = X(); if (x && x.refreshHome) x.refreshHome(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
