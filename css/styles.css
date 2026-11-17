@@ -25,15 +25,15 @@ a{color:inherit;text-decoration:none}
 /* backgrounds */
 #ambient-bg{position:fixed;inset:0;z-index:-1;background-size:cover;background-position:center;transition:opacity .5s}
 .bg-none{background:var(--primary-bg)}
-.bg-rain{background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.5)),url('./assets/Backgrounds/rain.jpg') center/cover;opacity:.5}
-.bg-space{background:url('./assets/Backgrounds/space.svg') center/cover;opacity:.6}
-.bg-lofi{background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.5)),url('./assets/Backgrounds/lofi.jpg') center/cover;opacity:.55}
-.bg-topo{background:url('./assets/Backgrounds/topo.svg') center/cover;opacity:.6}
-.bg-doodles{background:url('./assets/Backgrounds/doodles.svg') center/cover;opacity:.5}
-.bg-waves{background:url('./assets/Backgrounds/waves.jpg') center/cover;opacity:.45}
-.bg-robot{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('./assets/Backgrounds/robot-chill.jpg') center/cover;opacity:.5}
-.bg-robot2{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('./assets/Backgrounds/robot-sleep.jpg') center/cover;opacity:.5}
-.bg-hex{background:url('./assets/Backgrounds/hex.svg') center/cover;opacity:.6}
+.bg-rain{background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.5)),url('../assets/Backgrounds/rain.jpg') center/cover;opacity:.5}
+.bg-space{background:url('../assets/Backgrounds/space.svg') center/cover;opacity:.6}
+.bg-lofi{background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.5)),url('../assets/Backgrounds/lofi.jpg') center/cover;opacity:.55}
+.bg-topo{background:url('../assets/Backgrounds/topo.svg') center/cover;opacity:.6}
+.bg-doodles{background:url('../assets/Backgrounds/doodles.svg') center/cover;opacity:.5}
+.bg-waves{background:url('../assets/Backgrounds/waves.jpg') center/cover;opacity:.45}
+.bg-robot{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('../assets/Backgrounds/robot-chill.jpg') center/cover;opacity:.5}
+.bg-robot2{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.55)),url('../assets/Backgrounds/robot-sleep.jpg') center/cover;opacity:.5}
+.bg-hex{background:url('../assets/Backgrounds/hex.svg') center/cover;opacity:.6}
 .bg-aurora{background:radial-gradient(ellipse 60% 50% at 15% 20%,color-mix(in srgb,var(--accent-color) 60%,transparent),transparent 70%),radial-gradient(ellipse 50% 60% at 85% 25%,rgba(168,85,247,.55),transparent 70%),radial-gradient(ellipse 60% 50% at 60% 95%,rgba(6,182,212,.5),transparent 70%),var(--primary-bg);background-size:150% 150%;animation:auroraMove 18s ease-in-out infinite alternate,auroraHue 45s linear infinite;opacity:.9}
 @keyframes auroraMove{from{background-position:0 0}to{background-position:100% 100%}}
 @keyframes auroraHue{to{filter:hue-rotate(360deg)}}

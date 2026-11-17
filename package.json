@@ -1,0 +1,40 @@
+{
+  "name": "rectilinear-redundancies",
+  "version": "5.4.0",
+  "description": "A distraction-free study dashboard featuring Pomodoro analytics, Sea Lion virtual assistant, an ambient audio hub, flashcards, and syllabus tracking.",
+  "main": "server/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "npx serve -l 3000 .",
+    "server": "node server/server.js",
+    "start": "node server/server.js",
+    "test": "node --check server/server.js && node --check js/config.js && node --check js/script.js && node --check js/v2-ui.js"
+  },
+  "keywords": [
+    "study-dashboard",
+    "pomodoro-timer",
+    "focus-analytics",
+    "flashcards",
+    "ambient-soundscapes",
+    "exam-prep",
+    "dark-mode",
+    "productivity"
+  ],
+  "author": {
+    "name": "raunakpc23-a11y",
+    "email": "raunakpc23@gmail.com",
+    "url": "https://github.com/raunakpc23-a11y"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raunakpc23-a11y/Rectilinear-Redundancies.git"
+  },
+  "bugs": {
+    "url": "https://github.com/raunakpc23-a11y/Rectilinear-Redundancies/issues"
+  },
+  "homepage": "https://rectilinear-redundancies.vercel.app",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

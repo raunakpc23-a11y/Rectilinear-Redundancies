@@ -125,7 +125,9 @@ const natSort = (a, b) => a._t.localeCompare(b._t, undefined, { numeric: true, s
 
 /* ============ APPLY SETTINGS ============ */
 function applySettings() {
-    document.body.className = [S.theme, 'mode-' + S.mode, S.fontSize, 'r-' + S.radius, 'f-' + S.font, S.density === 'compact' ? 'dense' : '', S.anim ? '' : 'no-anim', S.cursorGlow ? 'glow' : '', S.dyn ? 'dyn' : '', 'cs-' + (S.cardStyle || 'glass'), S.tabLabels === false ? 'no-tab-labels' : '', S.reduceMotion ? 'no-anim' : ''].filter(Boolean).join(' ');
+    const isV2 = LS.getItem('rr_ui_mode') === 'v2' || S.mode === 'v2';
+    const v2Theme = LS.getItem('rr_v2_theme') || 'v2-theme-amoled';
+    document.body.className = [S.theme, 'mode-' + S.mode, isV2 ? `ui-v2-active ${v2Theme}` : '', S.fontSize, 'r-' + S.radius, 'f-' + S.font, S.density === 'compact' ? 'dense' : '', S.anim ? '' : 'no-anim', S.cursorGlow ? 'glow' : '', S.dyn ? 'dyn' : '', 'cs-' + (S.cardStyle || 'glass'), S.tabLabels === false ? 'no-tab-labels' : '', S.reduceMotion ? 'no-anim' : ''].filter(Boolean).join(' ');
     const r = document.documentElement.style, c = /^#[0-9a-f]{6}$/i.test(S.accent) ? S.accent : '#3b82f6';
     const R = parseInt(c.slice(1, 3), 16), G = parseInt(c.slice(3, 5), 16), B = parseInt(c.slice(5, 7), 16);
     r.setProperty('--accent-color', c); r.setProperty('--accent-glow', `rgba(${R},${G},${B},.4)`);
@@ -459,10 +461,21 @@ function renderHome() {
     const today = minsOn(ld()), goal = S.goal * 60, syl = Math.round((sylPct('Class12') + sylPct('JEEMains') + sylPct('JEEAdv')) / 3);
     const row = id => { const b = idMap.get(id); return b ? `<button class="link-row" data-open="${esc(id)}">${KIND_ICON[b._k]} <span>${esc(b._t)}</span></button>` : ''; };
     const rec = recents.map(row).filter(Boolean).slice(0, 5).join('') || '<p class="muted">Nothing opened yet.</p>', sv = favs.map(row).filter(Boolean).slice(0, 5).join('') || '<p class="muted">Tap ☆ on any item to save it here.</p>';
-    el.innerHTML = `<div class="tiles"><div class="card tile">${ring(goal ? today / goal : 0, Math.round(today) + 'm')}<span>Today / ${S.goal}h goal</span></div><div class="card tile"><b>${streakNow()} 🔥</b><span>Day streak</span></div><div class="card tile"><b>${(totalMins() / 60).toFixed(1)}h</b><span>Total focus</span></div><div class="card tile">${ring(syl / 100, syl + '%')}<span>Syllabus</span></div></div>
+    el.innerHTML = `<div class="card v2-promo-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(139,92,246,0.15));border:1px solid rgba(139,92,246,0.3);border-radius:var(--radius-lg,14px);padding:18px">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:18px">🚀</span>
+          <h4 style="margin:0;font-size:15px;font-weight:700;color:#fff">Experience the Modern Test UI</h4>
+          <span class="v2-test-pill" style="font-size:10px;padding:2px 8px;border-radius:999px">NEW</span>
+        </div>
+        <p style="margin:0;font-size:12.5px;color:var(--text-muted,#94a3b8);line-height:1.4">Switch anytime between Classic and the new 6-Pillar Activity Rail with Mock Test Logger, Quizrr Diagnostic Scanner, and 3D Revision Lab.</p>
+      </div>
+      <button class="v2-test-pill" data-util="test-ui" style="cursor:pointer;white-space:nowrap;padding:8px 18px;font-size:12px;font-weight:700">✨ Launch Test UI</button>
+    </div>
+    <div class="tiles"><div class="card tile">${ring(goal ? today / goal : 0, Math.round(today) + 'm')}<span>Today / ${S.goal}h goal</span></div><div class="card tile"><b>${streakNow()} 🔥</b><span>Day streak</span></div><div class="card tile"><b>${(totalMins() / 60).toFixed(1)}h</b><span>Total focus</span></div><div class="card tile">${ring(syl / 100, syl + '%')}<span>Syllabus</span></div></div>
     ${recents[0] && idMap.get(recents[0]) ? `<div class="card"><h4>▶ Continue where you left off</h4>${row(recents[0])}</div>` : ''}
     <div class="two"><div class="card"><h4>🕘 Recent</h4>${rec}</div><div class="card"><h4>★ Saved</h4>${sv}</div></div>
-    <div class="card"><h4>Quick actions</h4><div class="quick"><button class="outline-btn" data-util="focus">🎯 Start focus</button><button class="outline-btn" data-util="flashcards">📇 Flashcards</button><button class="outline-btn" data-util="timetable">📅 Timetable</button><button class="outline-btn" data-util="analytics">📊 Analytics</button><button class="outline-btn" data-util="syllabus">📑 Syllabus</button></div></div>`;
+    <div class="card"><h4>Quick actions</h4><div class="quick"><button class="outline-btn" data-util="focus">🎯 Start focus</button><button class="outline-btn" data-util="flashcards">📇 Flashcards</button><button class="outline-btn" data-util="timetable">📅 Timetable</button><button class="outline-btn" data-util="analytics">📊 Analytics</button><button class="outline-btn" data-util="syllabus">📑 Syllabus</button><button class="outline-btn v2-test-pill" data-util="test-ui" style="cursor:pointer;padding:6px 14px">✨ Test UI (V2)</button></div></div>`;
 }
 $('home-dash')?.addEventListener('click', e => { const o = e.target.closest('[data-open]'); if (o) loadResource(idMap.get(o.dataset.open), null); });
 
@@ -482,8 +495,13 @@ document.addEventListener('keydown', e => {
 });
 
 /* ============ UTILITIES ============ */
-const UTITLE = { focus: '🎯 Focus Room', analytics: '📊 Analytics', timetable: '📅 Timetable', syllabus: '📑 Syllabus Mastery', flashcards: '📇 Flashcards', mocks: '🧪 Mock Tests' };
+const UTITLE = { focus: '🎯 Focus Room', analytics: '📊 Analytics', timetable: '📅 Timetable', syllabus: '📑 Syllabus Mastery', flashcards: '📇 Flashcards', mocks: '🧪 Mock Tests', 'test-ui': '✨ Test UI', 'v2': '✨ Test UI' };
 function openUtility(type) {
+    if (type === 'test-ui' || type === 'v2') {
+        if (window.enableV2) window.enableV2();
+        else if (window.RR && window.RR.enableV2) window.RR.enableV2();
+        return;
+    }
     if (!UTITLE[type]) return;
     setView('util'); curUtil = type;
     $('current-title').textContent = UTITLE[type]; $('current-path').textContent = 'Tools › ' + type;
@@ -712,7 +730,7 @@ const OPT = {
     bg: [['bg-aurora', 'Dynamic Aurora (default)'], ['bg-none', 'None (Solid Theme)'], ['bg-glow', 'Accent Glow'], ['bg-grid', 'Blueprint Grid'], ['bg-dynamic', 'Colour Shift Gradient'], ['bg-rain', 'Rainy Window'], ['bg-space', 'Deep Space'], ['bg-lofi', 'Neon Lofi City'], ['bg-topo', 'Topography'], ['bg-doodles', 'Study Doodles'], ['bg-waves', 'Deep Waves'], ['bg-hex', 'Hex Mesh'], ['bg-robot', 'Chill Robot'], ['bg-robot2', 'Sleepy Robot']],
     pomoTheme: [['plant', 'Plant 🌱 🌿 🪴 🌳'], ['beaker', 'Beaker 🧫 💧 🧪 🧬'], ['flame', 'Flame 💨 🕯️ 🪵 🔥']],
     icon: ['⚡', '🍅', '🧠', '🔥', '⏱️', '🚀', '📖'].map(i => [i, i]),
-    mode: [['fancy', 'Interactive & Smooth (default)'], ['classic', 'Classic / Normal']], radius: [['round', 'Rounded'], ['sharp', 'Sharp corners'], ['pill', 'Extra round']],
+    mode: [['fancy', 'Interactive & Smooth (default)'], ['classic', 'Classic / Normal'], ['v2', '✨ Test UI (Modern V2 Overhaul)']], radius: [['round', 'Rounded'], ['sharp', 'Sharp corners'], ['pill', 'Extra round']],
     font: [['inter', 'Inter (default)'], ['system', 'System UI'], ['serif', 'Serif'], ['humanist', 'Humanist Sans'], ['rounded', 'Rounded'], ['mono', 'Monospace']], fontSize: [['font-small', 'Small'], ['font-medium', 'Medium'], ['font-large', 'Large'], ['font-xl', 'Extra large']],
     cardStyle: [['glass', 'Glass (default)'], ['flat', 'Flat'], ['outline', 'Outline'], ['elevated', 'Elevated']],
     density: [['comfortable', 'Comfortable'], ['compact', 'Compact']], logo: [['img', 'Mascot logo (default)'], ['vector', 'Vector logo']],
@@ -720,7 +738,7 @@ const OPT = {
     slImages: [['local', 'My assets only'], ['fallback', 'Assets, then online (cats/dogs)'], ['online', 'Online first (cats/dogs)']]
 };
 const SCHEMA = [
-    { sec: 'Appearance', items: [{ k: 'theme', l: 'Theme', t: 'select' }, { k: 'accent', l: 'Accent colour', t: 'accent' }, { k: 'bg', l: 'Ambient background', t: 'select' }, { k: 'mode', l: 'Design style', t: 'select' }, { k: 'radius', l: 'Corner style', t: 'select' }, { k: 'font', l: 'Font', t: 'select' }, { k: 'fontSize', l: 'Text size', t: 'select' }, { k: 'density', l: 'Density', t: 'select' }, { k: 'logo', l: 'Logo style', t: 'select' }, { k: 'cardStyle', l: 'Card style', t: 'select' }, { k: 'bgDim', l: 'Background intensity', t: 'range', min: 0.2, max: 1.5, step: 0.05 }, { k: 'bgBlur', l: 'Background blur', t: 'range', min: 0, max: 24, step: 1 }, { k: 'tabLabels', l: 'Show module tab labels', t: 'toggle' }, { k: 'reduceMotion', l: 'Reduce motion', t: 'toggle' }, { k: 'sbWidth', l: 'Sidebar width', t: 'range', min: 280, max: 460, step: 10 }] },
+    { sec: 'Appearance', items: [{ k: 'theme', l: 'Theme', t: 'select' }, { k: 'accent', l: 'Accent colour', t: 'accent' }, { k: 'bg', l: 'Ambient background', t: 'select' }, { k: 'mode', l: 'Design style / UI Mode', t: 'select' }, { k: 'radius', l: 'Corner style', t: 'select' }, { k: 'font', l: 'Font', t: 'select' }, { k: 'fontSize', l: 'Text size', t: 'select' }, { k: 'density', l: 'Density', t: 'select' }, { k: 'logo', l: 'Logo style', t: 'select' }, { k: 'cardStyle', l: 'Card style', t: 'select' }, { k: 'bgDim', l: 'Background intensity', t: 'range', min: 0.2, max: 1.5, step: 0.05 }, { k: 'bgBlur', l: 'Background blur', t: 'range', min: 0, max: 24, step: 1 }, { k: 'tabLabels', l: 'Show module tab labels', t: 'toggle' }, { k: 'reduceMotion', l: 'Reduce motion', t: 'toggle' }, { k: 'sbWidth', l: 'Sidebar width', t: 'range', min: 280, max: 460, step: 10 }] },
     { sec: 'Interface', items: [{ k: 'name', l: 'Your display name', t: 'text' }, { k: 'anim', l: 'Animations', t: 'toggle' }, { k: 'cursorGlow', l: 'Cursor glow (Interactive mode)', t: 'toggle' }, { k: 'dyn', l: 'Dynamic colour accents', t: 'toggle' }, { k: 'goal', l: 'Daily study goal (hours)', t: 'number', min: 0.5, max: 16, step: 0.5 }, { k: 'examName', l: 'Target exam name', t: 'text' }, { k: 'examDate', l: 'Exam date (home countdown)', t: 'date' }, { k: 'realTitles', l: 'Show real YouTube titles in playlists', t: 'toggle' }] },
     { sec: 'Focus', items: [{ k: 'focusTime', l: 'Focus (min)', t: 'number', min: 1, max: 180 }, { k: 'shortTime', l: 'Short break (min)', t: 'number', min: 1, max: 60 }, { k: 'longTime', l: 'Long break (min)', t: 'number', min: 1, max: 90 }, { k: 'cycles', l: 'Sessions before long break', t: 'number', min: 1, max: 12 }, { k: 'autoStart', l: 'Auto-start next timer', t: 'toggle' }, { k: 'chime', l: 'Chime on finish', t: 'toggle' }, { k: 'chimeVol', l: 'Chime volume', t: 'range', min: 0.1, max: 1, step: 0.1 }, { k: 'icon', l: 'Timer icon', t: 'select' }, { k: 'pomoTheme', l: 'Growth theme', t: 'select' }, { k: 'burnoutHours', l: '"Touch grass" after (hours/day)', t: 'number', min: 1, max: 16 }] },
     { sec: 'Sea Lion', items: [{ k: 'seaLion', l: 'Show Sea Lion', t: 'toggle' }, { k: 'slTheme', l: 'Chat theme', t: 'select' }, { k: 'slImages', l: 'Picture source', t: 'select' }, { k: 'slSounds', l: 'Sea-lion sounds & actions', t: 'toggle' }] },
@@ -731,7 +749,7 @@ let setSec = 'Appearance';
 function renderSettings() {
     $('set-tabs').innerHTML = SCHEMA.map(s => `<button class="chip ${s.sec === setSec ? 'active' : ''}" data-sec="${s.sec}">${s.sec}</button>`).join('');
     const sec = SCHEMA.find(s => s.sec === setSec); let h = '';
-    if (setSec === 'Appearance') h += `<div class="preset-row"><button class="primary-btn" data-preset="fancy">✨ Interactive (default)</button><button class="outline-btn" data-preset="classic">▭ Normal / Classic</button></div>`;
+    if (setSec === 'Appearance') h += `<div class="preset-row"><button class="primary-btn" data-preset="fancy">✨ Interactive (default)</button><button class="outline-btn" data-preset="classic">▭ Normal / Classic</button><button class="v2-test-pill" data-preset="v2" style="cursor:pointer;padding:8px 16px;font-size:12px">✨ Test UI (V2)</button></div>`;
     sec.items.forEach(it => {
         if (it.t === 'data') { h += `<div class="preset-row"><button class="outline-btn" data-act="export">⬇ Export backup</button><button class="outline-btn" data-act="import">⬆ Import backup</button><input type="file" id="imp-file" accept=".json" hidden></div><div class="preset-row"><button class="outline-btn" data-act="code">📋 Copy my stats code</button><button class="outline-btn" data-act="statsfile">⬇ Download my stats file</button></div><p class="set-note">To appear in the admin view, send your stats code (or file) to the admin — they paste it in the admin panel. It holds only simplified stats (study time, streak, subject hours, syllabus %), never passwords. If the site owner configured a server, stats also sync automatically.</p>`; return; }
         const v = S[it.k]; let c = '';
@@ -747,7 +765,17 @@ function renderSettings() {
     $('set-body').innerHTML = h;
 }
 function changeSetting(k, v) {
-    S[k] = v; saveS(); applySettings();
+    S[k] = v; saveS();
+    if (k === 'mode') {
+        if (v === 'v2') {
+            LS.setItem('rr_ui_mode', 'v2');
+            if (window.enableV2) window.enableV2();
+        } else {
+            LS.setItem('rr_ui_mode', 'classic');
+            if (window.disableV2) window.disableV2();
+        }
+    }
+    applySettings();
     if (['focusTime', 'shortTime', 'longTime'].includes(k) && !P.running && P.left === P.total) setMode(P.mode);
     if (k === 'cycles') renderPomo();
     if (['theme', 'accent', 'mode'].includes(k)) renderSettings();
@@ -759,7 +787,22 @@ $('settings-modal')?.addEventListener('click', e => { if (e.target === $('settin
 $('set-tabs')?.addEventListener('click', e => { const b = e.target.closest('[data-sec]'); if (b) { setSec = b.dataset.sec; renderSettings(); } });
 $('set-body')?.addEventListener('click', e => {
     const d = e.target.closest('.color-dot'); if (d) { changeSetting('accent', d.dataset.color); return; }
-    const p = e.target.closest('[data-preset]'); if (p) { if (p.dataset.preset === 'classic') Object.assign(S, { mode: 'classic', anim: false, cursorGlow: false, radius: 'sharp', font: 'system', bg: 'bg-none', density: 'compact' }); else Object.assign(S, { mode: 'fancy', anim: true, cursorGlow: true, radius: 'round', font: 'inter', bg: 'bg-none', density: 'comfortable' }); saveS(); applySettings(); renderSettings(); return; }
+    const p = e.target.closest('[data-preset]'); if (p) {
+        if (p.dataset.preset === 'classic') {
+            Object.assign(S, { mode: 'classic', anim: false, cursorGlow: false, radius: 'sharp', font: 'system', bg: 'bg-none', density: 'compact' });
+            LS.setItem('rr_ui_mode', 'classic');
+            if (window.disableV2) window.disableV2();
+        } else if (p.dataset.preset === 'v2') {
+            Object.assign(S, { mode: 'v2', anim: true, cursorGlow: true, radius: 'round', font: 'inter', density: 'comfortable' });
+            LS.setItem('rr_ui_mode', 'v2');
+            if (window.enableV2) window.enableV2();
+        } else {
+            Object.assign(S, { mode: 'fancy', anim: true, cursorGlow: true, radius: 'round', font: 'inter', bg: 'bg-none', density: 'comfortable' });
+            LS.setItem('rr_ui_mode', 'classic');
+            if (window.disableV2) window.disableV2();
+        }
+        saveS(); applySettings(); renderSettings(); return;
+    }
     const a = e.target.closest('[data-act]'); if (!a) return;
     if (a.dataset.act === 'code') { const c = encodeCode(summary()); (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(() => showToast('Stats code copied — send it to the admin'), () => { window.prompt('Copy your stats code:', c); }); return; }
     if (a.dataset.act === 'statsfile') { dl('rr-stats-' + (LS.getItem('admin_real_user') || 'me') + '.json', JSON.stringify(summary()), 'application/json'); return; }
@@ -783,6 +826,9 @@ window.RR = {
     pomo: { start: startPomo, pause: pausePomo, reset: () => { setMode(P.mode); }, state: () => P },
     stats: () => ({ todayMin: Math.round(minsOn(ld())), totalH: +(totalMins() / 60).toFixed(1), streak: streakNow(), best: bestStreak(), sessions: sessionsTotal() }),
     card: () => pick(allCards()), quote: () => pick(QUOTES),
+    enableV2: () => { if (window.enableV2) window.enableV2(); },
+    disableV2: () => { if (window.disableV2) window.disableV2(); },
+    toggleV2: () => { if (window.toggleV2) window.toggleV2(); },
     x: {
         get S() { return S; }, saveS, applySettings, changeSetting, ld, minsOn, streakNow, bestStreak, totalMins, sylPct, ring, nowMin, esc, save, load, QUOTES, KIND_ICON, idMap, allCards,
         loadResource: (b, el, i) => window.loadResource(b, el, i), setView, playIdx, openUtility, switchTab, tt: () => tt,
@@ -986,7 +1032,18 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
     const rb = x.recents[0] && x.idMap.get(x.recents[0]), pg = rb && rb.playlist ? (x.prog[rb._id] || { watched: {} }) : null, wc = pg ? Object.keys(pg.watched || {}).length : 0;
     const row = id => { const b = x.idMap.get(id); return b ? `<button class="link-row" data-open="${esc(id)}">${x.KIND_ICON[b._k]} <span>${esc(trunc(b._t, 60))}</span></button>` : ''; };
     const rec = x.recents.map(row).filter(Boolean).slice(0, 4).join('') || '<p class="muted">Nothing opened yet.</p>', sv = x.favs.map(row).filter(Boolean).slice(0, 4).join('') || '<p class="muted">Tap ☆ on any item to save it here.</p>';
-    el.innerHTML = `<div class="tiles">
+    el.innerHTML = `<div class="card v2-promo-card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(139,92,246,0.15));border:1px solid rgba(139,92,246,0.3);border-radius:var(--radius-lg,14px);padding:18px">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-size:18px">🚀</span>
+          <h4 style="margin:0;font-size:15px;font-weight:700;color:#fff">Experience the Modern Test UI</h4>
+          <span class="v2-test-pill" style="font-size:10px;padding:2px 8px;border-radius:999px">NEW</span>
+        </div>
+        <p style="margin:0;font-size:12.5px;color:var(--text-muted,#94a3b8);line-height:1.4">Switch anytime between Classic and the new 6-Pillar Activity Rail with Mock Test Logger, Quizrr Diagnostic Scanner, and 3D Revision Lab.</p>
+      </div>
+      <button class="v2-test-pill" data-util="test-ui" style="cursor:pointer;white-space:nowrap;padding:8px 18px;font-size:12px;font-weight:700">✨ Launch Test UI</button>
+    </div>
+    <div class="tiles">
       <div class="card tile">${x.ring(goal ? today / goal : 0, Math.round(today) + 'm')}<span>Today / ${S.goal}h goal</span></div>
       <div class="card tile"><b>${x.streakNow()} 🔥</b><span>Day streak</span></div>
       <div class="card tile"><b>${(x.totalMins() / 60).toFixed(1)}h</b><span>Total focus</span></div>
@@ -999,7 +1056,7 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
       <div class="card"><h4>🧪 Mock tests <small class="muted">${esc(mdb.active)}</small></h4>${ms.n ? `<div class="mock-snap"><b>${ms.last.pct.toFixed(1)}%</b><span>${esc(trunc(ms.last.name, 28))} · ${ms.last.total}/${ms.last.max}</span><small class="${ms.trend >= 0 ? 'up' : 'down'}">${ms.n > 1 ? (ms.trend >= 0 ? '▲ ' : '▼ ') + Math.abs(ms.trend).toFixed(1) + ' trend · ' : ''}${ms.n} attempts · avg ${ms.avg.toFixed(1)}%</small></div>` : '<p class="muted">Log your mock attempts to track scores, mistakes and trends.</p>'}<button class="outline-btn sm" data-util="mocks">${ms.n ? 'Open database' : 'Log first mock'}</button></div></div>
     <div class="two"><div class="card"><h4>🕘 Recent</h4>${rec}</div><div class="card"><h4>★ Saved</h4>${sv}</div></div>
     <div class="card hhealth"><div><h4>🩺 Library health</h4><small class="muted">${hl.chk ? hl.chk + ' of ' + hl.total + ' videos checked · ' + (hl.bad || hl.mis ? '<b class="down">' + hl.bad + ' unavailable, ' + hl.mis + ' title mismatches</b>' : 'no problems found') : 'Check that every lecture video still plays and matches its title.'}</small></div><span><button class="outline-btn sm" data-rrx="scan">${hl.chk ? 'Re-scan' : 'Scan videos'}</button>${hl.bad || hl.mis ? '<button class="outline-btn sm" data-rrx="review">Review</button>' : ''}</span></div>
-    <div class="card"><h4>Quick actions</h4><div class="quick"><button class="outline-btn" data-util="focus">🎯 Start focus</button><button class="outline-btn" data-util="flashcards">📇 Flashcards</button><button class="outline-btn" data-util="mocks">🧪 Mocks</button><button class="outline-btn" data-util="timetable">📅 Timetable</button><button class="outline-btn" data-util="analytics">📊 Analytics</button><button class="outline-btn" data-util="syllabus">📑 Syllabus</button><button class="outline-btn" data-rrx="audio">🎧 Focus sounds</button></div></div>`;
+    <div class="card"><h4>Quick actions</h4><div class="quick"><button class="outline-btn" data-util="focus">🎯 Start focus</button><button class="outline-btn" data-util="flashcards">📇 Flashcards</button><button class="outline-btn" data-util="mocks">🧪 Mocks</button><button class="outline-btn" data-util="timetable">📅 Timetable</button><button class="outline-btn" data-util="analytics">📊 Analytics</button><button class="outline-btn" data-util="syllabus">📑 Syllabus</button><button class="outline-btn" data-rrx="audio">🎧 Focus sounds</button><button class="outline-btn v2-test-pill" data-util="test-ui" style="cursor:pointer;padding:6px 14px">✨ Test UI (V2)</button></div></div>`;
     return true;
   }
   document.addEventListener('click', e => {

@@ -2,19 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rectilinear Redundancies</title>
-<script>try{if(localStorage.getItem('authenticated')==='true')document.documentElement.classList.add('authed')}catch(e){}</script>
-<link rel="icon" href="assets/Important/favicon.png">
-<link rel="stylesheet" href="styles.css">
-<script src="config.js"></script>
-<script src="data.js"></script>
-<script src="songs.js"></script>
-<script src="cards.js"></script>
-<script src="script.js" defer></script>
-<script src="sealion.js" defer></script>
-<script src="audio.js" defer></script>
-<script src="quizrr.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Rectilinear Redundancies · Study Dashboard</title>
+<meta name="description" content="A distraction-free, high-performance study dashboard featuring Pomodoro analytics, Sea Lion AI assistant, an ambient soundscape hub, flashcards, and syllabus tracking.">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="Rectilinear Redundancies · Study Dashboard">
+<meta property="og:description" content="Distraction-free focus dashboard featuring Pomodoro analytics, Sea Lion companion, and ambient audio hub.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://rectilinear-redundancies.vercel.app">
+<meta property="og:image" content="./assets/Important/Logo 2.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rectilinear Redundancies">
+<meta name="twitter:description" content="Distraction-free focus dashboard featuring Pomodoro analytics, Sea Lion companion, and ambient audio hub.">
+<meta name="twitter:image" content="./assets/Important/Logo 2.jpg">
+<script>try{if(localStorage.getItem('authenticated')==='true')document.documentElement.classList.add('authed');if(localStorage.getItem('rr_ui_mode')==='v2')document.documentElement.classList.add('v2-pre-init');}catch(e){}</script>
+<link rel="icon" type="image/png" href="assets/Important/favicon.png">
+<link rel="apple-touch-icon" href="assets/Important/Logo 2.jpg">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/v2-ui.css">
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/songs.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/script.js" defer></script>
+<script src="js/sealion.js" defer></script>
+<script src="js/audio.js" defer></script>
+<script src="js/quizrr.js" defer></script>
+<script src="js/v2-ui.js" defer></script>
 </head>
 <body class="theme-amoled mode-fancy font-medium">
 
@@ -46,10 +62,15 @@
     <img class="auth-logo" src="./assets/Important/Logo 2.jpg" alt="Rectilinear Redundancies" style="width:92px;height:92px;border-radius:22px;object-fit:cover" onerror="this.outerHTML='<svg class=&quot;auth-logo&quot; viewBox=&quot;0 0 64 64&quot;><use href=&quot;#rr-logo&quot;/></svg>'">
     <h2>Rectilinear Redundancies</h2>
     <p class="auth-sub">Sign in to your workspace</p>
-    <input type="text" id="auth-user" placeholder="Username" autocomplete="username">
+    <input type="text" id="auth-user" placeholder="Username (e.g. Student)" autocomplete="username">
     <input type="password" id="auth-pass" placeholder="Site Wide Password" autocomplete="current-password">
     <button class="primary-btn wide" id="auth-btn">Access Workspace</button>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button type="button" class="outline-btn wide" id="auth-guest-btn" style="flex:1;font-size:12px;padding:8px" title="Instant Guest Access">⚡ Guest Login</button>
+      <button type="button" class="v2-test-pill" id="auth-v2-btn" style="flex:1;font-size:12px;padding:8px;justify-content:center" title="Launch Modern Overhaul Directly">✨ Test UI (V2)</button>
+    </div>
     <p id="auth-error" class="auth-error">Access Denied. Incorrect Password.</p>
+    <p class="auth-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">💡 Demo Credentials: Username = <b>Student</b> &nbsp;·&nbsp; Password = <b>Huh</b></p>
     <p class="auth-note">Your study stats (never your password) may be shared with the site admin if sync is enabled. You can turn this off in Settings → Data.</p>
   </div>
 </div>
@@ -137,6 +158,13 @@
 
     <div id="view-utilities" class="sidebar-view">
       <div class="util-menu">
+        <button class="util-card-btn" data-util="test-ui" id="util-v2-card" style="border: 1px solid rgba(139, 92, 246, 0.4); background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.12));">
+          <span class="icon">✨</span>
+          <div class="info">
+            <h3 style="color:#a78bfa">Test UI (V2 Overhaul)</h3>
+            <p>Modern 6-pillar activity rail workspace</p>
+          </div>
+        </button>
         <button class="util-card-btn" data-util="focus"><span class="icon">🎯</span><div class="info"><h3>Focus Room</h3><p>Pomodoro with cycles & growth</p></div></button>
         <button class="util-card-btn" data-util="analytics"><span class="icon">📊</span><div class="info"><h3>Analytics</h3><p>Hours, streaks, trends, goals</p></div></button>
         <button class="util-card-btn" data-util="timetable"><span class="icon">📅</span><div class="info"><h3>Timetable</h3><p>List & draggable day planner</p></div></button>
@@ -170,6 +198,7 @@
       </div>
       <button id="pomo-chip" class="pomo-chip" data-util="focus" title="Open Focus Room"><span class="chip-ico">⚡</span><span id="pomo-chip-time">25:00</span></button>
       <div class="header-actions">
+        <button type="button" class="v2-test-pill" id="btn-activate-v2" title="Switch to Test UI (Modern V2 Overhaul)">✨ TEST UI</button>
         <button id="settings-btn-main" class="icon-btn" title="Settings">⚙️</button>
         <button id="home-btn" class="icon-btn" title="Home">🏠</button>
         <button id="audio-btn" class="icon-btn" title="Audio Player">🎧</button>

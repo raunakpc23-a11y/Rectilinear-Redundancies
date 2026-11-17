@@ -121,6 +121,7 @@
       { re: /\b(open|show|go to|take me to)\b.*\b(syllabus|tracker)\b|^syllabus$/, f: () => go(() => RR().openUtility('syllabus'), 'Opening the Syllabus tracker ✅') },
       { re: /\b(open|show|go to|take me to)\b.*\b(flash ?cards?)\b/, f: () => go(() => RR().openUtility('flashcards'), 'Opening Flashcards 🃏') },
       { re: /\b(open|show|go to|take me to)\b.*\b(focus|pomodoro|timer)\b/, f: () => go(() => RR().openUtility('focus'), 'Opening Focus ⏱') },
+      { re: /\b(test ui|v2|modern ui|new ui|activity rail|overhaul)\b/, f: () => go(() => { if (window.enableV2) window.enableV2(); else if (RR().enableV2) RR().enableV2(); }, '🚀 Launching Test UI (V2 Overhaul)! Switch back anytime using the button in the top bar.') },
       { re: /\b(open|show|go to)\b.*\bsettings?\b|^settings$/, f: () => go(() => document.getElementById('settings-btn-main').click(), 'Opening Settings ⚙') },
       { re: /\b(go )?home\b|\bdashboard\b/, f: () => go(() => RR().home(), 'Heading home 🏠') }
     ];
